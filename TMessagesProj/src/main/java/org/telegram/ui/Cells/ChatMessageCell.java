@@ -35,6 +35,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
+import android.graphics.text.LineBreaker;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -1972,9 +1973,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             gamePreviewPressed = false;
             instantPressed = instantButtonPressed = commentButtonPressed = false;
             if (Build.VERSION.SDK_INT >= 21) {
-                for (int a = 0; a < selectorDrawable.length; a++) {
-                    if (selectorDrawable[a] != null) {
-                        selectorDrawable[a].setState(StateSet.NOTHING);
+                for (Drawable drawable : selectorDrawable) {
+                    if (drawable != null) {
+                        drawable.setState(StateSet.NOTHING);
                     }
                 }
             }
@@ -2736,8 +2737,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             mediaCheckBox.onDetachedFromWindow();
         }
         if (pollCheckBox != null) {
-            for (int a = 0; a < pollCheckBox.length; a++) {
-                pollCheckBox[a].onDetachedFromWindow();
+            for (CheckBoxBase box : pollCheckBox) {
+                box.onDetachedFromWindow();
             }
         }
         attachedToWindow = false;
@@ -2745,13 +2746,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         videoRadialProgress.onDetachedFromWindow();
         avatarImage.onDetachedFromWindow();
         if (pollAvatarImages != null) {
-            for (int a = 0; a < pollAvatarImages.length; a++) {
-                pollAvatarImages[a].onDetachedFromWindow();
+            for (ImageReceiver pollAvatarImage : pollAvatarImages) {
+                pollAvatarImage.onDetachedFromWindow();
             }
         }
         if (commentAvatarImages != null) {
-            for (int a = 0; a < commentAvatarImages.length; a++) {
-                commentAvatarImages[a].onDetachedFromWindow();
+            for (ImageReceiver commentAvatarImage : commentAvatarImages) {
+                commentAvatarImage.onDetachedFromWindow();
             }
         }
         replyImageReceiver.onDetachedFromWindow();
@@ -2799,8 +2800,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             mediaCheckBox.onAttachedToWindow();
         }
         if (pollCheckBox != null) {
-            for (int a = 0; a < pollCheckBox.length; a++) {
-                pollCheckBox[a].onAttachedToWindow();
+            for (CheckBoxBase box : pollCheckBox) {
+                box.onAttachedToWindow();
             }
         }
 
@@ -2816,13 +2817,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         avatarImage.onAttachedToWindow();
         avatarImage.setParentView((View) getParent());
         if (pollAvatarImages != null) {
-            for (int a = 0; a < pollAvatarImages.length; a++) {
-                pollAvatarImages[a].onAttachedToWindow();
+            for (ImageReceiver pollAvatarImage : pollAvatarImages) {
+                pollAvatarImage.onAttachedToWindow();
             }
         }
         if (commentAvatarImages != null) {
-            for (int a = 0; a < commentAvatarImages.length; a++) {
-                commentAvatarImages[a].onAttachedToWindow();
+            for (ImageReceiver commentAvatarImage : commentAvatarImages) {
+                commentAvatarImage.onAttachedToWindow();
             }
         }
         replyImageReceiver.onAttachedToWindow();
@@ -3001,10 +3002,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             hasInvoicePreview = false;
             instantPressed = instantButtonPressed = commentButtonPressed = false;
             if (!pollChanged && Build.VERSION.SDK_INT >= 21) {
-                for (int a = 0; a < selectorDrawable.length; a++) {
-                    if (selectorDrawable[a] != null) {
-                        selectorDrawable[a].setVisible(false, false);
-                        selectorDrawable[a].setState(StateSet.NOTHING);
+                for (Drawable drawable : selectorDrawable) {
+                    if (drawable != null) {
+                        drawable.setVisible(false, false);
+                        drawable.setState(StateSet.NOTHING);
                     }
                 }
             }
@@ -4482,11 +4483,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                         votingFor = null;
                     }
 
-                    if (currentMessageObject.checkedVotes.contains(button.answer)) {
-                        pollCheckBox[a].setChecked(true, false);
-                    } else {
-                        pollCheckBox[a].setChecked(false, false);
-                    }
+                    pollCheckBox[a].setChecked(currentMessageObject.checkedVotes.contains(button.answer), false);
                 }
                 if (hasDifferent && restPercent != 0) {
                     Collections.sort(sortedPollButtons, (o1, o2) -> {
@@ -4594,7 +4591,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                             widthForCaption = width - AndroidUtilities.dp(10) - getExtraTextX() * 2;
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 captionLayout = StaticLayout.Builder.obtain(messageObject.caption, 0, messageObject.caption.length(), Theme.chat_msgTextPaint, widthForCaption)
-                                        .setBreakStrategy(StaticLayout.BREAK_STRATEGY_HIGH_QUALITY)
+                                        .setBreakStrategy(LineBreaker.BREAK_STRATEGY_HIGH_QUALITY)
                                         .setHyphenationFrequency(StaticLayout.HYPHENATION_FREQUENCY_NONE)
                                         .setAlignment(Layout.Alignment.ALIGN_NORMAL)
                                         .build();
@@ -5204,7 +5201,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                             widthForCaption -= getExtraTextX() * 2;
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 captionLayout = StaticLayout.Builder.obtain(currentCaption, 0, currentCaption.length(), Theme.chat_msgTextPaint, widthForCaption)
-                                        .setBreakStrategy(StaticLayout.BREAK_STRATEGY_HIGH_QUALITY)
+                                        .setBreakStrategy(LineBreaker.BREAK_STRATEGY_HIGH_QUALITY)
                                         .setHyphenationFrequency(StaticLayout.HYPHENATION_FREQUENCY_NONE)
                                         .setAlignment(Layout.Alignment.ALIGN_NORMAL)
                                         .build();
@@ -5475,7 +5472,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                         int widthForCaption = width - AndroidUtilities.dp(10) - getExtraTextX() * 2;
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             captionLayout = StaticLayout.Builder.obtain(messageObject.caption, 0, messageObject.caption.length(), Theme.chat_msgTextPaint, widthForCaption)
-                                    .setBreakStrategy(StaticLayout.BREAK_STRATEGY_HIGH_QUALITY)
+                                    .setBreakStrategy(LineBreaker.BREAK_STRATEGY_HIGH_QUALITY)
                                     .setHyphenationFrequency(StaticLayout.HYPHENATION_FREQUENCY_NONE)
                                     .setAlignment(Layout.Alignment.ALIGN_NORMAL)
                                     .build();
@@ -5885,9 +5882,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             psaHintPressed = false;
             otherPressed = false;
             if (Build.VERSION.SDK_INT >= 21) {
-                for (int a = 0; a < selectorDrawable.length; a++) {
-                    if (selectorDrawable[a] != null) {
-                        selectorDrawable[a].setState(StateSet.NOTHING);
+                for (Drawable drawable : selectorDrawable) {
+                    if (drawable != null) {
+                        drawable.setState(StateSet.NOTHING);
                     }
                 }
             }
@@ -13755,11 +13752,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     drawClock = false;
                     drawError = true;
                 } else if (currentMessageObject.isSent()) {
-                    if (!currentMessageObject.scheduled && !currentMessageObject.isUnread()) {
-                        drawCheck1 = true;
-                    } else {
-                        drawCheck1 = false;
-                    }
+                    drawCheck1 = !currentMessageObject.scheduled && !currentMessageObject.isUnread();
                     drawCheck2 = true;
                     drawClock = false;
                     drawError = false;

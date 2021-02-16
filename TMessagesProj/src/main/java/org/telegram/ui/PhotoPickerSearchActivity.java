@@ -254,12 +254,12 @@ public class PhotoPickerSearchActivity extends BaseFragment {
 
                 int actionBarHeight = actionBar.getMeasuredHeight();
                 globalIgnoreLayout = true;
-                for (int a = 0; a < viewPages.length; a++) {
-                    if (viewPages[a] == null) {
+                for (ViewPage viewPage : viewPages) {
+                    if (viewPage == null) {
                         continue;
                     }
-                    if (viewPages[a].listView != null) {
-                        viewPages[a].listView.setPadding(AndroidUtilities.dp(4), actionBarHeight + AndroidUtilities.dp(4), AndroidUtilities.dp(4), AndroidUtilities.dp(4));
+                    if (viewPage.listView != null) {
+                        viewPage.listView.setPadding(AndroidUtilities.dp(4), actionBarHeight + AndroidUtilities.dp(4), AndroidUtilities.dp(4), AndroidUtilities.dp(4));
                     }
                 }
                 globalIgnoreLayout = false;
@@ -724,8 +724,8 @@ public class PhotoPickerSearchActivity extends BaseFragment {
 
     private void setScrollY(float value) {
         actionBar.setTranslationY(value);
-        for (int a = 0; a < viewPages.length; a++) {
-            viewPages[a].listView.setPinnedSectionOffsetY((int) value);
+        for (ViewPage viewPage : viewPages) {
+            viewPage.listView.setPinnedSectionOffsetY((int) value);
         }
         fragmentView.invalidate();
     }
@@ -786,8 +786,8 @@ public class PhotoPickerSearchActivity extends BaseFragment {
     }
 
     private void switchToCurrentSelectedMode(boolean animated) {
-        for (int a = 0; a < viewPages.length; a++) {
-            viewPages[a].listView.stopScroll();
+        for (ViewPage viewPage : viewPages) {
+            viewPage.listView.stopScroll();
         }
         int a = animated ? 1 : 0;
         RecyclerView.Adapter currentAdapter = viewPages[a].listView.getAdapter();

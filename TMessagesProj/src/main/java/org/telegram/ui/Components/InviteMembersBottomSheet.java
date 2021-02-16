@@ -28,7 +28,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
@@ -38,12 +37,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
-import org.telegram.messenger.UserObject;
 import org.telegram.messenger.Utilities;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLObject;
@@ -52,7 +49,6 @@ import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Adapters.SearchAdapterHelper;
-import org.telegram.ui.Cells.CheckBoxCell;
 import org.telegram.ui.Cells.GroupCreateSectionCell;
 import org.telegram.ui.Cells.GroupCreateUserCell;
 import org.telegram.ui.Cells.ManageChatTextCell;
@@ -253,7 +249,7 @@ public class InviteMembersBottomSheet extends UsersAlertBase {
             combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
             drawable = combinedDrawable;
         }
-        floatingButton.setBackgroundDrawable(drawable);
+        floatingButton.setBackground(drawable);
         floatingButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
         floatingButton.setImageResource(R.drawable.floating_check);
 
@@ -550,10 +546,7 @@ public class InviteMembersBottomSheet extends UsersAlertBase {
 
         @Override
         public boolean isEnabled(RecyclerView.ViewHolder holder) {
-            if (holder.getItemViewType() == 3 || holder.getItemViewType() == 1) {
-                return true;
-            }
-            return false;
+            return holder.getItemViewType() == 3 || holder.getItemViewType() == 1;
         }
 
         @Override
@@ -583,10 +576,7 @@ public class InviteMembersBottomSheet extends UsersAlertBase {
 
         @Override
         public boolean isEnabled(RecyclerView.ViewHolder holder) {
-            if (holder.getItemViewType() == 1) {
-                return true;
-            }
-            return false;
+            return holder.getItemViewType() == 1;
         }
 
         @NonNull

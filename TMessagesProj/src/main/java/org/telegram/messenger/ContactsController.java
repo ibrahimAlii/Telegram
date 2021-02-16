@@ -289,7 +289,7 @@ public class ContactsController extends BaseController {
                             SharedPreferences.Editor editor = preferences1.edit();
                             editor.putString("invitelink", inviteLink = res.message);
                             editor.putInt("invitelinktime", (int) (System.currentTimeMillis() / 1000));
-                            editor.commit();
+                            editor.apply();
                         });
                     }
                 }
@@ -315,8 +315,7 @@ public class ContactsController extends BaseController {
         try {
             Account[] accounts = am.getAccountsByType("org.telegram.messenger");
             systemAccount = null;
-            for (int a = 0; a < accounts.length; a++) {
-                Account acc = accounts[a];
+            for (Account acc : accounts) {
                 boolean found = false;
                 for (int b = 0; b < UserConfig.MAX_ACCOUNT_COUNT; b++) {
                     TLRPC.User user = UserConfig.getInstance(b).getCurrentUser();
@@ -332,7 +331,7 @@ public class ContactsController extends BaseController {
                 }
                 if (!found) {
                     try {
-                        am.removeAccount(accounts[a], null, null);
+                        am.removeAccount(acc, null, null);
                     } catch (Exception ignore) {
 
                     }
@@ -360,8 +359,7 @@ public class ContactsController extends BaseController {
             systemAccount = null;
             AccountManager am = AccountManager.get(ApplicationLoader.applicationContext);
             Account[] accounts = am.getAccountsByType("org.telegram.messenger");
-            for (int a = 0; a < accounts.length; a++) {
-                Account acc = accounts[a];
+            for (Account acc : accounts) {
                 boolean found = false;
                 for (int b = 0; b < UserConfig.MAX_ACCOUNT_COUNT; b++) {
                     TLRPC.User user = UserConfig.getInstance(b).getCurrentUser();
@@ -374,7 +372,7 @@ public class ContactsController extends BaseController {
                 }
                 if (!found) {
                     try {
-                        am.removeAccount(accounts[a], null, null);
+                        am.removeAccount(acc, null, null);
                     } catch (Exception ignore) {
 
                     }
@@ -437,8 +435,7 @@ public class ContactsController extends BaseController {
                     try {
                         Account[] accounts = am.getAccountsByType("org.telegram.messenger");
                         systemAccount = null;
-                        for (int a = 0; a < accounts.length; a++) {
-                            Account acc = accounts[a];
+                        for (Account acc : accounts) {
                             for (int b = 0; b < UserConfig.MAX_ACCOUNT_COUNT; b++) {
                                 TLRPC.User user = UserConfig.getInstance(b).getCurrentUser();
                                 if (user != null) {
@@ -1600,7 +1597,7 @@ public class ContactsController extends BaseController {
     private void saveContactsLoadTime() {
         try {
             SharedPreferences preferences = MessagesController.getMainSettings(currentAccount);
-            preferences.edit().putLong("lastReloadStatusTime", System.currentTimeMillis()).commit();
+            preferences.edit().putLong("lastReloadStatusTime", System.currentTimeMillis()).apply();
         } catch (Exception e) {
             FileLog.e(e);
         }
@@ -1821,7 +1818,7 @@ public class ContactsController extends BaseController {
             final SharedPreferences settings = MessagesController.getMainSettings(currentAccount);
             final boolean forceUpdate = !settings.getBoolean("contacts_updated_v7", false);
             if (forceUpdate) {
-                settings.edit().putBoolean("contacts_updated_v7", true).commit();
+                settings.edit().putBoolean("contacts_updated_v7", true).apply();
             }
             final ContentResolver contentResolver = ApplicationLoader.applicationContext.getContentResolver();
             Uri rawContactUri = ContactsContract.RawContacts.CONTENT_URI.buildUpon().appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_NAME, systemAccount.name).appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_TYPE, systemAccount.type).build();
@@ -2272,7 +2269,7 @@ public class ContactsController extends BaseController {
         getMessagesController().clearFullUsers();
         SharedPreferences preferences = MessagesController.getMainSettings(currentAccount);
         final SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean("needGetStatuses", true).commit();
+        editor.putBoolean("needGetStatuses", true).apply();
         TLRPC.TL_contacts_getStatuses req = new TLRPC.TL_contacts_getStatuses();
         getConnectionsManager().sendRequest(req, (response, error) -> {
             if (error == null) {

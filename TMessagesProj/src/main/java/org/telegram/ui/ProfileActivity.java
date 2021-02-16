@@ -2077,7 +2077,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             RecyclerView.ViewHolder holder = listView.findContainingViewHolder(view);
                             pos = holder.getAdapterPosition();
                             if (pos == RecyclerView.NO_POSITION) {
-                                pos = holder.getPosition();
+                                pos = holder.getLayoutPosition();
                             }
                         }
                     }
@@ -2464,7 +2464,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     }
                     getNotificationsController().updateServerNotificationsSettings(did);
                     checkCell.setChecked(checked);
-                    RecyclerListView.Holder holder = (RecyclerListView.Holder) listView.findViewHolderForPosition(notificationsRow);
+                    RecyclerListView.Holder holder = (RecyclerListView.Holder) listView.findViewHolderForLayoutPosition(notificationsRow);
                     if (holder != null) {
                         listAdapter.onBindViewHolder(holder, notificationsRow);
                     }
@@ -2593,6 +2593,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
             private int pressCount = 0;
 
+            @SuppressLint("NewApi")
             @Override
             public boolean onItemClick(View view, int position) {
                 if (position == versionRow) {
@@ -2991,7 +2992,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
             drawable = combinedDrawable;
         }
-        writeButton.setBackgroundDrawable(drawable);
+        writeButton.setBackground(drawable);
         if (user_id != 0) {
             if (imageUpdater != null) {
                 cameraDrawable = new RLottieDrawable(R.raw.camera_outline, "" + R.raw.camera_outline, AndroidUtilities.dp(56), AndroidUtilities.dp(56), false, null);
@@ -4324,10 +4325,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     }
 
     private void invalidateIsInLandscapeMode() {
-        final Point size = new Point();
-        final Display display = getParentActivity().getWindowManager().getDefaultDisplay();
-        display.getSize(size);
-        isInLandscapeMode = size.x > size.y;
+        final Rect bounds = getParentActivity().getWindowManager().getCurrentWindowMetrics().getBounds();
+        isInLandscapeMode = bounds.width() > bounds.height();
     }
 
     @SuppressWarnings("unchecked")
@@ -4342,7 +4341,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
                 if ((mask & MessagesController.UPDATE_MASK_PHONE) != 0) {
                     if (listView != null) {
-                        RecyclerListView.Holder holder = (RecyclerListView.Holder) listView.findViewHolderForPosition(phoneRow);
+                        RecyclerListView.Holder holder = (RecyclerListView.Holder) listView.findViewHolderForLayoutPosition(phoneRow);
                         if (holder != null) {
                             listAdapter.onBindViewHolder(holder, phoneRow);
                         }
@@ -5086,8 +5085,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         boolean hasMedia = false;
         if (sharedMediaPreloader != null) {
             int[] lastMediaCount = sharedMediaPreloader.getLastMediaCount();
-            for (int a = 0; a < lastMediaCount.length; a++) {
-                if (lastMediaCount[a] > 0) {
+            for (int i : lastMediaCount) {
+                if (i > 0) {
                     hasMedia = true;
                     break;
                 }
@@ -5824,8 +5823,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 return;
             }
             boolean allGranted = true;
-            for (int a = 0; a < grantResults.length; a++) {
-                if (grantResults[a] != PackageManager.PERMISSION_GRANTED) {
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
                     allGranted = false;
                     break;
                 }
@@ -5840,8 +5839,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 return;
             }
             boolean allGranted = true;
-            for (int a = 0; a < grantResults.length; a++) {
-                if (grantResults[a] != PackageManager.PERMISSION_GRANTED) {
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
                     allGranted = false;
                     break;
                 }
@@ -6212,11 +6211,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     out = new ZipOutputStream(new BufferedOutputStream(dest));
                     byte[] data = new byte[1024 * 64];
 
-                    for (int i = 0; i < files.length; i++) {
-                        FileInputStream fi = new FileInputStream(files[i]);
+                    for (File file : files) {
+                        FileInputStream fi = new FileInputStream(file);
                         origin = new BufferedInputStream(fi, data.length);
 
-                        ZipEntry entry = new ZipEntry(files[i].getName());
+                        ZipEntry entry = new ZipEntry(file.getName());
                         out.putNextEntry(entry);
                         int count;
                         while ((count = origin.read(data, 0, data.length)) != -1) {
@@ -6432,7 +6431,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     }
                     cell.getTextView().setPadding(0, AndroidUtilities.dp(14), 0, AndroidUtilities.dp(14));
                     view = cell;
-                    view.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+                    view.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                     break;
                 }
             }
@@ -6712,9 +6711,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     sectionCell.setTag(position);
                     Drawable drawable;
                     if (position == infoSectionRow && lastSectionRow == -1 && secretSettingsSectionRow == -1 && sharedMediaRow == -1 && membersSectionRow == -1 || position == secretSettingsSectionRow || position == lastSectionRow || position == membersSectionRow && lastSectionRow == -1 && sharedMediaRow == -1) {
-                        sectionCell.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+                        sectionCell.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                     } else {
-                        sectionCell.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
+                        sectionCell.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                     }
                     break;
                 case 8:
@@ -7017,11 +7016,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             mContext = context;
 
             HashMap<Integer, SearchResult> resultHashMap = new HashMap<>();
-            for (int a = 0; a < searchArray.length; a++) {
-                if (searchArray[a] == null) {
+            for (SearchResult searchResult : searchArray) {
+                if (searchResult == null) {
                     continue;
                 }
-                resultHashMap.put(searchArray[a].guid, searchArray[a]);
+                resultHashMap.put(searchResult.guid, searchResult);
             }
             Set<String> set = MessagesController.getGlobalMainSettings().getStringSet("settingsSearchRecent2", null);
             if (set != null) {

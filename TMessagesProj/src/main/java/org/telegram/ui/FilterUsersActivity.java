@@ -511,7 +511,7 @@ public class FilterUsersActivity extends BaseFragment implements NotificationCen
         editText.setCursorWidth(1.5f);
         editText.setInputType(InputType.TYPE_TEXT_VARIATION_FILTER | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         editText.setSingleLine(true);
-        editText.setBackgroundDrawable(null);
+        editText.setBackground(null);
         editText.setVerticalScrollBarEnabled(false);
         editText.setHorizontalScrollBarEnabled(false);
         editText.setTextIsSelectable(false);
@@ -727,7 +727,7 @@ public class FilterUsersActivity extends BaseFragment implements NotificationCen
             combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
             drawable = combinedDrawable;
         }
-        floatingButton.setBackgroundDrawable(drawable);
+        floatingButton.setBackground(drawable);
         floatingButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
         floatingButton.setImageResource(R.drawable.floating_check);
         if (Build.VERSION.SDK_INT >= 21) {
@@ -1299,8 +1299,7 @@ public class FilterUsersActivity extends BaseFragment implements NotificationCen
 
                             int found = 0;
                             for (String q : search) {
-                                for (int i = 0; i < names.length; i++) {
-                                    final String name = names[i];
+                                for (final String name : names) {
                                     if (name != null && (name.startsWith(q) || name.contains(" " + q))) {
                                         found = 1;
                                         break;

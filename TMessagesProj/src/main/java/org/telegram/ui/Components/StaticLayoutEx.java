@@ -8,6 +8,7 @@
 
 package org.telegram.ui.Components;
 
+import android.graphics.text.LineBreaker;
 import android.os.Build;
 import android.text.Layout;
 import android.text.SpannableStringBuilder;
@@ -92,7 +93,7 @@ public class StaticLayoutEx {
                     .setEllipsize(TextUtils.TruncateAt.END)
                     .setEllipsizedWidth(ellipsisWidth)
                     .setMaxLines(maxLines)
-                    .setBreakStrategy(StaticLayout.BREAK_STRATEGY_HIGH_QUALITY)
+                    .setBreakStrategy(LineBreaker.BREAK_STRATEGY_HIGH_QUALITY)
                     .setHyphenationFrequency(StaticLayout.HYPHENATION_FREQUENCY_NONE);
             return builder.build();
         } else {
@@ -144,7 +145,7 @@ public class StaticLayoutEx {
                             .setEllipsize(null)
                             .setEllipsizedWidth(ellipsisWidth)
                             .setMaxLines(maxLines)
-                            .setBreakStrategy(StaticLayout.BREAK_STRATEGY_HIGH_QUALITY)
+                            .setBreakStrategy(LineBreaker.BREAK_STRATEGY_HIGH_QUALITY)
                             .setHyphenationFrequency(StaticLayout.HYPHENATION_FREQUENCY_NONE);
                     layout = builder.build();
                 } else {
@@ -175,7 +176,7 @@ public class StaticLayoutEx {
                                 .setEllipsize(TextUtils.TruncateAt.END)
                                 .setEllipsizedWidth(ellipsisWidth)
                                 .setMaxLines(maxLines)
-                                .setBreakStrategy(canContainUrl ? StaticLayout.BREAK_STRATEGY_HIGH_QUALITY : StaticLayout.BREAK_STRATEGY_SIMPLE)
+                                .setBreakStrategy(canContainUrl ? LineBreaker.BREAK_STRATEGY_HIGH_QUALITY : LineBreaker.BREAK_STRATEGY_SIMPLE)
                                 .setHyphenationFrequency(StaticLayout.HYPHENATION_FREQUENCY_NONE);
                         return builder.build();
                     } else {

@@ -813,8 +813,9 @@ public class ContentPreviewViewer {
         int insets = 0;
         int top;
         if (Build.VERSION.SDK_INT >= 21 && lastInsets != null) {
-            insets = lastInsets.getStableInsetBottom() + lastInsets.getStableInsetTop();
-            top = lastInsets.getStableInsetTop();
+            insets = lastInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).bottom +
+                    lastInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).top;
+            top = lastInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).top;
         } else {
             top = AndroidUtilities.statusBarHeight;
         }

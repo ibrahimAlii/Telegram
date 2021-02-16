@@ -336,13 +336,13 @@ public class VoIPFragment implements VoIPBaseService.StateListener, Notification
         if (VoIPService.getSharedInstance() != null) {
             int h = instance.windowView.getMeasuredHeight();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && instance.lastInsets != null) {
-                h -= instance.lastInsets.getSystemWindowInsetBottom();
+                h -= instance.lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
             }
             if (instance.canSwitchToPip) {
                 VoIPPiPView.show(instance.activity, instance.currentAccount, instance.windowView.getMeasuredWidth(), h, VoIPPiPView.ANIMATION_ENTER_TYPE_SCALE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && instance.lastInsets != null) {
-                    VoIPPiPView.topInset = instance.lastInsets.getSystemWindowInsetTop();
-                    VoIPPiPView.bottomInset = instance.lastInsets.getSystemWindowInsetBottom();
+                    VoIPPiPView.topInset = instance.lastInsets.getInsets(WindowInsets.Type.systemBars()).top;
+                    VoIPPiPView.bottomInset = instance.lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
                 }
             }
         }
@@ -364,21 +364,21 @@ public class VoIPFragment implements VoIPBaseService.StateListener, Notification
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void setInsets(WindowInsets windowInsets) {
         lastInsets = windowInsets;
-        ((FrameLayout.LayoutParams) buttonsLayout.getLayoutParams()).bottomMargin = lastInsets.getSystemWindowInsetBottom();
-        ((FrameLayout.LayoutParams) acceptDeclineView.getLayoutParams()).bottomMargin = lastInsets.getSystemWindowInsetBottom();
-        ((FrameLayout.LayoutParams) backIcon.getLayoutParams()).topMargin = lastInsets.getSystemWindowInsetTop();
-        ((FrameLayout.LayoutParams) speakerPhoneIcon.getLayoutParams()).topMargin = lastInsets.getSystemWindowInsetTop();
-        ((FrameLayout.LayoutParams) topShadow.getLayoutParams()).topMargin = lastInsets.getSystemWindowInsetTop();
-        ((FrameLayout.LayoutParams) statusLayout.getLayoutParams()).topMargin = AndroidUtilities.dp(68) + lastInsets.getSystemWindowInsetTop();
-        ((FrameLayout.LayoutParams) emojiLayout.getLayoutParams()).topMargin = AndroidUtilities.dp(17) + lastInsets.getSystemWindowInsetTop();
-        ((FrameLayout.LayoutParams) callingUserPhotoViewMini.getLayoutParams()).topMargin = AndroidUtilities.dp(68) + lastInsets.getSystemWindowInsetTop();
+        ((FrameLayout.LayoutParams) buttonsLayout.getLayoutParams()).bottomMargin = lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
+        ((FrameLayout.LayoutParams) acceptDeclineView.getLayoutParams()).bottomMargin = lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
+        ((FrameLayout.LayoutParams) backIcon.getLayoutParams()).topMargin = lastInsets.getInsets(WindowInsets.Type.systemBars()).top;
+        ((FrameLayout.LayoutParams) speakerPhoneIcon.getLayoutParams()).topMargin = lastInsets.getInsets(WindowInsets.Type.systemBars()).top;
+        ((FrameLayout.LayoutParams) topShadow.getLayoutParams()).topMargin = lastInsets.getInsets(WindowInsets.Type.systemBars()).top;
+        ((FrameLayout.LayoutParams) statusLayout.getLayoutParams()).topMargin = AndroidUtilities.dp(68) + lastInsets.getInsets(WindowInsets.Type.systemBars()).top;
+        ((FrameLayout.LayoutParams) emojiLayout.getLayoutParams()).topMargin = AndroidUtilities.dp(17) + lastInsets.getInsets(WindowInsets.Type.systemBars()).top;
+        ((FrameLayout.LayoutParams) callingUserPhotoViewMini.getLayoutParams()).topMargin = AndroidUtilities.dp(68) + lastInsets.getInsets(WindowInsets.Type.systemBars()).top;
 
-        ((FrameLayout.LayoutParams) currentUserCameraFloatingLayout.getLayoutParams()).bottomMargin = lastInsets.getSystemWindowInsetBottom();
-        ((FrameLayout.LayoutParams) callingUserMiniFloatingLayout.getLayoutParams()).bottomMargin = lastInsets.getSystemWindowInsetBottom();
-        ((FrameLayout.LayoutParams) callingUserTextureView.getLayoutParams()).bottomMargin = lastInsets.getSystemWindowInsetBottom();
-        ((FrameLayout.LayoutParams) notificationsLayout.getLayoutParams()).bottomMargin = lastInsets.getSystemWindowInsetBottom();
+        ((FrameLayout.LayoutParams) currentUserCameraFloatingLayout.getLayoutParams()).bottomMargin = lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
+        ((FrameLayout.LayoutParams) callingUserMiniFloatingLayout.getLayoutParams()).bottomMargin = lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
+        ((FrameLayout.LayoutParams) callingUserTextureView.getLayoutParams()).bottomMargin = lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
+        ((FrameLayout.LayoutParams) notificationsLayout.getLayoutParams()).bottomMargin = lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
 
-        ((FrameLayout.LayoutParams) bottomShadow.getLayoutParams()).bottomMargin = lastInsets.getSystemWindowInsetBottom();
+        ((FrameLayout.LayoutParams) bottomShadow.getLayoutParams()).bottomMargin = lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
         currentUserCameraFloatingLayout.setInsets(lastInsets);
         callingUserMiniFloatingLayout.setInsets(lastInsets);
         fragmentView.requestLayout();
@@ -487,11 +487,11 @@ public class VoIPFragment implements VoIPBaseService.StateListener, Notification
             protected void dispatchDraw(Canvas canvas) {
                 super.dispatchDraw(canvas);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && lastInsets != null) {
-                    canvas.drawRect(0, 0, getMeasuredWidth(), lastInsets.getSystemWindowInsetTop(), overlayPaint);
+                    canvas.drawRect(0, 0, getMeasuredWidth(), lastInsets.getInsets(WindowInsets.Type.systemBars()).top, overlayPaint);
                 }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && lastInsets != null) {
-                    canvas.drawRect(0, getMeasuredHeight() - lastInsets.getSystemWindowInsetBottom(), getMeasuredWidth(), getMeasuredHeight(), overlayBottomPaint);
+                    canvas.drawRect(0, getMeasuredHeight() - lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom, getMeasuredWidth(), getMeasuredHeight(), overlayBottomPaint);
                 }
             }
 
@@ -880,12 +880,12 @@ public class VoIPFragment implements VoIPBaseService.StateListener, Notification
         if (VoIPService.getSharedInstance() != null) {
             int h = instance.windowView.getMeasuredHeight();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && instance.lastInsets != null) {
-                h -= instance.lastInsets.getSystemWindowInsetBottom();
+                h -= instance.lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
             }
             VoIPPiPView.show(instance.activity, instance.currentAccount, instance.windowView.getMeasuredWidth(), h, VoIPPiPView.ANIMATION_ENTER_TYPE_TRANSITION);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && instance.lastInsets != null) {
-                VoIPPiPView.topInset = instance.lastInsets.getSystemWindowInsetTop();
-                VoIPPiPView.bottomInset = instance.lastInsets.getSystemWindowInsetBottom();
+                VoIPPiPView.topInset = instance.lastInsets.getInsets(WindowInsets.Type.systemBars()).top;
+                VoIPPiPView.bottomInset = instance.lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
             }
         }
         if (VoIPPiPView.getInstance() == null) {
@@ -2069,12 +2069,12 @@ public class VoIPFragment implements VoIPBaseService.StateListener, Notification
         if (canSwitchToPip && hasPermissionsToPip) {
             int h = instance.windowView.getMeasuredHeight();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && instance.lastInsets != null) {
-                h -= instance.lastInsets.getSystemWindowInsetBottom();
+                h -= instance.lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
             }
             VoIPPiPView.show(instance.activity, instance.currentAccount, instance.windowView.getMeasuredWidth(), h, VoIPPiPView.ANIMATION_ENTER_TYPE_SCALE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && instance.lastInsets != null) {
-                VoIPPiPView.topInset = instance.lastInsets.getSystemWindowInsetTop();
-                VoIPPiPView.bottomInset = instance.lastInsets.getSystemWindowInsetBottom();
+                VoIPPiPView.topInset = instance.lastInsets.getInsets(WindowInsets.Type.systemBars()).top;
+                VoIPPiPView.bottomInset = instance.lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
             }
         }
 

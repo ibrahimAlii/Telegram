@@ -54,8 +54,7 @@ public class SQLitePreparedStatement {
         reset(sqliteStatementHandle);
 
         int i = 1;
-        for (int a = 0; a < args.length; a++) {
-            Object obj = args[a];
+        for (Object obj : args) {
             if (obj == null) {
                 bindNull(sqliteStatementHandle, i);
             } else if (obj instanceof Integer) {

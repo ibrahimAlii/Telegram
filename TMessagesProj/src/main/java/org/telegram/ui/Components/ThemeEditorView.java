@@ -166,7 +166,7 @@ public class ThemeEditorView {
                 super(context);
 
                 View searchBackground = new View(context);
-                searchBackground.setBackgroundDrawable(Theme.createRoundRectDrawable(AndroidUtilities.dp(18), 0xfff2f4f5));
+                searchBackground.setBackground(Theme.createRoundRectDrawable(AndroidUtilities.dp(18), 0xfff2f4f5));
                 addView(searchBackground, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36, Gravity.LEFT | Gravity.TOP, 14, 11, 14, 0));
 
                 ImageView searchIconImageView = new ImageView(context);

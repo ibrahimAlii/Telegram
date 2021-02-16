@@ -95,7 +95,7 @@ public class CheckBoxBase {
         backgroundPaint.setStyle(Paint.Style.STROKE);
         backgroundPaint.setStrokeWidth(AndroidUtilities.dp(1.2f));
 
-        drawBitmap = Bitmap.createBitmap(AndroidUtilities.dp(size), AndroidUtilities.dp(size), Bitmap.Config.ARGB_4444);
+        drawBitmap = Bitmap.createBitmap(AndroidUtilities.dp(size), AndroidUtilities.dp(size), Bitmap.Config.ARGB_8888);
         bitmapCanvas = new Canvas(drawBitmap);
     }
 

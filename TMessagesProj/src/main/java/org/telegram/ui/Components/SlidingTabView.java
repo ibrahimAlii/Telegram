@@ -14,7 +14,6 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -58,14 +57,9 @@ public class SlidingTabView extends LinearLayout {
         tab.setTextColor(0xffffffff);
         tab.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         tab.setTypeface(Typeface.DEFAULT_BOLD);
-        tab.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.ACTION_BAR_PICKER_SELECTOR_COLOR, 0));
+        tab.setBackground(Theme.createSelectorDrawable(Theme.ACTION_BAR_PICKER_SELECTOR_COLOR, 0));
 
-        tab.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                didSelectTab(position);
-            }
-        });
+        tab.setOnClickListener(v -> didSelectTab(position));
         addView(tab);
         LayoutParams layoutParams = (LayoutParams)tab.getLayoutParams();
         layoutParams.height = LayoutHelper.MATCH_PARENT;

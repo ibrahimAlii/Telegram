@@ -69,7 +69,7 @@ public class GroupCreateCheckBox extends View {
         checkPaint.setStrokeWidth(AndroidUtilities.dp(1.5f));
         eraser2.setStrokeWidth(AndroidUtilities.dp(28));
 
-        drawBitmap = Bitmap.createBitmap(AndroidUtilities.dp(24), AndroidUtilities.dp(24), Bitmap.Config.ARGB_4444);
+        drawBitmap = Bitmap.createBitmap(AndroidUtilities.dp(24), AndroidUtilities.dp(24), Bitmap.Config.ARGB_8888);
         bitmapCanvas = new Canvas(drawBitmap);
         updateColors();
     }

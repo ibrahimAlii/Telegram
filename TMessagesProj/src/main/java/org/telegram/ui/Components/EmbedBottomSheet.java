@@ -35,6 +35,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.webkit.CookieManager;
@@ -91,7 +92,7 @@ public class EmbedBottomSheet extends BottomSheet {
     private String openUrl;
     private boolean hasDescription;
     private String embedUrl;
-    private int prevOrientation = -2;
+    private int prevOrientation = ActivityInfo.SCREEN_ORIENTATION_USER;
     private boolean fullscreenedByButton;
     private boolean wasInLandscape;
     private boolean animationInProgress;
@@ -304,11 +305,7 @@ public class EmbedBottomSheet extends BottomSheet {
             public boolean onTouchEvent(MotionEvent event) {
                 boolean result = super.onTouchEvent(event);
                 if (result) {
-                    if (event.getAction() == MotionEvent.ACTION_UP) {
-                        setDisableScroll(false);
-                    } else {
-                        setDisableScroll(true);
-                    }
+                    setDisableScroll(event.getAction() != MotionEvent.ACTION_UP);
                 }
                 return result;
             }
@@ -429,15 +426,19 @@ public class EmbedBottomSheet extends BottomSheet {
                         try {
                             prevOrientation = parentActivity.getRequestedOrientation();
                             if (byButton) {
-                                WindowManager manager = (WindowManager) parentActivity.getSystemService(Activity.WINDOW_SERVICE);
-                                int displayRotation = manager.getDefaultDisplay().getRotation();
+                                int displayRotation = ApplicationLoader.applicationContext.getDisplay().getRotation();
                                 if (displayRotation == Surface.ROTATION_270) {
                                     parentActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
                                 } else {
                                     parentActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                                 }
                             }
-                            containerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_FULLSCREEN);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                containerView.getWindowInsetsController().setSystemBarsAppearance(
+                                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+                            } else {
+                                containerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_FULLSCREEN);
+                            }
                         } catch (Exception e) {
                             FileLog.e(e);
                         }
@@ -448,7 +449,11 @@ public class EmbedBottomSheet extends BottomSheet {
 
                     if (parentActivity != null) {
                         try {
-                            containerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                containerView.getWindowInsetsController().setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+                            } else {
+                                containerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                            }
                             parentActivity.setRequestedOrientation(prevOrientation);
                         } catch (Exception e) {
                             FileLog.e(e);
@@ -475,7 +480,11 @@ public class EmbedBottomSheet extends BottomSheet {
                 if (inline) {
                     if (parentActivity != null) {
                         try {
-                            containerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                containerView.getWindowInsetsController().setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+                            } else {
+                                containerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                            }
                             if (prevOrientation != -2) {
                                 parentActivity.setRequestedOrientation(prevOrientation);
                             }
@@ -706,7 +715,7 @@ public class EmbedBottomSheet extends BottomSheet {
         textView.setGravity(Gravity.CENTER);
         textView.setSingleLine(true);
         textView.setEllipsize(TextUtils.TruncateAt.END);
-        textView.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 0));
+        textView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 0));
         textView.setPadding(AndroidUtilities.dp(18), 0, AndroidUtilities.dp(18), 0);
         textView.setText(LocaleController.getString("Close", R.string.Close).toUpperCase());
         textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
@@ -724,7 +733,7 @@ public class EmbedBottomSheet extends BottomSheet {
         pipButton.setEnabled(false);
         pipButton.setAlpha(0.5f);
         pipButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_dialogTextBlue4), PorterDuff.Mode.MULTIPLY));
-        pipButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 0));
+        pipButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 0));
         imageButtonsContainer.addView(pipButton, LayoutHelper.createFrame(48, 48, Gravity.TOP | Gravity.LEFT, 0, 0, 4, 0));
         pipButton.setOnClickListener(v -> {
             boolean inAppOnly = isYouTube && "inapp".equals(MessagesController.getInstance(currentAccount).youtubePipType);
@@ -797,7 +806,7 @@ public class EmbedBottomSheet extends BottomSheet {
         copyButton.setImageResource(R.drawable.video_copy);
         copyButton.setContentDescription(LocaleController.getString("CopyLink", R.string.CopyLink));
         copyButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_dialogTextBlue4), PorterDuff.Mode.MULTIPLY));
-        copyButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 0));
+        copyButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 0));
         imageButtonsContainer.addView(copyButton, LayoutHelper.createFrame(48, 48, Gravity.TOP | Gravity.LEFT));
         copyButton.setOnClickListener(copyClickListener);
 
@@ -807,7 +816,7 @@ public class EmbedBottomSheet extends BottomSheet {
         copyTextButton.setGravity(Gravity.CENTER);
         copyTextButton.setSingleLine(true);
         copyTextButton.setEllipsize(TextUtils.TruncateAt.END);
-        copyTextButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 0));
+        copyTextButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 0));
         copyTextButton.setPadding(AndroidUtilities.dp(18), 0, AndroidUtilities.dp(18), 0);
         copyTextButton.setText(LocaleController.getString("Copy", R.string.Copy).toUpperCase());
         copyTextButton.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
@@ -820,7 +829,7 @@ public class EmbedBottomSheet extends BottomSheet {
         openInButton.setGravity(Gravity.CENTER);
         openInButton.setSingleLine(true);
         openInButton.setEllipsize(TextUtils.TruncateAt.END);
-        openInButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 0));
+        openInButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 0));
         openInButton.setPadding(AndroidUtilities.dp(18), 0, AndroidUtilities.dp(18), 0);
         openInButton.setText(LocaleController.getString("OpenInBrowser", R.string.OpenInBrowser).toUpperCase());
         openInButton.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));

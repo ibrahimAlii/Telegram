@@ -191,9 +191,9 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 			addView(profileSearchCell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
 			imageView = new ImageView(context);
-			imageView.setAlpha(214);
+			imageView.setImageAlpha(214);
 			imageView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_featuredStickers_addButton), PorterDuff.Mode.MULTIPLY));
-			imageView.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 1));
+			imageView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 1));
 			imageView.setScaleType(ImageView.ScaleType.CENTER);
 			imageView.setOnClickListener(callBtnClickListener);
 			imageView.setContentDescription(LocaleController.getString("Call", R.string.Call));
@@ -378,7 +378,7 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 			combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
 			drawable = combinedDrawable;
 		}
-		floatingButton.setBackgroundDrawable(drawable);
+		floatingButton.setBackground(drawable);
 		floatingButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
 		floatingButton.setImageResource(R.drawable.ic_call);
 		floatingButton.setContentDescription(LocaleController.getString("Call", R.string.Call));
@@ -426,7 +426,7 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 		final boolean[] checks = new boolean[]{false};
 		FrameLayout frameLayout = new FrameLayout(getParentActivity());
 		CheckBoxCell cell = new CheckBoxCell(getParentActivity(), 1);
-		cell.setBackgroundDrawable(Theme.getSelectorDrawable(false));
+		cell.setBackground(Theme.getSelectorDrawable(false));
 		cell.setText(LocaleController.getString("DeleteCallsForEveryone", R.string.DeleteCallsForEveryone), "", false, false);
 		cell.setPadding(LocaleController.isRTL ? AndroidUtilities.dp(8) : 0, 0, LocaleController.isRTL ? 0 : AndroidUtilities.dp(8), 0);
 		frameLayout.addView(cell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.TOP | Gravity.LEFT, 8, 0, 8, 0));
@@ -662,8 +662,8 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 	public void onRequestPermissionsResultFragment(int requestCode, String[] permissions, int[] grantResults) {
 		if (requestCode == 101 || requestCode == 102) {
 			boolean allGranted = true;
-			for (int a = 0; a < grantResults.length; a++) {
-				if (grantResults[a] != PackageManager.PERMISSION_GRANTED) {
+			for (int grantResult : grantResults) {
+				if (grantResult != PackageManager.PERMISSION_GRANTED) {
 					allGranted = false;
 					break;
 				}
@@ -721,7 +721,7 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 				case 2:
 				default:
 					view = new TextInfoPrivacyCell(mContext);
-					view.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+					view.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
 					break;
 			}
 			return new RecyclerListView.Holder(view);

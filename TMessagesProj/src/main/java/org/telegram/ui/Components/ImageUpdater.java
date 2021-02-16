@@ -28,6 +28,7 @@ import android.view.View;
 import androidx.core.content.FileProvider;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildConfig;
 import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.ImageLocation;
@@ -705,7 +706,8 @@ public class ImageUpdater implements NotificationCenter.NotificationCenterDelega
             try {
                 Bitmap b = BitmapFactory.decodeFile(FileLoader.getPathToAttach(smallPhoto, true).getAbsolutePath());
                 String key = smallPhoto.location.volume_id + "_" + smallPhoto.location.local_id + "@50_50";
-                ImageLoader.getInstance().putImageToCache(new BitmapDrawable(b), key);
+                ImageLoader.getInstance().putImageToCache(new BitmapDrawable(
+                        ApplicationLoader.applicationContext.getResources(), b), key);
             } catch (Throwable ignore) {
 
             }
@@ -857,7 +859,8 @@ public class ImageUpdater implements NotificationCenter.NotificationCenterDelega
                         try {
                             Bitmap b = BitmapFactory.decodeFile(FileLoader.getPathToAttach(smallPhoto, true).getAbsolutePath());
                             String key = smallPhoto.location.volume_id + "_" + smallPhoto.location.local_id + "@50_50";
-                            ImageLoader.getInstance().putImageToCache(new BitmapDrawable(b), key);
+                            ImageLoader.getInstance().putImageToCache(new BitmapDrawable(
+                                    ApplicationLoader.applicationContext.getResources(), b), key);
                         } catch (Throwable ignore) {
 
                         }

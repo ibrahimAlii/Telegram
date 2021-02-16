@@ -9,7 +9,6 @@
 package org.telegram.messenger.camera;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.ImageFormat;
@@ -22,7 +21,6 @@ import android.hardware.Camera;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
@@ -253,8 +251,7 @@ public class CameraView extends FrameLayout implements TextureView.SurfaceTextur
         if (previewSize == null) {
             return;
         }
-        WindowManager manager = (WindowManager) ApplicationLoader.applicationContext.getSystemService(Activity.WINDOW_SERVICE);
-        adjustAspectRatio(previewSize.getWidth(), previewSize.getHeight(), manager.getDefaultDisplay().getRotation());
+        adjustAspectRatio(previewSize.getWidth(), previewSize.getHeight(), ApplicationLoader.applicationContext.getDisplay().getRotation());
     }
 
     private void adjustAspectRatio(int previewWidth, int previewHeight, int rotation) {

@@ -11,6 +11,7 @@ package org.telegram.ui.Components;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -19,8 +20,8 @@ import org.telegram.tgnet.TLRPC;
 public class IdenticonDrawable extends Drawable {
 
     private byte[] data;
-    private Paint paint = new Paint();
-    private int colors[] = {
+    private final Paint paint = new Paint();
+    private int[] colors = {
             0xffffffff,
             0xffd5e6f3,
             0xff2d5775,
@@ -96,7 +97,7 @@ public class IdenticonDrawable extends Drawable {
 
     @Override
     public int getOpacity() {
-        return 0;
+        return PixelFormat.UNKNOWN;
     }
 
     @Override

@@ -543,7 +543,7 @@ public class ManageLinksActivity extends BaseFragment implements NotificationCen
                 case 0:
                 default:
                     view = new HintInnerCell(mContext);
-                    view.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundWhite));
+                    view.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundWhite));
                     break;
                 case 1:
                     view = new HeaderCell(mContext, 23);

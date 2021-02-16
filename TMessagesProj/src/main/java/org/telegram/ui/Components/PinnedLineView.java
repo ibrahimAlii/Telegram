@@ -12,8 +12,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.view.View;
 
 import androidx.core.graphics.ColorUtils;
@@ -190,15 +188,14 @@ public class PinnedLineView extends View {
 
         }
 
+        float startY;
         if (animationInProgress) {
-            float startY = viewPadding + (animateFromPosition * (1f - animationProgress) + animateToPosition * animationProgress) * lineH - startOffset;
-            rectF.set(0, startY + linePadding, getMeasuredWidth(), startY + lineH - linePadding);
-            canvas.drawRoundRect(rectF, r, r, selectedPaint);
+            startY = viewPadding + (animateFromPosition * (1f - animationProgress) + animateToPosition * animationProgress) * lineH - startOffset;
         } else {
-            float startY = viewPadding + selectedPosition * lineH - startOffset;
-            rectF.set(0, startY + linePadding, getMeasuredWidth(), startY + lineH - linePadding);
-            canvas.drawRoundRect(rectF, r, r, selectedPaint);
+            startY = viewPadding + selectedPosition * lineH - startOffset;
         }
+        rectF.set(0, startY + linePadding, getMeasuredWidth(), startY + lineH - linePadding);
+        canvas.drawRoundRect(rectF, r, r, selectedPaint);
 
         if (drawFade) {
             canvas.drawRect(0, 0, getMeasuredWidth(), AndroidUtilities.dp(6), fadePaint);

@@ -591,11 +591,7 @@ public class NumberPicker extends LinearLayout {
         }
         maxTextWidth += mInputText.getPaddingLeft() + mInputText.getPaddingRight();
         if (mMaxWidth != maxTextWidth) {
-            if (maxTextWidth > mMinWidth) {
-                mMaxWidth = maxTextWidth;
-            } else {
-                mMaxWidth = mMinWidth;
-            }
+            mMaxWidth = Math.max(maxTextWidth, mMinWidth);
             invalidate();
         }
     }

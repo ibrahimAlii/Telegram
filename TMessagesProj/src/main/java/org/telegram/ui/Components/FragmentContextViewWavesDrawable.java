@@ -248,8 +248,8 @@ public class FragmentContextViewWavesDrawable {
     float pressedRemoveProgress;
 
     private void checkColors() {
-        for (int i = 0; i < states.length; i++) {
-            states[i].checkColor();
+        for (WeavingState state : states) {
+            state.checkColor();
         }
     }
 

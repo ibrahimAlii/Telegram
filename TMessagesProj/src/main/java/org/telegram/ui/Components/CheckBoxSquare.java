@@ -52,7 +52,7 @@ public class CheckBoxSquare extends View {
         key3 = isAlert ? Theme.key_dialogCheckboxSquareCheck : Theme.key_checkboxSquareCheck;
 
         rectF = new RectF();
-        drawBitmap = Bitmap.createBitmap(AndroidUtilities.dp(18), AndroidUtilities.dp(18), Bitmap.Config.ARGB_4444);
+        drawBitmap = Bitmap.createBitmap(AndroidUtilities.dp(18), AndroidUtilities.dp(18), Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(drawBitmap);
         isAlert = alert;
     }

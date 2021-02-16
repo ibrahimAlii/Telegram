@@ -263,8 +263,8 @@ public class BackgroundGradientDrawable extends GradientDrawable {
                         runnables[index] = null;
                         boolean hasNotNull = false;
                         if (runnables.length > 1) {
-                            for (int j = 0; j < runnables.length; j++) {
-                                if (runnables[j] != null) {
+                            for (Runnable runnable : runnables) {
+                                if (runnable != null) {
                                     hasNotNull = true;
                                     break;
                                 }
@@ -291,8 +291,7 @@ public class BackgroundGradientDrawable extends GradientDrawable {
                 Utilities.globalQueue.cancelRunnables(runnables);
                 ditheringRunnables.remove(runnables);
             }
-            for (int i = 0; i < sizesArr.length; i++) {
-                final IntSize size = sizesArr[i];
+            for (final IntSize size : sizesArr) {
                 final Bitmap bitmap = bitmaps.remove(size);
                 isForExactBounds.remove(size);
                 if (bitmap != null) {

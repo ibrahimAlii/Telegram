@@ -125,9 +125,9 @@ public class ChangePhoneActivity extends BaseFragment {
     @Override
     public void onFragmentDestroy() {
         super.onFragmentDestroy();
-        for (int a = 0; a < views.length; a++) {
-            if (views[a] != null) {
-                views[a].onDestroyActivity();
+        for (SlideView view : views) {
+            if (view != null) {
+                view.onDestroyActivity();
             }
         }
         if (progressDialog != null) {
@@ -222,9 +222,9 @@ public class ChangePhoneActivity extends BaseFragment {
     @Override
     public boolean onBackPressed() {
         if (currentViewNum == 0) {
-            for (int a = 0; a < views.length; a++) {
-                if (views[a] != null) {
-                    views[a].onDestroyActivity();
+            for (SlideView view : views) {
+                if (view != null) {
+                    view.onDestroyActivity();
                 }
             }
             return true;
@@ -405,7 +405,7 @@ public class ChangePhoneActivity extends BaseFragment {
             codeField.setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             codeField.setCursorSize(AndroidUtilities.dp(20));
             codeField.setCursorWidth(1.5f);
-            codeField.setBackgroundDrawable(Theme.createEditTextDrawable(context, false));
+            codeField.setBackground(Theme.createEditTextDrawable(context, false));
             codeField.setPadding(AndroidUtilities.dp(10), 0, 0, 0);
             codeField.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
             codeField.setMaxLines(1);
@@ -504,7 +504,7 @@ public class ChangePhoneActivity extends BaseFragment {
             phoneField.setInputType(InputType.TYPE_CLASS_PHONE);
             phoneField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             phoneField.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
-            phoneField.setBackgroundDrawable(Theme.createEditTextDrawable(context, false));
+            phoneField.setBackground(Theme.createEditTextDrawable(context, false));
             phoneField.setPadding(0, 0, 0, 0);
             phoneField.setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             phoneField.setCursorSize(AndroidUtilities.dp(20));
@@ -582,7 +582,7 @@ public class ChangePhoneActivity extends BaseFragment {
                     }
                     phoneField.setText(builder);
                     if (start >= 0) {
-                        phoneField.setSelection(start <= phoneField.length() ? start : phoneField.length());
+                        phoneField.setSelection(Math.min(start, phoneField.length()));
                     }
                     phoneField.onTextChange();
                     ignoreOnPhoneChange = false;
@@ -725,7 +725,7 @@ public class ChangePhoneActivity extends BaseFragment {
                     if (!permissionsItems.isEmpty()) {
                         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                         if (preferences.getBoolean("firstlogin", true) || getParentActivity().shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE)) {
-                            preferences.edit().putBoolean("firstlogin", false).commit();
+                            preferences.edit().putBoolean("firstlogin", false).apply();
                             AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
                             builder.setTitle(LocaleController.getString("AppName", R.string.AppName));
                             builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
@@ -755,9 +755,9 @@ public class ChangePhoneActivity extends BaseFragment {
             req.settings.allow_app_hash = ApplicationLoader.hasPlayServices;
             SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
             if (req.settings.allow_app_hash) {
-                preferences.edit().putString("sms_hash", BuildVars.SMS_HASH).commit();
+                preferences.edit().putString("sms_hash", BuildVars.SMS_HASH).apply();
             } else {
-                preferences.edit().remove("sms_hash").commit();
+                preferences.edit().remove("sms_hash").apply();
             }
             if (req.settings.allow_flashcall) {
                 try {
@@ -1119,7 +1119,7 @@ public class ChangePhoneActivity extends BaseFragment {
                     Drawable pressedDrawable = getResources().getDrawable(R.drawable.search_dark_activated).mutate();
                     pressedDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteInputFieldActivated), PorterDuff.Mode.MULTIPLY));
 
-                    codeField[a].setBackgroundDrawable(pressedDrawable);
+                    codeField[a].setBackground(pressedDrawable);
                     codeField[a].setImeOptions(EditorInfo.IME_ACTION_NEXT | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
                     codeField[a].setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
                     codeField[a].setMaxLines(1);
@@ -1194,8 +1194,8 @@ public class ChangePhoneActivity extends BaseFragment {
                     });
                 }
             } else {
-                for (int a = 0; a < codeField.length; a++) {
-                    codeField[a].setText("");
+                for (EditTextBoldCursor editTextBoldCursor : codeField) {
+                    editTextBoldCursor.setText("");
                 }
             }
 
@@ -1384,8 +1384,8 @@ public class ChangePhoneActivity extends BaseFragment {
                 return "";
             }
             StringBuilder codeBuilder = new StringBuilder();
-            for (int a = 0; a < codeField.length; a++) {
-                codeBuilder.append(PhoneFormat.stripExceptNumbers(codeField[a].getText().toString()));
+            for (EditTextBoldCursor editTextBoldCursor : codeField) {
+                codeBuilder.append(PhoneFormat.stripExceptNumbers(editTextBoldCursor.getText().toString()));
             }
             return codeBuilder.toString();
         }
@@ -1447,8 +1447,8 @@ public class ChangePhoneActivity extends BaseFragment {
                         AlertsCreator.processError(currentAccount, error, ChangePhoneActivity.this, req);
                     }
                     if (error.text.contains("PHONE_CODE_EMPTY") || error.text.contains("PHONE_CODE_INVALID")) {
-                        for (int a = 0; a < codeField.length; a++) {
-                            codeField[a].setText("");
+                        for (EditTextBoldCursor editTextBoldCursor : codeField) {
+                            editTextBoldCursor.setText("");
                         }
                         codeField[0].requestFocus();
                     } else if (error.text.contains("PHONE_CODE_EXPIRED")) {

@@ -492,7 +492,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
         buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
         buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        buttonTextView.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(4), Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
+        buttonTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(4), Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
         viewGroup.addView(buttonTextView);
         buttonTextView.setOnClickListener(v -> {
             if (getParentActivity() == null) {
@@ -564,7 +564,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                 break;
             }
             case ACTION_TYPE_NEARBY_LOCATION_ACCESS: {
-                imageView.setBackgroundDrawable(Theme.createCircleDrawable(AndroidUtilities.dp(100), Theme.getColor(Theme.key_chats_archiveBackground)));
+                imageView.setBackground(Theme.createCircleDrawable(AndroidUtilities.dp(100), Theme.getColor(Theme.key_chats_archiveBackground)));
                 imageView.setImageDrawable(new ShareLocationDrawable(context, 3));
                 imageView.setScaleType(ImageView.ScaleType.CENTER);
                 titleTextView.setText(LocaleController.getString("PeopleNearby", R.string.PeopleNearby));
@@ -573,7 +573,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                 break;
             }
             case ACTION_TYPE_NEARBY_LOCATION_ENABLED: {
-                imageView.setBackgroundDrawable(Theme.createCircleDrawable(AndroidUtilities.dp(100), Theme.getColor(Theme.key_chats_archiveBackground)));
+                imageView.setBackground(Theme.createCircleDrawable(AndroidUtilities.dp(100), Theme.getColor(Theme.key_chats_archiveBackground)));
                 imageView.setImageDrawable(new ShareLocationDrawable(context, 3));
                 imageView.setScaleType(ImageView.ScaleType.CENTER);
                 titleTextView.setText(LocaleController.getString("PeopleNearby", R.string.PeopleNearby));

@@ -125,9 +125,9 @@ public class ChartData {
         if (timeStep == 1) {
             formatter = null;
         } else if (timeStep < 86400000L) {
-            formatter = new SimpleDateFormat("HH:mm");
+            formatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
         } else {
-            formatter = new SimpleDateFormat("MMM d");
+            formatter = new SimpleDateFormat("MMM d", Locale.getDefault());
         }
 
         for (int i = 0; i < daysLookup.length; i++) {

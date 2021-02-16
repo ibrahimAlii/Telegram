@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.view.WindowManager;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 
@@ -184,7 +183,7 @@ public final class FloatingActionMode extends ActionMode {
     }
 
     private boolean isContentRectWithinBounds() {
-        mContext.getSystemService(WindowManager.class).getDefaultDisplay().getRealSize(mDisplaySize);
+        mContext.getDisplay().getRealSize(mDisplaySize);
         mScreenRect.set(0, 0, mDisplaySize.x, mDisplaySize.y);
         return intersectsClosed(mContentRectOnScreen, mScreenRect) && intersectsClosed(mContentRectOnScreen, mViewRectOnScreen);
     }

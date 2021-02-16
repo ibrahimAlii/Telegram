@@ -1,14 +1,10 @@
 package org.telegram.ui.Components;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.Gravity;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.core.graphics.ColorUtils;
 import androidx.core.widget.NestedScrollView;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -21,7 +17,6 @@ import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ActionBar.ThemeDescription;
-import org.telegram.ui.ManageLinksActivity;
 
 import java.util.ArrayList;
 
@@ -34,7 +29,7 @@ public class PermanentLinkBottomSheet extends BottomSheet {
   //  private final TextView manage;
     private final RLottieImageView imageView;
     private final LinkActionView linkActionView;
-    private int chatId;
+    private final int chatId;
 
     public PermanentLinkBottomSheet(Context context, boolean needFocus, BaseFragment fragment, TLRPC.ChatFull info, int chatId) {
         super(context, needFocus);
@@ -132,17 +127,13 @@ public class PermanentLinkBottomSheet extends BottomSheet {
     @Override
     public void show() {
         super.show();
-        AndroidUtilities.runOnUIThread(() -> {
-            linkIcon.start();
-        }, 50);
+        AndroidUtilities.runOnUIThread(() -> linkIcon.start(), 50);
     }
 
     @Override
     public ArrayList<ThemeDescription> getThemeDescriptions() {
         ArrayList<ThemeDescription> arrayList = new ArrayList<>();
-        ThemeDescription.ThemeDescriptionDelegate descriptionDelegate = () -> {
-            updateColors();
-        };
+        ThemeDescription.ThemeDescriptionDelegate descriptionDelegate = this::updateColors;
         arrayList.add(new ThemeDescription(titleView, ThemeDescription.FLAG_TEXTCOLOR, null, null, null, null, Theme.key_windowBackgroundWhiteBlackText));
         arrayList.add(new ThemeDescription(subtitle, ThemeDescription.FLAG_TEXTCOLOR, null, null, null, null, Theme.key_windowBackgroundWhiteGrayText));
        // arrayList.add(new ThemeDescription(manage, ThemeDescription.FLAG_TEXTCOLOR, null, null, null, null, Theme.key_windowBackgroundWhiteBlueText));

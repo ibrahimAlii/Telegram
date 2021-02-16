@@ -97,7 +97,7 @@ public class PieChartView extends StackLinearChartView<PieChartViewData> {
             );
         }
 
-        int radius = (int) ((chartArea.width() > chartArea.height() ? chartArea.height() : chartArea.width()) * 0.45f);
+        int radius = (int) ((Math.min(chartArea.width(), chartArea.height())) * 0.45f);
         rectF.set(
                 chartArea.centerX() - radius,
                 chartArea.centerY() + AndroidUtilities.dp(16) - radius,
@@ -432,7 +432,7 @@ public class PieChartView extends StackLinearChartView<PieChartViewData> {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (getMeasuredWidth() != oldW) {
             oldW = getMeasuredWidth();
-            int r = (int) ((chartArea.width() > chartArea.height() ? chartArea.height() : chartArea.width()) * 0.45f);
+            int r = (int) ((Math.min(chartArea.width(), chartArea.height())) * 0.45f);
             MIN_TEXT_SIZE = r / 13;
             MAX_TEXT_SIZE = r / 7;
         }

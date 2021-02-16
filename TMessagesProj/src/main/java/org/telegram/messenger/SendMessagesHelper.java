@@ -1418,7 +1418,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
 
                 AndroidUtilities.runOnUIThread(() -> {
                     if (bitmapFinal[0] != null && keyFinal[0] != null) {
-                        ImageLoader.getInstance().putImageToCache(new BitmapDrawable(bitmapFinal[0]), keyFinal[0]);
+                        ImageLoader.getInstance().putImageToCache(new BitmapDrawable(
+                                ApplicationLoader.applicationContext.getResources(), bitmapFinal[0]), keyFinal[0]);
                     }
                     sendMessage((TLRPC.TL_document) finalDocument, null, null, peer, replyToMsg, replyToTopMsg, null, null, null, null, notify, scheduleDate, 0, parentObject);
                 });
@@ -3647,8 +3648,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                         if (params != null && params.containsKey("answers")) {
                             byte[] answers = Utilities.hexToBytes(params.get("answers"));
                             if (answers.length > 0) {
-                                for (int a = 0; a < answers.length; a++) {
-                                    inputMediaPoll.correct_answers.add(new byte[]{answers[a]});
+                                for (byte answer : answers) {
+                                    inputMediaPoll.correct_answers.add(new byte[]{answer});
                                 }
                                 inputMediaPoll.flags |= 1;
                             }
@@ -6240,7 +6241,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                                     attributeSticker.stickerset = new TLRPC.TL_inputStickerSetEmpty();
                                     document.attributes.add(attributeSticker);
                                     TLRPC.TL_documentAttributeImageSize attributeImageSize = new TLRPC.TL_documentAttributeImageSize();
-                                    int wh[] = MessageObject.getInlineResultWidthAndHeight(result);
+                                    int[] wh = MessageObject.getInlineResultWidthAndHeight(result);
                                     attributeImageSize.w = wh[0];
                                     attributeImageSize.h = wh[1];
                                     document.attributes.add(attributeImageSize);
@@ -6272,7 +6273,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                             }
                             if (document.thumbs.isEmpty()) {
                                 TLRPC.PhotoSize thumb = new TLRPC.TL_photoSize();
-                                int wh[] = MessageObject.getInlineResultWidthAndHeight(result);
+                                int[] wh = MessageObject.getInlineResultWidthAndHeight(result);
                                 thumb.w = wh[0];
                                 thumb.h = wh[1];
                                 thumb.size = 0;
@@ -6293,7 +6294,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                                 photo.date = accountInstance.getConnectionsManager().getCurrentTime();
                                 photo.file_reference = new byte[0];
                                 TLRPC.TL_photoSize photoSize = new TLRPC.TL_photoSize();
-                                int wh[] = MessageObject.getInlineResultWidthAndHeight(result);
+                                int[] wh = MessageObject.getInlineResultWidthAndHeight(result);
                                 photoSize.w = wh[0];
                                 photoSize.h = wh[1];
                                 photoSize.size = 1;
@@ -6327,7 +6328,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                 AndroidUtilities.runOnUIThread(() -> {
                     if (finalDocument != null) {
                         if (precahcedThumb[0] != null && precachedKey[0] != null) {
-                            ImageLoader.getInstance().putImageToCache(new BitmapDrawable(precahcedThumb[0]), precachedKey[0]);
+                            ImageLoader.getInstance().putImageToCache(new BitmapDrawable(
+                                    ApplicationLoader.applicationContext.getResources(), precahcedThumb[0]), precachedKey[0]);
                         }
                         accountInstance.getSendMessagesHelper().sendMessage(finalDocument, null, finalPathFinal, dialogId, replyToMsg, replyToTopMsg, result.send_message.message, result.send_message.entities, result.send_message.reply_markup, params, notify, scheduleDate, 0, result);
                     } else if (finalPhoto != null) {
@@ -6967,7 +6969,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                             }
                             AndroidUtilities.runOnUIThread(() -> {
                                 if (thumbFinal != null && thumbKeyFinal != null) {
-                                    ImageLoader.getInstance().putImageToCache(new BitmapDrawable(thumbFinal), thumbKeyFinal);
+                                    ImageLoader.getInstance().putImageToCache(new BitmapDrawable(
+                                            ApplicationLoader.applicationContext.getResources(), thumbFinal), thumbKeyFinal);
                                 }
                                 if (editingMessageObject != null) {
                                     accountInstance.getSendMessagesHelper().editMessage(editingMessageObject, null, videoEditedInfo, videoFinal, finalPath, params, false, parentFinal);
@@ -7160,7 +7163,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                                 }
                                 AndroidUtilities.runOnUIThread(() -> {
                                     if (bitmapFinal[0] != null && keyFinal[0] != null) {
-                                        ImageLoader.getInstance().putImageToCache(new BitmapDrawable(bitmapFinal[0]), keyFinal[0]);
+                                        ImageLoader.getInstance().putImageToCache(new BitmapDrawable(
+                                                ApplicationLoader.applicationContext.getResources(), bitmapFinal[0]), keyFinal[0]);
                                     }
                                     if (editingMessageObject != null) {
                                         accountInstance.getSendMessagesHelper().editMessage(editingMessageObject, photoFinal, null, null, null, params, false, parentFinal);
@@ -7601,7 +7605,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                 }
                 AndroidUtilities.runOnUIThread(() -> {
                     if (thumbFinal != null && thumbKeyFinal != null) {
-                        ImageLoader.getInstance().putImageToCache(new BitmapDrawable(thumbFinal), thumbKeyFinal);
+                        ImageLoader.getInstance().putImageToCache(new BitmapDrawable(
+                                ApplicationLoader.applicationContext.getResources(), thumbFinal), thumbKeyFinal);
                     }
                     if (editingMessageObject != null) {
                         accountInstance.getSendMessagesHelper().editMessage(editingMessageObject, null, videoEditedInfo, videoFinal, finalPath, params, false, parentFinal);

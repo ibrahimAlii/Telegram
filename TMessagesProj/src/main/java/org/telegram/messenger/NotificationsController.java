@@ -2558,8 +2558,8 @@ public class NotificationsController extends BaseController {
         if (pattern == null || pattern.length == 0) {
             return false;
         }
-        for (int a = 0; a < pattern.length; a++) {
-            if (pattern[a] != 0) {
+        for (long l : pattern) {
+            if (l != 0) {
                 return false;
             }
         }
@@ -2932,8 +2932,8 @@ public class NotificationsController extends BaseController {
                     }
                     int channelLedColor = existingChannel.getLightColor();
                     if (channelVibrationPattern != null) {
-                        for (int a = 0; a < channelVibrationPattern.length; a++) {
-                            newSettings.append(channelVibrationPattern[a]);
+                        for (long l : channelVibrationPattern) {
+                            newSettings.append(l);
                         }
                     }
                     newSettings.append(channelLedColor);
@@ -3111,8 +3111,8 @@ public class NotificationsController extends BaseController {
                 FileLog.d("change edited channel " + channelId);
             }
         } else if (shouldOverwrite || newSettingsHash == null || !isInApp || !isDefault) {
-            for (int a = 0; a < vibrationPattern.length; a++) {
-                newSettings.append(vibrationPattern[a]);
+            for (long l : vibrationPattern) {
+                newSettings.append(l);
             }
             newSettings.append(ledColor);
             if (sound != null) {

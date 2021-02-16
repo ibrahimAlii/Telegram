@@ -353,7 +353,7 @@ public class ConnectionsManager extends BaseController {
         }
         String installer = "";
         try {
-            installer = ApplicationLoader.applicationContext.getPackageManager().getInstallerPackageName(ApplicationLoader.applicationContext.getPackageName());
+            installer = ApplicationLoader.applicationContext.getPackageManager().getInstallSourceInfo(ApplicationLoader.applicationContext.getPackageName()).getInstallingPackageName();
         } catch (Throwable ignore) {
 
         }
@@ -391,7 +391,7 @@ public class ConnectionsManager extends BaseController {
 
     public void switchBackend() {
         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-        preferences.edit().remove("language_showed2").commit();
+        preferences.edit().remove("language_showed2").apply();
         native_switchBackend(currentAccount);
     }
 

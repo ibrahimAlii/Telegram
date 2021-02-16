@@ -126,8 +126,8 @@ public class ChatListCell extends LinearLayout {
     @Override
     public void invalidate() {
         super.invalidate();
-        for (int a = 0; a < listView.length; a++) {
-            listView[a].invalidate();
+        for (ListView view : listView) {
+            view.invalidate();
         }
     }
 

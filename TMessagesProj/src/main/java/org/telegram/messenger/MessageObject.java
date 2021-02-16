@@ -207,7 +207,7 @@ public class MessageObject {
 
                 String line;
                 String originalLine;
-                String pendingLine = null;
+                StringBuilder pendingLine = null;
                 while ((originalLine = line = bufferedReader.readLine()) != null) {
                     if (originalLine.startsWith("PHOTO")) {
                         continue;
@@ -223,12 +223,12 @@ public class MessageObject {
                         }
                     }
                     if (pendingLine != null) {
-                        pendingLine += line;
-                        line = pendingLine;
+                        pendingLine.append(line);
+                        line = pendingLine.toString();
                         pendingLine = null;
                     }
                     if (line.contains("=QUOTED-PRINTABLE") && line.endsWith("=")) {
-                        pendingLine = line.substring(0, line.length() - 1);
+                        pendingLine = new StringBuilder(line.substring(0, line.length() - 1));
                         continue;
                     }
                     int idx = line.indexOf(":");
@@ -1022,8 +1022,8 @@ public class MessageObject {
             }
             Emoji.EmojiSpan[] spans = ((Spannable) messageText).getSpans(0, messageText.length(), Emoji.EmojiSpan.class);
             if (spans != null && spans.length > 0) {
-                for (int a = 0; a < spans.length; a++) {
-                    spans[a].replaceFontMetrics(emojiPaint.getFontMetricsInt(), size);
+                for (Emoji.EmojiSpan span : spans) {
+                    span.replaceFontMetrics(emojiPaint.getFontMetricsInt(), size);
                 }
             }
         }
@@ -5225,8 +5225,8 @@ public class MessageObject {
                         String performer = attribute.performer;
                         String title = attribute.title;
                         if (!TextUtils.isEmpty(performer)) {
-                            for (int a = 0; a < excludeWords.length; a++) {
-                                performer = performer.replace(excludeWords[a], " ");
+                            for (String excludeWord : excludeWords) {
+                                performer = performer.replace(excludeWord, " ");
                             }
                         }
                         if (TextUtils.isEmpty(performer) && TextUtils.isEmpty(title)) {
@@ -5732,8 +5732,7 @@ public class MessageObject {
             String[] words = musicAuthor.split("\\P{L}+");
             searchForWords.addAll(Arrays.asList(words));
         }
-        for (int k = 0; k < queryWord.length; k++) {
-            String currentQuery = queryWord[k];
+        for (String currentQuery : queryWord) {
             if (currentQuery.length() < 2) {
                 continue;
             }
@@ -5771,8 +5770,8 @@ public class MessageObject {
         if (!foundWords.isEmpty()) {
             boolean foundExactly = false;
             for (int i = 0; i < foundWords.size(); i++) {
-                for (int j = 0; j < queryWord.length; j++) {
-                    if (foundWords.get(i).contains(queryWord[j])) {
+                for (String s : queryWord) {
+                    if (foundWords.get(i).contains(s)) {
                         foundExactly = true;
                         break;
                     }
@@ -5784,8 +5783,8 @@ public class MessageObject {
             if (foundExactly) {
                 for (int i = 0; i < foundWords.size(); i++) {
                     boolean findMatch = false;
-                    for (int j = 0; j < queryWord.length; j++) {
-                        if (foundWords.get(i).contains(queryWord[j])) {
+                    for (String s : queryWord) {
+                        if (foundWords.get(i).contains(s)) {
                             findMatch = true;
                             break;
                         }

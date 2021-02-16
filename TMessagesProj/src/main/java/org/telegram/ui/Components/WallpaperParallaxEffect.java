@@ -14,22 +14,20 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.view.Surface;
-import android.view.WindowManager;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ApplicationLoader;
 
 public class WallpaperParallaxEffect implements SensorEventListener {
 
 	private float[] rollBuffer = new float[3], pitchBuffer = new float[3];
 	private int bufferOffset;
-	private WindowManager wm;
 	private SensorManager sensorManager;
 	private Sensor accelerometer;
 	private boolean enabled;
 	private Callback callback;
 
 	public WallpaperParallaxEffect(Context context) {
-		wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 		sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 		accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 	}
@@ -58,7 +56,7 @@ public class WallpaperParallaxEffect implements SensorEventListener {
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		int rotation = wm.getDefaultDisplay().getRotation();
+		int rotation = ApplicationLoader.applicationContext.getDisplay().getRotation();
 
 		float x = event.values[0] / SensorManager.GRAVITY_EARTH;
 		float y = event.values[1] / SensorManager.GRAVITY_EARTH;

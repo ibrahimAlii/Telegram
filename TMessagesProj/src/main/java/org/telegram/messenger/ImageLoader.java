@@ -704,7 +704,8 @@ public class ImageLoader {
                 } catch (Exception e) {
                     FileLog.e(e);
                 }
-                final BitmapDrawable bitmapDrawable = new BitmapDrawable(originalBitmap);
+                final BitmapDrawable bitmapDrawable = new BitmapDrawable(
+                        ApplicationLoader.applicationContext.getResources(), originalBitmap);
                 final ArrayList<ImageReceiver> finalImageReceiverArray = new ArrayList<>(info.imageReceiverArray);
                 final ArrayList<Integer> finalImageReceiverGuidsArray = new ArrayList<>(info.imageReceiverGuidsArray);
                 AndroidUtilities.runOnUIThread(() -> {
@@ -780,7 +781,8 @@ public class ImageLoader {
                 } catch (Throwable e) {
                     FileLog.e(e);
                 }
-                onPostExecute(bitmap != null ? new BitmapDrawable(bitmap) : null);
+                onPostExecute(bitmap != null ? new BitmapDrawable(
+                        ApplicationLoader.applicationContext.getResources() ,bitmap) : null);
             } else if (cacheImage.imageType == FileLoader.IMAGE_TYPE_LOTTIE) {
                 int w = Math.min(512, AndroidUtilities.dp(170.6f));
                 int h = Math.min(512, AndroidUtilities.dp(170.6f));
@@ -1339,7 +1341,8 @@ public class ImageLoader {
                 if (needInvert || orientation != 0) {
                     onPostExecute(image != null ? new ExtendedBitmapDrawable(image, needInvert, orientation) : null);
                 } else {
-                    onPostExecute(image != null ? new BitmapDrawable(image) : null);
+                    onPostExecute(image != null ? new BitmapDrawable(
+                            ApplicationLoader.applicationContext.getResources(), image) : null);
                 }
             }
         }
@@ -3483,7 +3486,8 @@ public class ImageLoader {
                             bitmap.recycle();
                             bitmap = scaledBitmap;
                         }
-                        return new MessageThumb(key, new BitmapDrawable(bitmap));
+                        return new MessageThumb(key, new BitmapDrawable(
+                                ApplicationLoader.applicationContext.getResources(), bitmap));
                     }
                 }
             }
@@ -3519,7 +3523,8 @@ public class ImageLoader {
                                 b.recycle();
                                 b = scaledBitmap;
                             }
-                            return new MessageThumb(key, new BitmapDrawable(b));
+                            return new MessageThumb(key, new BitmapDrawable(
+                                    ApplicationLoader.applicationContext.getResources(), b));
                         }
                     }
                 }

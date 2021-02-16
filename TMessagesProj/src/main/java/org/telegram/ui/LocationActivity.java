@@ -447,6 +447,7 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
         return true;
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onFragmentDestroy() {
         super.onFragmentDestroy();
@@ -686,7 +687,7 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
                 }
             }
         };
-        mapViewClip.setBackgroundDrawable(new MapPlaceholderDrawable());
+        mapViewClip.setBackground(new MapPlaceholderDrawable());
 
         if (messageObject == null && (locationType == LOCATION_TYPE_SEND || locationType == LOCATION_TYPE_SEND_WITH_LIVE)) {
             searchAreaButton = new SearchButton(context);
@@ -711,7 +712,7 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
                     }
                 });
             }
-            searchAreaButton.setBackgroundDrawable(drawable);
+            searchAreaButton.setBackground(drawable);
             searchAreaButton.setTextColor(Theme.getColor(Theme.key_location_actionActiveIcon));
             searchAreaButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             searchAreaButton.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
@@ -756,7 +757,7 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
                 }
             });
         }
-        mapTypeButton.setBackgroundDrawable(drawable);
+        mapTypeButton.setBackground(drawable);
         mapTypeButton.setIcon(R.drawable.location_type);
         mapViewClip.addView(mapTypeButton, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 40 : 44, Build.VERSION.SDK_INT >= 21 ? 40 : 44, Gravity.RIGHT | Gravity.TOP, 0, 12, 12, 0));
         mapTypeButton.setOnClickListener(v -> mapTypeButton.toggleSubMenu());
@@ -794,7 +795,7 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
                 }
             });
         }
-        locationButton.setBackgroundDrawable(drawable);
+        locationButton.setBackground(drawable);
         locationButton.setImageResource(R.drawable.location_current);
         locationButton.setScaleType(ImageView.ScaleType.CENTER);
         locationButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_location_actionActiveIcon), PorterDuff.Mode.MULTIPLY));
@@ -862,7 +863,7 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
             });
         }
         proximityButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_location_actionIcon), PorterDuff.Mode.MULTIPLY));
-        proximityButton.setBackgroundDrawable(drawable);
+        proximityButton.setBackground(drawable);
         proximityButton.setScaleType(ImageView.ScaleType.CENTER);
         proximityButton.setContentDescription(LocaleController.getString("AccDescrLocationNotify", R.string.AccDescrLocationNotify));
         mapViewClip.addView(proximityButton, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 40 : 44, Build.VERSION.SDK_INT >= 21 ? 40 : 44, Gravity.RIGHT | Gravity.TOP, 0, 12 + 50, 12, 0));
@@ -1697,6 +1698,7 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
         return liveLocation;
     }
 
+    @SuppressLint("MissingPermission")
     private void onMapInit() {
         if (googleMap == null) {
             return;
@@ -2093,6 +2095,7 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
         }
     }
 
+    @SuppressLint("MissingPermission")
     private Location getLastLocation() {
         LocationManager lm = (LocationManager) ApplicationLoader.applicationContext.getSystemService(Context.LOCATION_SERVICE);
         List<String> providers = lm.getProviders(true);
@@ -2376,6 +2379,7 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
         return brng;
     }
 
+    @SuppressLint("MissingPermission")
     @SuppressWarnings("unchecked")
     @Override
     public void didReceivedNotification(int id, int account, Object... args) {
@@ -2504,6 +2508,7 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
         }
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onResume() {
         super.onResume();
@@ -2606,23 +2611,23 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
             }
         };
 
-        for (int a = 0; a < undoView.length; a++) {
-            themeDescriptions.add(new ThemeDescription(undoView[a], ThemeDescription.FLAG_BACKGROUNDFILTER, null, null, null, null, Theme.key_undo_background));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"undoImageView"}, null, null, null, Theme.key_undo_cancelColor));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"undoTextView"}, null, null, null, Theme.key_undo_cancelColor));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"infoTextView"}, null, null, null, Theme.key_undo_infoColor));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"subinfoTextView"}, null, null, null, Theme.key_undo_infoColor));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"textPaint"}, null, null, null, Theme.key_undo_infoColor));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"progressPaint"}, null, null, null, Theme.key_undo_infoColor));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "BODY", Theme.key_undo_background));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Wibe Big", Theme.key_undo_background));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Wibe Big 3", Theme.key_undo_infoColor));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Wibe Small", Theme.key_undo_infoColor));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Body Main.**", Theme.key_undo_infoColor));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Body Top.**", Theme.key_undo_infoColor));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Line.**", Theme.key_undo_infoColor));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Curve Big.**", Theme.key_undo_infoColor));
-            themeDescriptions.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Curve Small.**", Theme.key_undo_infoColor));
+        for (UndoView view : undoView) {
+            themeDescriptions.add(new ThemeDescription(view, ThemeDescription.FLAG_BACKGROUNDFILTER, null, null, null, null, Theme.key_undo_background));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"undoImageView"}, null, null, null, Theme.key_undo_cancelColor));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"undoTextView"}, null, null, null, Theme.key_undo_cancelColor));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"infoTextView"}, null, null, null, Theme.key_undo_infoColor));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"subinfoTextView"}, null, null, null, Theme.key_undo_infoColor));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"textPaint"}, null, null, null, Theme.key_undo_infoColor));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"progressPaint"}, null, null, null, Theme.key_undo_infoColor));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "BODY", Theme.key_undo_background));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Wibe Big", Theme.key_undo_background));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Wibe Big 3", Theme.key_undo_infoColor));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Wibe Small", Theme.key_undo_infoColor));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Body Main.**", Theme.key_undo_infoColor));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Body Top.**", Theme.key_undo_infoColor));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Line.**", Theme.key_undo_infoColor));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Curve Big.**", Theme.key_undo_infoColor));
+            themeDescriptions.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Curve Small.**", Theme.key_undo_infoColor));
         }
 
         themeDescriptions.add(new ThemeDescription(fragmentView, ThemeDescription.FLAG_BACKGROUND, null, null, null, cellDelegate, Theme.key_dialogBackground));

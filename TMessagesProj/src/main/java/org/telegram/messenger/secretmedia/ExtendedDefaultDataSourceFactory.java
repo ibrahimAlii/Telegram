@@ -55,6 +55,8 @@ public final class ExtendedDefaultDataSourceFactory implements DataSource.Factor
 
     @Override
     public ExtendedDefaultDataSource createDataSource() {
-        return new ExtendedDefaultDataSource(context, listener, baseDataSourceFactory.createDataSource());
+        ExtendedDefaultDataSource defaultDataSource = new ExtendedDefaultDataSource(context, baseDataSourceFactory.createDataSource());
+        defaultDataSource.addTransferListener(listener);
+        return defaultDataSource;
     }
 }

@@ -357,7 +357,7 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
             }
 
             if (magnifier == null) {
-                magnifier = new Magnifier(textSelectionOverlay);
+                magnifier = new Magnifier.Builder(textSelectionOverlay).build();
                 magnifierYanimated = magnifierY;
             }
 

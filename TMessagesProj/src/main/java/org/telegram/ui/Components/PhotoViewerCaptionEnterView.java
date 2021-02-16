@@ -173,11 +173,7 @@ public class PhotoViewerCaptionEnterView extends FrameLayout implements Notifica
             @Override
             protected void onSelectionChanged(int selStart, int selEnd) {
                 super.onSelectionChanged(selStart, selEnd);
-                if (selStart != selEnd) {
-                    fixHandleView(false);
-                } else {
-                    fixHandleView(true);
-                }
+                fixHandleView(selStart == selEnd);
             }
 
             @Override
@@ -208,7 +204,7 @@ public class PhotoViewerCaptionEnterView extends FrameLayout implements Notifica
         messageEditText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         messageEditText.setGravity(Gravity.BOTTOM);
         messageEditText.setPadding(0, AndroidUtilities.dp(11), 0, AndroidUtilities.dp(12));
-        messageEditText.setBackgroundDrawable(null);
+        messageEditText.setBackground(null);
         messageEditText.setCursorColor(0xffffffff);
         messageEditText.setCursorSize(AndroidUtilities.dp(20));
         messageEditText.setTextColor(0xffffffff);
@@ -273,8 +269,8 @@ public class PhotoViewerCaptionEnterView extends FrameLayout implements Notifica
                 if (!innerTextChange) {
                     if (processChange) {
                         ImageSpan[] spans = editable.getSpans(0, editable.length(), ImageSpan.class);
-                        for (int i = 0; i < spans.length; i++) {
-                            editable.removeSpan(spans[i]);
+                        for (ImageSpan span : spans) {
+                            editable.removeSpan(span);
                         }
                         Emoji.replaceEmoji(editable, messageEditText.getPaint().getFontMetricsInt(), AndroidUtilities.dp(20), false);
                         processChange = false;

@@ -38,7 +38,7 @@ public class NotificationsDisabledReceiver extends BroadcastReceiver {
         SharedPreferences preferences = AccountInstance.getInstance(account).getNotificationsSettings();
         SharedPreferences.Editor editor = preferences.edit();
         if (args[1].startsWith("channel")) {
-            editor.putInt(NotificationsController.getGlobalNotificationsKey(NotificationsController.TYPE_CHANNEL), state ? Integer.MAX_VALUE : 0).commit();
+            editor.putInt(NotificationsController.getGlobalNotificationsKey(NotificationsController.TYPE_CHANNEL), state ? Integer.MAX_VALUE : 0).apply();
             AccountInstance.getInstance(account).getNotificationsController().updateServerNotificationsSettings(NotificationsController.TYPE_CHANNEL);
         } else if (args[1].startsWith("groups")) {
             editor.putInt(NotificationsController.getGlobalNotificationsKey(NotificationsController.TYPE_GROUP), state ? Integer.MAX_VALUE : 0).commit();

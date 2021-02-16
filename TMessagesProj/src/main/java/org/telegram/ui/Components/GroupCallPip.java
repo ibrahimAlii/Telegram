@@ -13,7 +13,6 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.SystemClock;
-import android.provider.Settings;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
@@ -1034,9 +1033,6 @@ public class GroupCallPip implements NotificationCenter.NotificationCenterDelega
     }
 
     public static boolean checkInlinePermissions() {
-        if (Build.VERSION.SDK_INT < 23 || ApplicationLoader.canDrawOverlays) {
-            return true;
-        }
-        return false;
+        return Build.VERSION.SDK_INT < 23 || ApplicationLoader.canDrawOverlays;
     }
 }

@@ -9,7 +9,7 @@ public class ExtendedBitmapDrawable extends BitmapDrawable {
     private int orientation;
 
     public ExtendedBitmapDrawable(Bitmap bitmap, boolean invert, int orient) {
-        super(bitmap);
+        super(ApplicationLoader.applicationContext.getResources(), bitmap);
         canInvert = invert;
         orientation = orient;
     }

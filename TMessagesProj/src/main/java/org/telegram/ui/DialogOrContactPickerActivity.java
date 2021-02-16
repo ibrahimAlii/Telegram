@@ -249,15 +249,15 @@ public class DialogOrContactPickerActivity extends BaseFragment {
                 measureChildWithMargins(actionBar, widthMeasureSpec, 0, heightMeasureSpec, 0);
                 int actionBarHeight = actionBar.getMeasuredHeight();
                 globalIgnoreLayout = true;
-                for (int a = 0; a < viewPages.length; a++) {
-                    if (viewPages[a] == null) {
+                for (ViewPage viewPage : viewPages) {
+                    if (viewPage == null) {
                         continue;
                     }
-                    if (viewPages[a].listView != null) {
-                        viewPages[a].listView.setPadding(0, actionBarHeight, 0, 0);
+                    if (viewPage.listView != null) {
+                        viewPage.listView.setPadding(0, actionBarHeight, 0, 0);
                     }
-                    if (viewPages[a].listView2 != null) {
-                        viewPages[a].listView2.setPadding(0, actionBarHeight, 0, 0);
+                    if (viewPage.listView2 != null) {
+                        viewPage.listView2.setPadding(0, actionBarHeight, 0, 0);
                     }
                 }
                 globalIgnoreLayout = false;
@@ -607,10 +607,10 @@ public class DialogOrContactPickerActivity extends BaseFragment {
 
     private void setScrollY(float value) {
         actionBar.setTranslationY(value);
-        for (int a = 0; a < viewPages.length; a++) {
-            viewPages[a].listView.setPinnedSectionOffsetY((int) value);
-            if (viewPages[a].listView2 != null) {
-                viewPages[a].listView2.setPinnedSectionOffsetY((int) value);
+        for (ViewPage viewPage : viewPages) {
+            viewPage.listView.setPinnedSectionOffsetY((int) value);
+            if (viewPage.listView2 != null) {
+                viewPage.listView2.setPinnedSectionOffsetY((int) value);
             }
         }
         fragmentView.invalidate();
@@ -657,10 +657,10 @@ public class DialogOrContactPickerActivity extends BaseFragment {
     }
 
     private void switchToCurrentSelectedMode(boolean animated) {
-        for (int a = 0; a < viewPages.length; a++) {
-            viewPages[a].listView.stopScroll();
-            if (viewPages[a].listView2 != null) {
-                viewPages[a].listView2.stopScroll();
+        for (ViewPage viewPage : viewPages) {
+            viewPage.listView.stopScroll();
+            if (viewPage.listView2 != null) {
+                viewPage.listView2.stopScroll();
             }
         }
         int a = animated ? 1 : 0;

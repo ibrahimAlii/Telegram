@@ -22,8 +22,7 @@ public class ShortcutWidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
-        for (int i = 0; i < appWidgetIds.length; i++) {
-            int appWidgetId = appWidgetIds[i];
+        for (int appWidgetId : appWidgetIds) {
             updateWidget(context, appWidgetManager, appWidgetId);
         }
     }
@@ -31,12 +30,12 @@ public class ShortcutWidgetProvider extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         super.onDeleted(context, appWidgetIds);
-        for (int a = 0; a < appWidgetIds.length; a++) {
+        for (int appWidgetId : appWidgetIds) {
             SharedPreferences preferences = context.getSharedPreferences("shortcut_widget", Activity.MODE_PRIVATE);
-            int accountId = preferences.getInt("account" + appWidgetIds[a], -1);
+            int accountId = preferences.getInt("account" + appWidgetId, -1);
             if (accountId >= 0) {
                 AccountInstance accountInstance = AccountInstance.getInstance(accountId);
-                accountInstance.getMessagesStorage().clearWidgetDialogs(appWidgetIds[a]);
+                accountInstance.getMessagesStorage().clearWidgetDialogs(appWidgetId);
             }
         }
     }
@@ -46,7 +45,7 @@ public class ShortcutWidgetProvider extends AppWidgetProvider {
         intent2.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         intent2.setData(Uri.parse(intent2.toUri(Intent.URI_INTENT_SCHEME)));
         RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.shortcut_widget_layout);
-        rv.setRemoteAdapter(appWidgetId, R.id.list_view, intent2);
+        rv.setRemoteAdapter(R.id.list_view, intent2);
         rv.setEmptyView(R.id.list_view, R.id.empty_view);
 
         Intent intent = new Intent(ApplicationLoader.applicationContext, LaunchActivity.class);

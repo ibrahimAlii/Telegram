@@ -174,8 +174,8 @@ public class MediaActivity extends BaseFragment implements NotificationCenter.No
         @Override
         public void setValue(MediaActivity object, float value) {
             object.setScrollY(value);
-            for (int a = 0; a < mediaPages.length; a++) {
-                mediaPages[a].listView.checkSection();
+            for (MediaPage mediaPage : mediaPages) {
+                mediaPage.listView.checkSection();
             }
         }
 

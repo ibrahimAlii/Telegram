@@ -168,7 +168,7 @@ public class EditTextCaption extends EditTextBoldCursor {
         editText.setTransformHintToHeader(true);
         editText.setLineColors(Theme.getColor(Theme.key_windowBackgroundWhiteInputField), Theme.getColor(Theme.key_windowBackgroundWhiteInputFieldActivated), Theme.getColor(Theme.key_windowBackgroundWhiteRedText3));
         editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        editText.setBackgroundDrawable(null);
+        editText.setBackground(null);
         editText.requestFocus();
         editText.setPadding(0, 0, 0, 0);
         builder.setView(editText);
@@ -188,8 +188,7 @@ public class EditTextCaption extends EditTextBoldCursor {
             Editable editable = getText();
             CharacterStyle[] spans = editable.getSpans(start, end, CharacterStyle.class);
             if (spans != null && spans.length > 0) {
-                for (int a = 0; a < spans.length; a++) {
-                    CharacterStyle oldSpan = spans[a];
+                for (CharacterStyle oldSpan : spans) {
                     int spanStart = editable.getSpanStart(oldSpan);
                     int spanEnd = editable.getSpanEnd(oldSpan);
                     editable.removeSpan(oldSpan);

@@ -32,6 +32,7 @@ import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
+import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.audio.TeeAudioProcessor;
@@ -59,6 +60,7 @@ import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.video.SurfaceNotValidException;
+import com.google.android.exoplayer2.video.VideoListener;
 
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FourierTransform;
@@ -69,21 +71,29 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 @SuppressLint("NewApi")
-public class VideoPlayer implements ExoPlayer.EventListener, SimpleExoPlayer.VideoListener, AnalyticsListener, NotificationCenter.NotificationCenterDelegate {
+public class VideoPlayer implements ExoPlayer.EventListener, VideoListener, AnalyticsListener, NotificationCenter.NotificationCenterDelegate {
 
     public interface VideoPlayerDelegate {
         void onStateChanged(boolean playWhenReady, int playbackState);
+
         void onError(VideoPlayer player, Exception e);
+
         void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
+
         void onRenderedFirstFrame();
+
         void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture);
+
         boolean onSurfaceDestroyed(SurfaceTexture surfaceTexture);
+
         default void onRenderedFirstFrame(EventTime eventTime) {
 
         }
+
         default void onSeekStarted(EventTime eventTime) {
 
         }
+
         default void onSeekFinished(EventTime eventTime) {
 
         }
@@ -91,6 +101,7 @@ public class VideoPlayer implements ExoPlayer.EventListener, SimpleExoPlayer.Vid
 
     public interface AudioVisualizerDelegate {
         void onVisualizerUpdate(boolean playing, boolean animate, float[] values);
+
         boolean needUpdate();
     }
 
@@ -132,7 +143,7 @@ public class VideoPlayer implements ExoPlayer.EventListener, SimpleExoPlayer.Vid
 
     Handler audioUpdateHandler = new Handler(Looper.getMainLooper());
 
-    private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
+    private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter.Builder(ApplicationLoader.applicationContext).build();
 
     public VideoPlayer() {
         this(true);
@@ -141,10 +152,10 @@ public class VideoPlayer implements ExoPlayer.EventListener, SimpleExoPlayer.Vid
     public VideoPlayer(boolean pauseOther) {
         mediaDataSourceFactory = new ExtendedDefaultDataSourceFactory(ApplicationLoader.applicationContext, BANDWIDTH_METER, new DefaultHttpDataSourceFactory("Mozilla/5.0 (X11; Linux x86_64; rv:10.0) Gecko/20150101 Firefox/47.0 (Chrome)", BANDWIDTH_METER));
 
-        mainHandler = new Handler();
+        mainHandler = new Handler(Looper.myLooper());
 
         TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
-        trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+        trackSelector = new DefaultTrackSelector(ApplicationLoader.applicationContext, videoTrackSelectionFactory);
 
         lastReportedPlaybackState = ExoPlayer.STATE_IDLE;
         shouldPauseOther = pauseOther;
@@ -164,14 +175,14 @@ public class VideoPlayer implements ExoPlayer.EventListener, SimpleExoPlayer.Vid
     }
 
     private void ensurePleyaerCreated() {
-        DefaultLoadControl loadControl = new DefaultLoadControl(
-                new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE),
-                DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
-                DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
-                100,
-                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
-                DefaultLoadControl.DEFAULT_TARGET_BUFFER_BYTES,
-                DefaultLoadControl.DEFAULT_PRIORITIZE_TIME_OVER_SIZE_THRESHOLDS);
+        DefaultLoadControl loadControl = new DefaultLoadControl.Builder()
+                .setAllocator(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE))
+                .setTargetBufferBytes(DefaultLoadControl.DEFAULT_TARGET_BUFFER_BYTES)
+                .setBufferDurationsMs(DefaultLoadControl.DEFAULT_MIN_BUFFER_MS, DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
+                        100, DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
+                .setPrioritizeTimeOverSizeThresholds(DefaultLoadControl.DEFAULT_PRIORITIZE_TIME_OVER_SIZE_THRESHOLDS)
+                .createDefaultLoadControl();
+
         if (player == null) {
             DefaultRenderersFactory factory;
             if (audioVisualizerDelegate != null) {
@@ -184,7 +195,7 @@ public class VideoPlayer implements ExoPlayer.EventListener, SimpleExoPlayer.Vid
 
             player.addAnalyticsListener(this);
             player.addListener(this);
-            player.setVideoListener(this);
+            player.addVideoListener(this);
             if (textureView != null) {
                 player.setVideoTextureView(textureView);
             } else if (surface != null) {
@@ -281,13 +292,13 @@ public class VideoPlayer implements ExoPlayer.EventListener, SimpleExoPlayer.Vid
             }
             switch (type) {
                 case "dash":
-                    mediaSource = new DashMediaSource(uri, mediaDataSourceFactory, new DefaultDashChunkSource.Factory(mediaDataSourceFactory), mainHandler, null);
+                    mediaSource = new DashMediaSource.Factory(new DefaultDashChunkSource.Factory(mediaDataSourceFactory), mediaDataSourceFactory).createMediaSource(uri);
                     break;
                 case "hls":
                     mediaSource = new HlsMediaSource.Factory(mediaDataSourceFactory).createMediaSource(uri);
                     break;
                 case "ss":
-                    mediaSource = new SsMediaSource(uri, mediaDataSourceFactory, new DefaultSsChunkSource.Factory(mediaDataSourceFactory), mainHandler, null);
+                    mediaSource = new SsMediaSource.Factory (new DefaultSsChunkSource.Factory(mediaDataSourceFactory), mediaDataSourceFactory).createMediaSource(uri);
                     break;
                 default:
                     mediaSource = new ExtractorMediaSource(uri, mediaDataSourceFactory, new DefaultExtractorsFactory(), mainHandler, null);
@@ -320,13 +331,13 @@ public class VideoPlayer implements ExoPlayer.EventListener, SimpleExoPlayer.Vid
         MediaSource mediaSource;
         switch (type) {
             case "dash":
-                mediaSource = new DashMediaSource(uri, mediaDataSourceFactory, new DefaultDashChunkSource.Factory(mediaDataSourceFactory), mainHandler, null);
+                mediaSource = new DashMediaSource.Factory(new DefaultDashChunkSource.Factory(mediaDataSourceFactory), mediaDataSourceFactory).createMediaSource(uri);
                 break;
             case "hls":
                 mediaSource = new HlsMediaSource.Factory(mediaDataSourceFactory).createMediaSource(uri);
                 break;
             case "ss":
-                mediaSource = new SsMediaSource(uri, mediaDataSourceFactory, new DefaultSsChunkSource.Factory(mediaDataSourceFactory), mainHandler, null);
+                mediaSource = new SsMediaSource.Factory (new DefaultSsChunkSource.Factory(mediaDataSourceFactory), mediaDataSourceFactory).createMediaSource(uri);
                 break;
             default:
                 mediaSource = new ExtractorMediaSource(uri, mediaDataSourceFactory, new DefaultExtractorsFactory(), mainHandler, null);
@@ -549,10 +560,10 @@ public class VideoPlayer implements ExoPlayer.EventListener, SimpleExoPlayer.Vid
 
     public void setStreamType(int type) {
         if (player != null) {
-            player.setAudioStreamType(type);
+            player.setAudioAttributes(new AudioAttributes.Builder().setContentType(type).build());
         }
         if (audioPlayer != null) {
-            audioPlayer.setAudioStreamType(type);
+            audioPlayer.setAudioAttributes(new AudioAttributes.Builder().setContentType(type).build());
         }
     }
 
@@ -722,7 +733,7 @@ public class VideoPlayer implements ExoPlayer.EventListener, SimpleExoPlayer.Vid
 
         @Override
         public void flush(int sampleRateHz, int channelCount, int encoding) {
-            
+
         }
 
 

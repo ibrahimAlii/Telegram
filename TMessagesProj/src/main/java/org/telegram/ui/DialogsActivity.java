@@ -686,9 +686,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
                 if (SharedConfig.smoothKeyboard && commentView.isPopupShowing()) {
                     fragmentView.setTranslationY(0);
-                    for (int a = 0; a < viewPages.length; a++) {
-                        if (viewPages[a] != null) {
-                            viewPages[a].setTranslationY(0);
+                    for (ViewPage viewPage : viewPages) {
+                        if (viewPage != null) {
+                            viewPage.setTranslationY(0);
                         }
                     }
                     if (!onlySelect) {
@@ -1512,7 +1512,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                             SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                             boolean hintShowed = preferences.getBoolean("archivehint_l", false) || SharedConfig.archiveHidden;
                             if (!hintShowed) {
-                                preferences.edit().putBoolean("archivehint_l", true).commit();
+                                preferences.edit().putBoolean("archivehint_l", true).apply();
                             }
                             getUndoView().showWithAction(dialog.id, hintShowed ? UndoView.ACTION_ARCHIVE : UndoView.ACTION_ARCHIVE_HINT, null, () -> {
                                 dialogsListFrozen = true;
@@ -1583,7 +1583,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             } else if (animationType == ItemTouchHelper.ANIMATION_TYPE_DRAG) {
                 if (movingView != null) {
                     View view = movingView;
-                    AndroidUtilities.runOnUIThread(() -> view.setBackgroundDrawable(null), parentPage.dialogsItemAnimator.getMoveDuration());
+                    AndroidUtilities.runOnUIThread(() -> view.setBackground(null), parentPage.dialogsItemAnimator.getMoveDuration());
                     movingView = null;
                 }
             }
@@ -2017,11 +2017,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
                 @Override
                 public void onPageReorder(int fromId, int toId) {
-                    for (int a = 0; a < viewPages.length; a++) {
-                        if (viewPages[a].selectedType == fromId) {
-                            viewPages[a].selectedType = toId;
-                        } else if (viewPages[a].selectedType == toId) {
-                            viewPages[a].selectedType = fromId;
+                    for (ViewPage viewPage : viewPages) {
+                        if (viewPage.selectedType == fromId) {
+                            viewPage.selectedType = toId;
+                        } else if (viewPage.selectedType == toId) {
+                            viewPage.selectedType = fromId;
                         }
                     }
                 }
@@ -2790,11 +2790,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     animated = true;
                 }
                 if (searching && searchWas && searchViewPager.emptyView != null) {
-                    if (search || searchViewPager.dialogsSearchAdapter.getItemCount() != 0) {
-                        searchViewPager.emptyView.showProgress(true, animated);
-                    } else {
-                        searchViewPager.emptyView.showProgress(false, animated);
-                    }
+                    searchViewPager.emptyView.showProgress(search || searchViewPager.dialogsSearchAdapter.getItemCount() != 0, animated);
                 }
                 if (search && searchViewPager.dialogsSearchAdapter.getItemCount() == 0) {
                     searchViewPager.cancelEnterAnimation();
@@ -2825,8 +2821,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     }
                     closeSearch();
                     if (AndroidUtilities.isTablet() && viewPages != null) {
-                        for (int a = 0; a < viewPages.length; a++) {
-                            viewPages[a].dialogsAdapter.setOpenedDialogId(openedDialogId = did);
+                        for (ViewPage viewPage : viewPages) {
+                            viewPage.dialogsAdapter.setOpenedDialogId(openedDialogId = did);
                         }
                         updateVisibleRows(MessagesController.UPDATE_MASK_SELECT_DIALOG);
                     }
@@ -2955,7 +2951,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
             drawable = combinedDrawable;
         }
-        floatingButton.setBackgroundDrawable(drawable);
+        floatingButton.setBackground(drawable);
         floatingButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
         if (initialDialogsType == 10) {
             floatingButton.setImageResource(R.drawable.floating_check);
@@ -3154,8 +3150,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
                 @Override
                 protected boolean canUndo() {
-                    for (int a = 0; a < viewPages.length; a++) {
-                        if (viewPages[a].dialogsItemAnimator.isRunning()) {
+                    for (ViewPage viewPage : viewPages) {
+                        if (viewPage.dialogsItemAnimator.isRunning()) {
                             return false;
                         }
                     }
@@ -3467,8 +3463,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     }
 
     private void switchToCurrentSelectedMode(boolean animated) {
-        for (int a = 0; a < viewPages.length; a++) {
-            viewPages[a].listView.stopScroll();
+        for (ViewPage viewPage : viewPages) {
+            viewPage.listView.stopScroll();
         }
         int a = animated ? 1 : 0;
         RecyclerView.Adapter currentAdapter = viewPages[a].listView.getAdapter();
@@ -3497,13 +3493,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             return;
         }
         scrollBarVisible = show;
-        for (int a = 0; a < viewPages.length; a++) {
+        for (ViewPage viewPage : viewPages) {
             if (show) {
-                viewPages[a].listView.setScrollbarFadingEnabled(false);
+                viewPage.listView.setScrollbarFadingEnabled(false);
             }
-            viewPages[a].listView.setVerticalScrollBarEnabled(show);
+            viewPage.listView.setVerticalScrollBarEnabled(show);
             if (show) {
-                viewPages[a].listView.setScrollbarFadingEnabled(true);
+                viewPage.listView.setScrollbarFadingEnabled(true);
             }
         }
     }
@@ -3556,11 +3552,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         viewPages[0].selectedType = id;
                     }
                 }
-                for (int a = 0; a < viewPages.length; a++) {
-                    if (viewPages[a].selectedType != Integer.MAX_VALUE && viewPages[a].selectedType >= filters.size()) {
-                        viewPages[a].selectedType = filters.size() - 1;
+                for (ViewPage viewPage : viewPages) {
+                    if (viewPage.selectedType != Integer.MAX_VALUE && viewPage.selectedType >= filters.size()) {
+                        viewPage.selectedType = filters.size() - 1;
                     }
-                    viewPages[a].listView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
+                    viewPage.listView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
                 }
                 filterTabsView.finishAddingTabs(animatedUpdateItems);
                 if (updateCurrentTab) {
@@ -3594,16 +3590,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 viewPages[1].dialogsAdapter.notifyDataSetChanged();
                 canShowFilterTabsView = false;
                 updateFilterTabsVisibility(animated);
-                for (int a = 0; a < viewPages.length; a++) {
-                    if (viewPages[a].dialogsType == 0 && viewPages[a].archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN && hasHiddenArchive()) {
-                        int p = viewPages[a].layoutManager.findFirstVisibleItemPosition();
+                for (ViewPage viewPage : viewPages) {
+                    if (viewPage.dialogsType == 0 && viewPage.archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN && hasHiddenArchive()) {
+                        int p = viewPage.layoutManager.findFirstVisibleItemPosition();
                         if (p == 0 || p == 1) {
-                            viewPages[a].layoutManager.scrollToPositionWithOffset(1, 0);
+                            viewPage.layoutManager.scrollToPositionWithOffset(1, 0);
                         }
                     }
-                    viewPages[a].listView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_DEFAULT);
-                    viewPages[a].listView.requestLayout();
-                    viewPages[a].requestLayout();
+                    viewPage.listView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_DEFAULT);
+                    viewPage.listView.requestLayout();
+                    viewPage.requestLayout();
                 }
             }
             if (parentLayout != null) {
@@ -3620,16 +3616,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         }
         if (commentView != null && commentView.isPopupShowing()) {
             fragmentView.setTranslationY(y);
-            for (int a = 0; a < viewPages.length; a++) {
-                viewPages[a].setTranslationY(0);
+            for (ViewPage viewPage : viewPages) {
+                viewPage.setTranslationY(0);
             }
             if (!onlySelect) {
                 actionBar.setTranslationY(0);
             }
             searchViewPager.setTranslationY(0);
         } else {
-            for (int a = 0; a < viewPages.length; a++) {
-                viewPages[a].setTranslationY(y);
+            for (ViewPage viewPage : viewPages) {
+                viewPage.setTranslationY(y);
             }
             if (!onlySelect) {
                 actionBar.setTranslationY(y);
@@ -3657,8 +3653,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             parentLayout.getDrawerLayoutContainer().setAllowOpenDrawerBySwipe(viewPages[0].selectedType == filterTabsView.getFirstTabId() || searchIsShowed);
         }
         if (viewPages != null && !dialogsListFrozen) {
-            for (int a = 0; a < viewPages.length; a++) {
-                viewPages[a].dialogsAdapter.notifyDataSetChanged();
+            for (ViewPage viewPage : viewPages) {
+                viewPage.dialogsAdapter.notifyDataSetChanged();
             }
         }
         if (commentView != null) {
@@ -3688,7 +3684,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     if (hasNotContactsPermission && askAboutContacts && getUserConfig().syncContacts && activity.shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS)) {
                         AlertDialog.Builder builder = AlertsCreator.createContactsPermissionDialog(activity, param -> {
                             askAboutContacts = param != 0;
-                            MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).commit();
+                            MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).apply();
                             askForPermissons(false);
                         });
                         showDialog(permissionDialog = builder.create());
@@ -3778,8 +3774,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         boolean b = super.presentFragment(fragment);
         if (b) {
             if (viewPages != null) {
-                for (int a = 0; a < viewPages.length; a++) {
-                    viewPages[a].dialogsAdapter.pause();
+                for (ViewPage viewPage : viewPages) {
+                    viewPage.dialogsAdapter.pause();
                 }
             }
         }
@@ -3801,8 +3797,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         Bulletin.removeDelegate(this);
 
         if (viewPages != null) {
-            for (int a = 0; a < viewPages.length; a++) {
-                viewPages[a].dialogsAdapter.pause();
+            for (ViewPage viewPage : viewPages) {
+                viewPage.dialogsAdapter.pause();
             }
         }
     }
@@ -4226,10 +4222,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (viewPages == null) {
             return;
         }
-        for (int b = 0; b < viewPages.length; b++) {
-            int count = viewPages[b].listView.getChildCount();
+        for (ViewPage viewPage : viewPages) {
+            int count = viewPage.listView.getChildCount();
             for (int a = 0; a < count; a++) {
-                View child = viewPages[b].listView.getChildAt(a);
+                View child = viewPage.listView.getChildAt(a);
                 if (child instanceof DialogCell) {
                     DialogCell dialogCell = (DialogCell) child;
                     if (dialogCell.getDialogId() == dialogId) {
@@ -4452,8 +4448,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     return;
                 }
                 if (viewPages != null) {
-                    for (int a = 0; a < viewPages.length; a++) {
-                        viewPages[a].dialogsAdapter.setOpenedDialogId(openedDialogId = dialogId);
+                    for (ViewPage viewPage : viewPages) {
+                        viewPage.dialogsAdapter.setOpenedDialogId(openedDialogId = dialogId);
                     }
                 }
                 updateVisibleRows(MessagesController.UPDATE_MASK_SELECT_DIALOG);
@@ -4563,16 +4559,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     if (which == 0) {
                         getMessagesStorage().readAllDialogs(1);
                     } else if (which == 1 && viewPages != null) {
-                        for (int a = 0; a < viewPages.length; a++) {
-                            if (viewPages[a].dialogsType != 0 || viewPages[a].getVisibility() != View.VISIBLE) {
+                        for (ViewPage viewPage : viewPages) {
+                            if (viewPage.dialogsType != 0 || viewPage.getVisibility() != View.VISIBLE) {
                                 continue;
                             }
-                            View child = viewPages[a].listView.getChildAt(0);
+                            View child = viewPage.listView.getChildAt(0);
                             DialogCell dialogCell = null;
                             if (child instanceof DialogCell && ((DialogCell) child).isFolderCell()) {
                                 dialogCell = (DialogCell) child;
                             }
-                            viewPages[a].listView.toggleArchiveHidden(true, dialogCell);
+                            viewPage.listView.toggleArchiveHidden(true, dialogCell);
                         }
                     }
                 });
@@ -4646,9 +4642,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         dialogChangeFinished = 0;
         AndroidUtilities.runOnUIThread(() -> {
             if (viewPages != null && folderId != 0 && (frozenDialogsList == null || frozenDialogsList.isEmpty())) {
-                for (int a = 0; a < viewPages.length; a++) {
-                    viewPages[a].listView.setEmptyView(null);
-                    viewPages[a].progressView.setVisibility(View.INVISIBLE);
+                for (ViewPage viewPage : viewPages) {
+                    viewPage.listView.setEmptyView(null);
+                    viewPage.progressView.setVisibility(View.INVISIBLE);
                 }
                 finishFragment();
             }
@@ -4667,8 +4663,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         }
         updateContextViewPosition();
         if (viewPages != null) {
-            for (int a = 0; a < viewPages.length; a++) {
-                viewPages[a].listView.setTopGlowOffset(viewPages[a].listView.getPaddingTop() + (int) value);
+            for (ViewPage viewPage : viewPages) {
+                viewPage.listView.setTopGlowOffset(viewPage.listView.getPaddingTop() + (int) value);
             }
         }
         fragmentView.invalidate();
@@ -4685,7 +4681,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         canvas.scale(1.0f / 6.0f, 1.0f / 6.0f);
         fragmentView.draw(canvas);
         Utilities.stackBlurBitmap(bitmap, Math.max(7, Math.max(w, h) / 180));
-        blurredView.setBackground(new BitmapDrawable(bitmap));
+        blurredView.setBackground(new BitmapDrawable(ApplicationLoader.applicationContext.getResources(), bitmap));
         blurredView.setAlpha(0.0f);
         blurredView.setVisibility(View.VISIBLE);
     }
@@ -4764,8 +4760,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         }
         updateCounters(true);
         if (viewPages != null) {
-            for (int a = 0; a < viewPages.length; a++) {
-                viewPages[a].dialogsAdapter.onReorderStateChanged(false);
+            for (ViewPage viewPage : viewPages) {
+                viewPage.dialogsAdapter.onReorderStateChanged(false);
             }
         }
         updateVisibleRows(MessagesController.UPDATE_MASK_REORDER | MessagesController.UPDATE_MASK_CHECK | (animateCheck ? MessagesController.UPDATE_MASK_CHAT : 0));
@@ -4825,7 +4821,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                 boolean hintShowed = preferences.getBoolean("archivehint_l", false) || SharedConfig.archiveHidden;
                 if (!hintShowed) {
-                    preferences.edit().putBoolean("archivehint_l", true).commit();
+                    preferences.edit().putBoolean("archivehint_l", true).apply();
                 }
                 int undoAction;
                 if (hintShowed) {
@@ -5421,8 +5417,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
             if (getPinnedCount() > 1) {
                 if (viewPages != null) {
-                    for (int a = 0; a < viewPages.length; a++) {
-                        viewPages[a].dialogsAdapter.onReorderStateChanged(true);
+                    for (ViewPage viewPage : viewPages) {
+                        viewPage.dialogsAdapter.onReorderStateChanged(true);
                     }
                 }
                 updateVisibleRows(MessagesController.UPDATE_MASK_REORDER);
@@ -5650,7 +5646,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             if (alert) {
                 AlertDialog.Builder builder = AlertsCreator.createContactsPermissionDialog(activity, param -> {
                     askAboutContacts = param != 0;
-                    MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).commit();
+                    MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).apply();
                     askForPermissons(false);
                 });
                 showDialog(permissionDialog = builder.create());
@@ -5719,7 +5715,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         if (grantResults[a] == PackageManager.PERMISSION_GRANTED) {
                             getContactsController().forceImportContacts();
                         } else {
-                            MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts = false).commit();
+                            MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts = false).apply();
                         }
                         break;
                     case Manifest.permission.WRITE_EXTERNAL_STORAGE:
@@ -5747,36 +5743,36 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             MessagesController messagesController = AccountInstance.getInstance(currentAccount).getMessagesController();
             ArrayList<TLRPC.Dialog> dialogs = messagesController.getDialogs(folderId);
 
-            for (int a = 0; a < viewPages.length; a++) {
-                if (viewPages[a].getVisibility() != View.VISIBLE) {
+            for (ViewPage viewPage : viewPages) {
+                if (viewPage.getVisibility() != View.VISIBLE) {
                     continue;
                 }
-                int oldItemCount = viewPages[a].dialogsAdapter.getCurrentCount();
+                int oldItemCount = viewPage.dialogsAdapter.getCurrentCount();
 
-                if (viewPages[a].dialogsType == 0 && hasHiddenArchive() && viewPages[a].listView.getChildCount() == 0) {
-                    LinearLayoutManager layoutManager = (LinearLayoutManager) viewPages[a].listView.getLayoutManager();
+                if (viewPage.dialogsType == 0 && hasHiddenArchive() && viewPage.listView.getChildCount() == 0) {
+                    LinearLayoutManager layoutManager = (LinearLayoutManager) viewPage.listView.getLayoutManager();
                     layoutManager.scrollToPositionWithOffset(1, 0);
                 }
 
-                if (viewPages[a].dialogsAdapter.isDataSetChanged() || args.length > 0) {
-                    viewPages[a].dialogsAdapter.notifyDataSetChanged();
-                    int newItemCount = viewPages[a].dialogsAdapter.getItemCount();
+                if (viewPage.dialogsAdapter.isDataSetChanged() || args.length > 0) {
+                    viewPage.dialogsAdapter.notifyDataSetChanged();
+                    int newItemCount = viewPage.dialogsAdapter.getItemCount();
                     if (newItemCount > oldItemCount && initialDialogsType != 11 && initialDialogsType != 12 && initialDialogsType != 13) {
-                        showItemsAnimated(viewPages[a].listView, oldItemCount);
+                        showItemsAnimated(viewPage.listView, oldItemCount);
                     }
                 } else {
                     updateVisibleRows(MessagesController.UPDATE_MASK_NEW_MESSAGE);
-                    int newItemCount = viewPages[a].dialogsAdapter.getItemCount();
+                    int newItemCount = viewPage.dialogsAdapter.getItemCount();
                     if (newItemCount > oldItemCount && initialDialogsType != 11 && initialDialogsType != 12 && initialDialogsType != 13) {
-                        showItemsAnimated(viewPages[a].listView, oldItemCount);
+                        showItemsAnimated(viewPage.listView, oldItemCount);
                     }
                 }
                 try {
-                    viewPages[a].listView.setEmptyView(folderId == 0 ? viewPages[a].progressView : null);
+                    viewPage.listView.setEmptyView(folderId == 0 ? viewPage.progressView : null);
                 } catch (Exception e) {
                     FileLog.e(e);
                 }
-                checkListLoad(viewPages[a]);
+                checkListLoad(viewPage);
             }
             if (filterTabsView != null && filterTabsView.getVisibility() == View.VISIBLE) {
                 filterTabsView.checkTabsCounter();
@@ -5803,9 +5799,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 filterTabsView.checkTabsCounter();
             }
             if (viewPages != null) {
-                for (int a = 0; a < viewPages.length; a++) {
+                for (ViewPage viewPage : viewPages) {
                     if ((mask & MessagesController.UPDATE_MASK_STATUS) != 0) {
-                        viewPages[a].dialogsAdapter.sortOnlineContacts(true);
+                        viewPage.dialogsAdapter.sortOnlineContacts(true);
                     }
                 }
             }
@@ -5818,9 +5814,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 return;
             }
             boolean updateVisibleRows = false;
-            for (int a = 0; a < viewPages.length; a++) {
-                if (viewPages[a].isDefaultDialogType() && getMessagesController().getDialogs(folderId).size() <= 10) {
-                    viewPages[a].dialogsAdapter.notifyDataSetChanged();
+            for (ViewPage viewPage : viewPages) {
+                if (viewPage.isDefaultDialogType() && getMessagesController().getDialogs(folderId).size() <= 10) {
+                    viewPage.dialogsAdapter.notifyDataSetChanged();
                 } else {
                     updateVisibleRows = true;
                 }
@@ -5832,8 +5828,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             if (viewPages == null) {
                 return;
             }
-            for (int a = 0; a < viewPages.length; a++) {
-                if (viewPages[a].isDefaultDialogType() && AndroidUtilities.isTablet()) {
+            for (ViewPage viewPage : viewPages) {
+                if (viewPage.isDefaultDialogType() && AndroidUtilities.isTablet()) {
                     boolean close = (Boolean) args[1];
                     long dialog_id = (Long) args[0];
                     if (close) {
@@ -5843,7 +5839,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     } else {
                         openedDialogId = dialog_id;
                     }
-                    viewPages[a].dialogsAdapter.setOpenedDialogId(openedDialogId);
+                    viewPage.dialogsAdapter.setOpenedDialogId(openedDialogId);
                 }
             }
             updateVisibleRows(MessagesController.UPDATE_MASK_SELECT_DIALOG);
@@ -5915,8 +5911,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 searchViewPager.messagesDeleted(channelId, markAsDeletedMessages);
             }
         } else if (id == NotificationCenter.didClearDatabase) {
-            for (int a = 0; a < viewPages.length; a++) {
-                viewPages[a].dialogsAdapter.didDatabaseCleared();
+            for (ViewPage viewPage : viewPages) {
+                viewPage.dialogsAdapter.didDatabaseCleared();
             }
         }
     }
@@ -6038,7 +6034,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (preferences.getBoolean("filterhint", false)) {
             return;
         }
-        preferences.edit().putBoolean("filterhint", true).commit();
+        preferences.edit().putBoolean("filterhint", true).apply();
         AndroidUtilities.runOnUIThread(() -> getUndoView().showWithAction(0, UndoView.ACTION_FILTERS_AVAILABLE, null, () -> presentFragment(new FiltersSetupActivity())), 1000);
     }
 
@@ -6157,14 +6153,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (viewPages == null) {
             return;
         }
-        for (int b = 0; b < viewPages.length; b++) {
-            if (viewPages[b].getVisibility() != View.VISIBLE) {
+        for (ViewPage viewPage : viewPages) {
+            if (viewPage.getVisibility() != View.VISIBLE) {
                 continue;
             }
-            ArrayList<TLRPC.Dialog> dialogs = getDialogsArray(currentAccount, viewPages[b].dialogsType, folderId, false);
-            int count = viewPages[b].listView.getChildCount();
+            ArrayList<TLRPC.Dialog> dialogs = getDialogsArray(currentAccount, viewPage.dialogsType, folderId, false);
+            int count = viewPage.listView.getChildCount();
             for (int a = 0; a < count; a++) {
-                View child = viewPages[b].listView.getChildAt(a);
+                View child = viewPage.listView.getChildAt(a);
                 if (child instanceof DialogCell) {
                     DialogCell dialogCell = (DialogCell) child;
                     TLRPC.Dialog dialog = getMessagesController().dialogs_dict.get(dialogCell.getDialogId());
@@ -6438,11 +6434,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
             }
             if (viewPages != null) {
-                for (int a = 0; a < viewPages.length; a++) {
-                    if (viewPages[a].pullForegroundDrawable == null) {
+                for (ViewPage viewPage : viewPages) {
+                    if (viewPage.pullForegroundDrawable == null) {
                         continue;
                     }
-                    viewPages[a].pullForegroundDrawable.updateColors();
+                    viewPage.pullForegroundDrawable.updateColors();
                 }
             }
             if (actionBar != null) {
@@ -6453,9 +6449,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
 
             if (scrimPopupWindowItems != null) {
-                for (int a = 0; a < scrimPopupWindowItems.length; a++) {
-                    scrimPopupWindowItems[a].setColors(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem), Theme.getColor(Theme.key_actionBarDefaultSubmenuItemIcon));
-                    scrimPopupWindowItems[a].setSelectorColor(Theme.getColor(Theme.key_dialogButtonSelector));
+                for (ActionBarMenuSubItem scrimPopupWindowItem : scrimPopupWindowItems) {
+                    scrimPopupWindowItem.setColors(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem), Theme.getColor(Theme.key_actionBarDefaultSubmenuItemIcon));
+                    scrimPopupWindowItem.setSelectorColor(Theme.getColor(Theme.key_dialogButtonSelector));
                 }
             }
             if (scrimPopupWindow != null) {
@@ -6657,57 +6653,57 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         arrayList.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_chats_messageArchived));
 
         if (viewPages != null) {
-            for (int a = 0; a < viewPages.length; a++) {
+            for (ViewPage viewPage : viewPages) {
                 if (folderId == 0) {
-                    arrayList.add(new ThemeDescription(viewPages[a].listView, ThemeDescription.FLAG_LISTGLOWCOLOR, null, null, null, null, Theme.key_actionBarDefault));
+                    arrayList.add(new ThemeDescription(viewPage.listView, ThemeDescription.FLAG_LISTGLOWCOLOR, null, null, null, null, Theme.key_actionBarDefault));
                 } else {
-                    arrayList.add(new ThemeDescription(viewPages[a].listView, ThemeDescription.FLAG_LISTGLOWCOLOR, null, null, null, null, Theme.key_actionBarDefaultArchived));
+                    arrayList.add(new ThemeDescription(viewPage.listView, ThemeDescription.FLAG_LISTGLOWCOLOR, null, null, null, null, Theme.key_actionBarDefaultArchived));
                 }
 
-                arrayList.add(new ThemeDescription(viewPages[a].listView, ThemeDescription.FLAG_TEXTCOLOR, new Class[]{DialogsEmptyCell.class}, new String[]{"emptyTextView1"}, null, null, null, Theme.key_chats_nameMessage_threeLines));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, ThemeDescription.FLAG_TEXTCOLOR, new Class[]{DialogsEmptyCell.class}, new String[]{"emptyTextView2"}, null, null, null, Theme.key_chats_message));
+                arrayList.add(new ThemeDescription(viewPage.listView, ThemeDescription.FLAG_TEXTCOLOR, new Class[]{DialogsEmptyCell.class}, new String[]{"emptyTextView1"}, null, null, null, Theme.key_chats_nameMessage_threeLines));
+                arrayList.add(new ThemeDescription(viewPage.listView, ThemeDescription.FLAG_TEXTCOLOR, new Class[]{DialogsEmptyCell.class}, new String[]{"emptyTextView2"}, null, null, null, Theme.key_chats_message));
 
                 if (SharedConfig.archiveHidden) {
-                    arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveAvatarDrawable}, "Arrow1", Theme.key_avatar_backgroundArchivedHidden));
-                    arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveAvatarDrawable}, "Arrow2", Theme.key_avatar_backgroundArchivedHidden));
+                    arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveAvatarDrawable}, "Arrow1", Theme.key_avatar_backgroundArchivedHidden));
+                    arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveAvatarDrawable}, "Arrow2", Theme.key_avatar_backgroundArchivedHidden));
                 } else {
-                    arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveAvatarDrawable}, "Arrow1", Theme.key_avatar_backgroundArchived));
-                    arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveAvatarDrawable}, "Arrow2", Theme.key_avatar_backgroundArchived));
+                    arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveAvatarDrawable}, "Arrow1", Theme.key_avatar_backgroundArchived));
+                    arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveAvatarDrawable}, "Arrow2", Theme.key_avatar_backgroundArchived));
                 }
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveAvatarDrawable}, "Box2", Theme.key_avatar_text));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveAvatarDrawable}, "Box1", Theme.key_avatar_text));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveAvatarDrawable}, "Box2", Theme.key_avatar_text));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveAvatarDrawable}, "Box1", Theme.key_avatar_text));
 
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_pinArchiveDrawable}, "Arrow", Theme.key_chats_archiveIcon));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_pinArchiveDrawable}, "Line", Theme.key_chats_archiveIcon));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_pinArchiveDrawable}, "Arrow", Theme.key_chats_archiveIcon));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_pinArchiveDrawable}, "Line", Theme.key_chats_archiveIcon));
 
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_unpinArchiveDrawable}, "Arrow", Theme.key_chats_archiveIcon));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_unpinArchiveDrawable}, "Line", Theme.key_chats_archiveIcon));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_unpinArchiveDrawable}, "Arrow", Theme.key_chats_archiveIcon));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_unpinArchiveDrawable}, "Line", Theme.key_chats_archiveIcon));
 
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveDrawable}, "Arrow", Theme.key_chats_archiveBackground));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveDrawable}, "Box2", Theme.key_chats_archiveIcon));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveDrawable}, "Box1", Theme.key_chats_archiveIcon));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveDrawable}, "Arrow", Theme.key_chats_archiveBackground));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveDrawable}, "Box2", Theme.key_chats_archiveIcon));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_archiveDrawable}, "Box1", Theme.key_chats_archiveIcon));
 
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_hidePsaDrawable}, "Line 1", Theme.key_chats_archiveBackground));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_hidePsaDrawable}, "Line 2", Theme.key_chats_archiveBackground));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_hidePsaDrawable}, "Line 3", Theme.key_chats_archiveBackground));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_hidePsaDrawable}, "Cup Red", Theme.key_chats_archiveIcon));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_hidePsaDrawable}, "Box", Theme.key_chats_archiveIcon));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_hidePsaDrawable}, "Line 1", Theme.key_chats_archiveBackground));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_hidePsaDrawable}, "Line 2", Theme.key_chats_archiveBackground));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_hidePsaDrawable}, "Line 3", Theme.key_chats_archiveBackground));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_hidePsaDrawable}, "Cup Red", Theme.key_chats_archiveIcon));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_hidePsaDrawable}, "Box", Theme.key_chats_archiveIcon));
 
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_unarchiveDrawable}, "Arrow1", Theme.key_chats_archiveIcon));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_unarchiveDrawable}, "Arrow2", Theme.key_chats_archivePinBackground));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_unarchiveDrawable}, "Box2", Theme.key_chats_archiveIcon));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_unarchiveDrawable}, "Box1", Theme.key_chats_archiveIcon));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_unarchiveDrawable}, "Arrow1", Theme.key_chats_archiveIcon));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_unarchiveDrawable}, "Arrow2", Theme.key_chats_archivePinBackground));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_unarchiveDrawable}, "Box2", Theme.key_chats_archiveIcon));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{DialogCell.class}, new RLottieDrawable[]{Theme.dialogs_unarchiveDrawable}, "Box1", Theme.key_chats_archiveIcon));
 
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{UserCell.class}, new String[]{"nameTextView"}, null, null, null, Theme.key_windowBackgroundWhiteBlackText));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{UserCell.class}, new String[]{"statusColor"}, null, null, cellDelegate, Theme.key_windowBackgroundWhiteGrayText));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{UserCell.class}, new String[]{"statusOnlineColor"}, null, null, cellDelegate, Theme.key_windowBackgroundWhiteBlueText));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{UserCell.class}, new String[]{"nameTextView"}, null, null, null, Theme.key_windowBackgroundWhiteBlackText));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{UserCell.class}, new String[]{"statusColor"}, null, null, cellDelegate, Theme.key_windowBackgroundWhiteGrayText));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{UserCell.class}, new String[]{"statusOnlineColor"}, null, null, cellDelegate, Theme.key_windowBackgroundWhiteBlueText));
 
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{TextCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteBlueText4));
-                arrayList.add(new ThemeDescription(viewPages[a].listView, 0, new Class[]{TextCell.class}, new String[]{"imageView"}, null, null, null, Theme.key_windowBackgroundWhiteBlueText4));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{TextCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteBlueText4));
+                arrayList.add(new ThemeDescription(viewPage.listView, 0, new Class[]{TextCell.class}, new String[]{"imageView"}, null, null, null, Theme.key_windowBackgroundWhiteBlueText4));
 
-                arrayList.add(new ThemeDescription(viewPages[a].progressView, ThemeDescription.FLAG_PROGRESSBAR, null, null, null, null, Theme.key_progressCircle));
+                arrayList.add(new ThemeDescription(viewPage.progressView, ThemeDescription.FLAG_PROGRESSBAR, null, null, null, null, Theme.key_progressCircle));
 
-                ViewPager pager = viewPages[a].dialogsAdapter.getArchiveHintCellPager();
+                ViewPager pager = viewPage.dialogsAdapter.getArchiveHintCellPager();
                 arrayList.add(new ThemeDescription(pager, 0, new Class[]{ArchiveHintInnerCell.class}, new String[]{"imageView"}, null, null, null, Theme.key_chats_nameMessage_threeLines));
                 arrayList.add(new ThemeDescription(pager, 0, new Class[]{ArchiveHintInnerCell.class}, new String[]{"imageView2"}, null, null, null, Theme.key_chats_unreadCounter));
                 arrayList.add(new ThemeDescription(pager, 0, new Class[]{ArchiveHintInnerCell.class}, new String[]{"headerTextView"}, null, null, null, Theme.key_chats_nameMessage_threeLines));
@@ -6761,29 +6757,29 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         arrayList.add(new ThemeDescription(fragmentView, ThemeDescription.FLAG_BACKGROUND | ThemeDescription.FLAG_CHECKTAG, new Class[]{FragmentContextView.class}, new String[]{"frameLayout"}, null, null, null, Theme.key_returnToCallBackground));
         arrayList.add(new ThemeDescription(fragmentView, ThemeDescription.FLAG_TEXTCOLOR | ThemeDescription.FLAG_CHECKTAG, new Class[]{FragmentContextView.class}, new String[]{"titleTextView"}, null, null, null, Theme.key_returnToCallText));
 
-        for (int a = 0; a < undoView.length; a++) {
-            arrayList.add(new ThemeDescription(undoView[a], ThemeDescription.FLAG_BACKGROUNDFILTER, null, null, null, null, Theme.key_undo_background));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"undoImageView"}, null, null, null, Theme.key_undo_cancelColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"undoTextView"}, null, null, null, Theme.key_undo_cancelColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"infoTextView"}, null, null, null, Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"subinfoTextView"}, null, null, null, Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"textPaint"}, null, null, null, Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"progressPaint"}, null, null, null, Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "info1", Theme.key_undo_background));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "info2", Theme.key_undo_background));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc12", Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc11", Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc10", Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc9", Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc8", Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc7", Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc6", Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc5", Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc4", Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc3", Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc2", Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc1", Theme.key_undo_infoColor));
-            arrayList.add(new ThemeDescription(undoView[a], 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Oval", Theme.key_undo_infoColor));
+        for (UndoView view : undoView) {
+            arrayList.add(new ThemeDescription(view, ThemeDescription.FLAG_BACKGROUNDFILTER, null, null, null, null, Theme.key_undo_background));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"undoImageView"}, null, null, null, Theme.key_undo_cancelColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"undoTextView"}, null, null, null, Theme.key_undo_cancelColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"infoTextView"}, null, null, null, Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"subinfoTextView"}, null, null, null, Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"textPaint"}, null, null, null, Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"progressPaint"}, null, null, null, Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "info1", Theme.key_undo_background));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "info2", Theme.key_undo_background));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc12", Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc11", Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc10", Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc9", Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc8", Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc7", Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc6", Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc5", Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc4", Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc3", Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc2", Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "luc1", Theme.key_undo_infoColor));
+            arrayList.add(new ThemeDescription(view, 0, new Class[]{UndoView.class}, new String[]{"leftImageView"}, "Oval", Theme.key_undo_infoColor));
         }
 
         arrayList.add(new ThemeDescription(null, 0, null, null, null, null, Theme.key_dialogBackground));

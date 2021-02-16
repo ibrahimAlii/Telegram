@@ -139,8 +139,8 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
             statusDrawables[2] = new SendingFileDrawable(false);
             statusDrawables[3] = new PlayingGameDrawable(false);
             statusDrawables[4] = new RoundStatusDrawable(false);
-            for (int a = 0; a < statusDrawables.length; a++) {
-                statusDrawables[a].setIsChat(chat != null);
+            for (StatusDrawable statusDrawable : statusDrawables) {
+                statusDrawable.setIsChat(chat != null);
             }
         }
     }
@@ -323,8 +323,8 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
             }
         } else {
             subtitleTextView.setLeftDrawable(null);
-            for (int a = 0; a < statusDrawables.length; a++) {
-                statusDrawables[a].stop();
+            for (StatusDrawable statusDrawable : statusDrawables) {
+                statusDrawable.stop();
             }
         }
     }

@@ -203,7 +203,7 @@ public class DataAutoDownloadActivity extends BaseFragment {
                 } else {
                     DownloadController.getInstance(currentAccount).currentRoamingPreset = currentPresetNum;
                 }
-                editor.commit();
+                editor.apply();
 
                 cell.setChecked(!checked);
                 DownloadController.getInstance(currentAccount).checkAutodownloadSettings();
@@ -279,7 +279,7 @@ public class DataAutoDownloadActivity extends BaseFragment {
                     } else {
                         DownloadController.getInstance(currentAccount).currentRoamingPreset = currentPresetNum;
                     }
-                    editor.commit();
+                    editor.apply();
 
                     cell.setChecked(!checked);
                     RecyclerView.ViewHolder holder = listView.findContainingViewHolder(view);
@@ -326,15 +326,15 @@ public class DataAutoDownloadActivity extends BaseFragment {
                         } else if (a == 3) {
                             cells[a].setTextAndCheck(LocaleController.getString("AutodownloadChannels", R.string.AutodownloadChannels), (currentPreset.mask[DownloadController.PRESET_NUM_CHANNEL] & type) != 0, position != photosRow);
                         }
-                        cells[a].setBackgroundDrawable(Theme.getSelectorDrawable(false));
+                        cells[a].setBackground(Theme.getSelectorDrawable(false));
                         cells[a].setOnClickListener(v -> {
                             if (!v.isEnabled()) {
                                 return;
                             }
                             checkBoxCell.setChecked(!checkBoxCell.isChecked());
                             boolean hasAny = false;
-                            for (int b = 0; b < cells.length; b++) {
-                                if (cells[b].isChecked()) {
+                            for (TextCheckBoxCell textCheckBoxCell : cells) {
+                                if (textCheckBoxCell.isChecked()) {
                                     hasAny = true;
                                     break;
                                 }
@@ -410,7 +410,7 @@ public class DataAutoDownloadActivity extends BaseFragment {
                         Drawable drawable = Theme.getThemedDrawable(getParentActivity(), R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow);
                         CombinedDrawable combinedDrawable = new CombinedDrawable(new ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray)), drawable);
                         combinedDrawable.setFullsize(true);
-                        infoCell.setBackgroundDrawable(combinedDrawable);
+                        infoCell.setBackground(combinedDrawable);
                         linearLayout.addView(infoCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
                         if (position == videosRow) {
@@ -432,8 +432,8 @@ public class DataAutoDownloadActivity extends BaseFragment {
                     }
                     if (position == videosRow) {
                         boolean hasAny = false;
-                        for (int b = 0; b < cells.length; b++) {
-                            if (cells[b].isChecked()) {
+                        for (TextCheckBoxCell textCheckBoxCell : cells) {
+                            if (textCheckBoxCell.isChecked()) {
                                 hasAny = true;
                                 break;
                             }
@@ -508,7 +508,7 @@ public class DataAutoDownloadActivity extends BaseFragment {
                         } else {
                             DownloadController.getInstance(currentAccount).currentRoamingPreset = currentPresetNum;
                         }
-                        editor.commit();
+                        editor.apply();
                         builder.getDismissRunnable().run();
 
                         RecyclerView.ViewHolder holder = listView.findContainingViewHolder(view);
@@ -749,12 +749,12 @@ public class DataAutoDownloadActivity extends BaseFragment {
                     TextInfoPrivacyCell view = (TextInfoPrivacyCell) holder.itemView;
                     if (position == typeSectionRow) {
                         view.setText(LocaleController.getString("AutoDownloadAudioInfo", R.string.AutoDownloadAudioInfo));
-                        view.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
+                        view.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                         view.setFixedSize(0);
                         view.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
                     } else if (position == autoDownloadSectionRow) {
                         if (usageHeaderRow == -1) {
-                            view.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+                            view.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                             if (currentType == 0) {
                                 view.setText(LocaleController.getString("AutoDownloadOnMobileDataInfo", R.string.AutoDownloadOnMobileDataInfo));
                             } else if (currentType == 1) {
@@ -764,7 +764,7 @@ public class DataAutoDownloadActivity extends BaseFragment {
                             }
                             view.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
                         } else {
-                            view.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
+                            view.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                             view.setText(null);
                             view.setFixedSize(12);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -829,7 +829,7 @@ public class DataAutoDownloadActivity extends BaseFragment {
                         }
                         SharedPreferences.Editor editor = MessagesController.getMainSettings(currentAccount).edit();
                         editor.putInt(key2, currentPresetNum);
-                        editor.commit();
+                        editor.apply();
                         DownloadController.getInstance(currentAccount).checkAutodownloadSettings();
                         for (int a = 0; a < 3; a++) {
                             RecyclerView.ViewHolder holder = listView.findViewHolderForAdapterPosition(photosRow + a);
@@ -849,7 +849,7 @@ public class DataAutoDownloadActivity extends BaseFragment {
                 }
                 case 5: {
                     view = new TextInfoPrivacyCell(mContext);
-                    view.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+                    view.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                 }
             }
             view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));

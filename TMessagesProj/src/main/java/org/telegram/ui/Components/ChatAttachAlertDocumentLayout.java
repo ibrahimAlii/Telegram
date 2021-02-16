@@ -825,8 +825,7 @@ public class ChatAttachAlertDocumentLayout extends ChatAttachAlert.AttachAlertLa
         }
         currentDir = dir;
         items.clear();
-        for (int a = 0; a < files.length; a++) {
-            File file = files[a];
+        for (File file : files) {
             if (file.getName().indexOf('.') == 0) {
                 continue;
             }
@@ -1086,7 +1085,7 @@ public class ChatAttachAlertDocumentLayout extends ChatAttachAlert.AttachAlertLa
                     Drawable drawable = Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow);
                     CombinedDrawable combinedDrawable = new CombinedDrawable(new ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray)), drawable);
                     combinedDrawable.setFullsize(true);
-                    view.setBackgroundDrawable(combinedDrawable);
+                    view.setBackground(combinedDrawable);
                     break;
                 case 3:
                 default:
@@ -1186,9 +1185,7 @@ public class ChatAttachAlertDocumentLayout extends ChatAttachAlert.AttachAlertLa
                             if (entry.file == null || entry.file.isDirectory()) {
                                 continue;
                             }
-                            for (int b = 0; b < search.length; b++) {
-                                String q = search[b];
-
+                            for (String q : search) {
                                 boolean ok = false;
                                 if (entry.title != null) {
                                     ok = entry.title.toLowerCase().contains(q);

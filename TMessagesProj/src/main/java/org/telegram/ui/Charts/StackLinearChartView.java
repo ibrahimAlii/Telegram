@@ -66,8 +66,8 @@ public class StackLinearChartView<T extends StackLinearViewData> extends BaseCha
                // transitionAlpha = (int) ((1f - transitionParams.progress) * 255);
                 ovalPath.reset();
 
-                float radiusStart = (chartArea.width() > chartArea.height() ? chartArea.width() : chartArea.height());
-                float radiusEnd = (chartArea.width() > chartArea.height() ? chartArea.height() : chartArea.width()) * 0.45f;
+                float radiusStart = (Math.max(chartArea.width(), chartArea.height()));
+                float radiusEnd = (Math.min(chartArea.width(), chartArea.height())) * 0.45f;
                 float radius = radiusEnd + ((radiusStart - radiusEnd) / 2) * (1 - transitionParams.progress);
 
                 RectF rectF = new RectF();

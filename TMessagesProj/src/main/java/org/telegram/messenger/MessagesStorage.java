@@ -10603,8 +10603,8 @@ public class MessagesStorage extends BaseController {
                 if (draftsDialogIds != null) {
                     final ArrayList<Long> unloadedDialogs = new ArrayList<>();
 
-                    for (int i = 0; i < draftsDialogIds.length; i++) {
-                        final int dialogId = (int) draftsDialogIds[i];
+                    for (long draftsDialogId : draftsDialogIds) {
+                        final int dialogId = (int) draftsDialogId;
                         if (dialogId == 0) {
                             continue;
                         }
@@ -10617,8 +10617,8 @@ public class MessagesStorage extends BaseController {
                                 chatsToLoad.add(-dialogId);
                             }
                         }
-                        if (!loadedDialogs.contains(draftsDialogIds[i])) {
-                            unloadedDialogs.add(draftsDialogIds[i]);
+                        if (!loadedDialogs.contains(draftsDialogId)) {
+                            unloadedDialogs.add(draftsDialogId);
                         }
                     }
 
@@ -11449,8 +11449,7 @@ public class MessagesStorage extends BaseController {
                         username = name.substring(usernamePos + 2);
                     }
                     int found = 0;
-                    for (int a = 0; a < search.length; a++) {
-                        String q = search[a];
+                    for (String q : search) {
                         if (name.startsWith(q) || name.contains(" " + q) || tName != null && (tName.startsWith(q) || tName.contains(" " + q))) {
                             found = 1;
                         } else if (username != null && username.startsWith(q)) {

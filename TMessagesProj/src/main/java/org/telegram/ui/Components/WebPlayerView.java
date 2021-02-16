@@ -70,7 +70,6 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -237,8 +236,7 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
                     throw new Exception(String.format("Premature end of parens in %s", expr));
                 }
             }
-            for (int a = 0; a < assign_operators.length; a++) {
-                String func = assign_operators[a];
+            for (String func : assign_operators) {
                 Matcher matcher = Pattern.compile(String.format(Locale.US, "(?x)(%s)(?:\\[([^\\]]+?)\\])?\\s*%s(.*)$", exprName, Pattern.quote(func))).matcher(expr);
                 if (!matcher.find()) {
                     continue;
@@ -301,8 +299,8 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
                 String[] argvals;
                 if (arg_str.length() != 0) {
                     String[] args = arg_str.split(",");
-                    for (int a = 0; a < args.length; a++) {
-                        interpretExpression(args[a], localVars, allowRecursion);
+                    for (String arg : args) {
+                        interpretExpression(arg, localVars, allowRecursion);
                     }
                 }
                 return;
@@ -315,8 +313,7 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
                 return;
             }
 
-            for (int a = 0; a < operators.length; a++) {
-                String func = operators[a];
+            for (String func : operators) {
                 matcher = Pattern.compile(String.format(Locale.US, "(.+?)%s(.+)", Pattern.quote(func))).matcher(expr);
                 if (!matcher.find()) {
                     continue;
@@ -390,13 +387,13 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
 
         private void buildFunction(String[] argNames, String funcCode) throws Exception {
             HashMap<String, String> localVars = new HashMap<>();
-            for (int a = 0; a < argNames.length; a++) {
-                localVars.put(argNames[a], "");
+            for (String argName : argNames) {
+                localVars.put(argName, "");
             }
             String[] stmts = funcCode.split(";");
             boolean[] abort = new boolean[1];
-            for (int a = 0; a < stmts.length; a++) {
-                interpretStatement(stmts[a], localVars, abort, 100);
+            for (String stmt : stmts) {
+                interpretStatement(stmt, localVars, abort, 100);
                 if (abort[0]) {
                     return;
                 }
@@ -552,7 +549,7 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
                                 if (result == null) {
                                     result = new StringBuilder();
                                 }
-                                result.append(new String(data, 0, read, StandardCharsets.UTF_8));
+                                result.append(new String(data, 0, read, "UTF-8"));
                             } else if (read == -1) {
                                 done = true;
                                 break;
@@ -618,8 +615,8 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
             boolean encrypted = false;
             String otherUrl = null;
             String[] extra = new String[]{"", "&el=leanback", "&el=embedded", "&el=detailpage", "&el=vevo"};
-            for (int i = 0; i < extra.length; i++) {
-                String videoInfo = downloadUrlContent(this, "https://www.youtube.com/get_video_info?" + params + extra[i]);
+            for (String s : extra) {
+                String videoInfo = downloadUrlContent(this, "https://www.youtube.com/get_video_info?" + params + s);
                 if (isCancelled()) {
                     return null;
                 }
@@ -628,10 +625,10 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
                 boolean isLive = false;
                 if (videoInfo != null) {
                     String[] args = videoInfo.split("&");
-                    for (int a = 0; a < args.length; a++) {
-                        if (args[a].startsWith("dashmpd")) {
+                    for (String arg : args) {
+                        if (arg.startsWith("dashmpd")) {
                             exists = true;
-                            String[] args2 = args[a].split("=");
+                            String[] args2 = arg.split("=");
                             if (args2.length == 2) {
                                 try {
                                     result[0] = URLDecoder.decode(args2[1], "UTF-8");
@@ -639,8 +636,8 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
                                     FileLog.e(e);
                                 }
                             }
-                        } else if (args[a].startsWith("url_encoded_fmt_stream_map")) {
-                            String[] args2 = args[a].split("=");
+                        } else if (arg.startsWith("url_encoded_fmt_stream_map")) {
+                            String[] args2 = arg.split("=");
                             if (args2.length == 2) {
                                 try {
                                     String[] args3 = URLDecoder.decode(args2[1], "UTF-8").split("[&,]");
@@ -668,15 +665,15 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
                                     FileLog.e(e);
                                 }
                             }
-                        } else if (args[a].startsWith("use_cipher_signature")) {
-                            String[] args2 = args[a].split("=");
+                        } else if (arg.startsWith("use_cipher_signature")) {
+                            String[] args2 = arg.split("=");
                             if (args2.length == 2) {
                                 if (args2[1].toLowerCase().equals("true")) {
                                     encrypted = true;
                                 }
                             }
-                        } else if (args[a].startsWith("hlsvp")) {
-                            String[] args2 = args[a].split("=");
+                        } else if (arg.startsWith("hlsvp")) {
+                            String[] args2 = arg.split("=");
                             if (args2.length == 2) {
                                 try {
                                     hls = URLDecoder.decode(args2[1], "UTF-8");
@@ -684,8 +681,8 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
                                     FileLog.e(e);
                                 }
                             }
-                        } else if (args[a].startsWith("livestream")) {
-                            String[] args2 = args[a].split("=");
+                        } else if (arg.startsWith("livestream")) {
+                            String[] args2 = arg.split("=");
                             if (args2.length == 2) {
                                 if (args2[1].toLowerCase().equals("1")) {
                                     isLive = true;
@@ -774,7 +771,7 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
                                         JSExtractor extractor = new JSExtractor(jsCode);
                                         functionCode = extractor.extractFunction(functionName);
                                         if (!TextUtils.isEmpty(functionCode) && playerId != null) {
-                                            preferences.edit().putString(playerId, functionCode).putString(playerId + "n", functionName).commit();
+                                            preferences.edit().putString(playerId, functionCode).putString(playerId + "n", functionName).apply();
                                         }
                                     } catch (Exception e) {
                                         FileLog.e(e);
@@ -799,7 +796,7 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
                                     } else {
                                         try {
                                             String javascript = "<script>" + functionCodeFinal + "</script>";
-                                            byte[] data = javascript.getBytes(StandardCharsets.UTF_8);
+                                            byte[] data = javascript.getBytes("UTF-8");
                                             final String base64 = Base64.encodeToString(data, Base64.DEFAULT);
                                             webView.loadUrl("data:text/html;charset=utf-8;base64," + base64);
                                         } catch (Exception e) {
@@ -1094,7 +1091,7 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
                 source.setCharAt(a, c == lower ? Character.toUpperCase(c) : lower);
             }
             try {
-                return new String(Base64.decode(source.toString(), Base64.DEFAULT), StandardCharsets.UTF_8);
+                return new String(Base64.decode(source.toString(), Base64.DEFAULT), "UTF-8");
             } catch (Exception ignore) {
                 return null;
             }

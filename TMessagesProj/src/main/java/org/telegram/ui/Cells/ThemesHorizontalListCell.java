@@ -234,9 +234,10 @@ public class ThemesHorizontalListCell extends RecyclerListView implements Notifi
                                     mode = mode.toLowerCase();
                                     String[] modes = mode.split(" ");
                                     if (modes != null && modes.length > 0) {
-                                        for (int b = 0; b < modes.length; b++) {
-                                            if ("blur".equals(modes[b])) {
+                                        for (String s : modes) {
+                                            if ("blur".equals(s)) {
                                                 themeInfo.isBlured = true;
+                                                break;
                                             }
                                         }
                                     }
@@ -370,7 +371,7 @@ public class ThemesHorizontalListCell extends RecyclerListView implements Notifi
             } else if (themeInfo.previewWallpaperOffset > 0 || themeInfo.pathToWallpaper != null) {
                 Bitmap wallpaper = getScaledBitmap(AndroidUtilities.dp(76), AndroidUtilities.dp(97), themeInfo.pathToWallpaper, themeInfo.pathToFile, themeInfo.previewWallpaperOffset);
                 if (wallpaper != null) {
-                    backgroundDrawable = new BitmapDrawable(wallpaper);
+                    backgroundDrawable = new BitmapDrawable(ApplicationLoader.applicationContext.getResources(), wallpaper);
                     bitmapShader = new BitmapShader(wallpaper, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
                     bitmapPaint.setShader(bitmapShader);
                     int[] colors = AndroidUtilities.calcDrawableColor(backgroundDrawable);
@@ -722,7 +723,7 @@ public class ThemesHorizontalListCell extends RecyclerListView implements Notifi
         if (currentType != ThemeActivity.THEME_TYPE_OTHER) {
             SharedPreferences.Editor editor = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE).edit();
             editor.putString(currentType == ThemeActivity.THEME_TYPE_NIGHT || themeInfo.isDark() ? "lastDarkTheme" : "lastDayTheme", themeInfo.getKey());
-            editor.commit();
+            editor.apply();
         }
         if (currentType == ThemeActivity.THEME_TYPE_NIGHT) {
             if (themeInfo == Theme.getCurrentNightTheme()) {

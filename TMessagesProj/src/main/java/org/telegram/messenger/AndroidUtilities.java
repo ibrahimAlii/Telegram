@@ -78,6 +78,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
@@ -368,11 +369,11 @@ public class AndroidUtilities {
 
     private static String makeUrl(String url, String[] prefixes, Matcher matcher) {
         boolean hasPrefix = false;
-        for (int i = 0; i < prefixes.length; i++) {
-            if (url.regionMatches(true, 0, prefixes[i], 0, prefixes[i].length())) {
+        for (String prefix : prefixes) {
+            if (url.regionMatches(true, 0, prefix, 0, prefix.length())) {
                 hasPrefix = true;
-                if (!url.regionMatches(false, 0, prefixes[i], 0, prefixes[i].length())) {
-                    url = prefixes[i] + url.substring(prefixes[i].length());
+                if (!url.regionMatches(false, 0, prefix, 0, prefix.length())) {
+                    url = prefix + url.substring(prefix.length());
                 }
                 break;
             }
@@ -409,10 +410,7 @@ public class AndroidUtilities {
         if (start == 0) {
             return true;
         }
-        if (s.charAt(start - 1) == '@') {
-            return false;
-        }
-        return true;
+        return s.charAt(start - 1) != '@';
     };
 
     public static boolean addLinks(Spannable text, int mask) {
@@ -442,8 +440,8 @@ public class AndroidUtilities {
             LinkSpec link = links.get(a);
             URLSpan[] oldSpans = text.getSpans(link.start, link.end, URLSpan.class);
             if (oldSpans != null && oldSpans.length > 0) {
-                for (int b = 0; b < oldSpans.length; b++) {
-                    text.removeSpan(oldSpans[b]);
+                for (URLSpan oldSpan : oldSpans) {
+                    text.removeSpan(oldSpan);
                 }
             }
             text.setSpan(new URLSpan(link.url), link.start, link.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -515,7 +513,7 @@ public class AndroidUtilities {
                 color = 1;
             } else if (name.contains(".pdf") || name.contains(".ppt") || name.contains(".key")) {
                 color = 2;
-            } else if (name.contains(".zip") || name.contains(".rar") || name.contains(".ai") || name.contains(".mp3")  || name.contains(".mov") || name.contains(".avi")) {
+            } else if (name.contains(".zip") || name.contains(".rar") || name.contains(".ai") || name.contains(".mp3") || name.contains(".mov") || name.contains(".avi")) {
                 color = 3;
             }
             if (color == -1) {
@@ -825,37 +823,35 @@ public class AndroidUtilities {
         }
         try {
             prevOrientation = activity.getRequestedOrientation();
-            WindowManager manager = (WindowManager) activity.getSystemService(Activity.WINDOW_SERVICE);
-            if (manager != null && manager.getDefaultDisplay() != null) {
-                int rotation = manager.getDefaultDisplay().getRotation();
-                int orientation = activity.getResources().getConfiguration().orientation;
+            int rotation = ApplicationLoader.applicationContext.getDisplay().getRotation();
+            int orientation = activity.getResources().getConfiguration().orientation;
 
-                if (rotation == Surface.ROTATION_270) {
-                    if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                    } else {
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-                    }
-                } else if (rotation == Surface.ROTATION_90) {
-                    if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
-                    } else {
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    }
-                } else if (rotation == Surface.ROTATION_0) {
-                    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    } else {
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                    }
+            if (rotation == Surface.ROTATION_270) {
+                if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 } else {
-                    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-                    } else {
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
-                    }
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                }
+            } else if (rotation == Surface.ROTATION_90) {
+                if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+                } else {
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                }
+            } else if (rotation == Surface.ROTATION_0) {
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                } else {
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+            } else {
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                } else {
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
                 }
             }
+
         } catch (Exception e) {
             FileLog.e(e);
         }
@@ -900,8 +896,8 @@ public class AndroidUtilities {
             String nameEncoding = null;
             String nameCharset = "UTF-8";
             String[] params = valueType.split(";");
-            for (int a = 0; a < params.length; a++) {
-                String[] args2 = params[a].split("=");
+            for (String param : params) {
+                String[] args2 = param.split("=");
                 if (args2.length != 2) {
                     continue;
                 }
@@ -949,8 +945,8 @@ public class AndroidUtilities {
             String nameEncoding = null;
             String nameCharset = "UTF-8";
             String[] params = valueType.split(";");
-            for (int a = 0; a < params.length; a++) {
-                String[] args2 = params[a].split("=");
+            for (String param : params) {
+                String[] args2 = param.split("=");
                 if (args2.length != 2) {
                     continue;
                 }
@@ -1023,11 +1019,11 @@ public class AndroidUtilities {
                 }
             } else {
                 String[] args = value.split(";");
-                for (int a = 0; a < args.length; a++) {
-                    if (args[a].indexOf('=') >= 0) {
+                for (String arg : args) {
+                    if (arg.indexOf('=') >= 0) {
                         continue;
                     }
-                    value = args[a];
+                    value = arg;
                 }
                 return value;
             }
@@ -1055,11 +1051,11 @@ public class AndroidUtilities {
                 value = args[0];
             } else {
                 String[] args = value.split(";");
-                for (int a = 0; a < args.length; a++) {
-                    if (args[a].indexOf('=') >= 0) {
+                for (String arg : args) {
+                    if (arg.indexOf('=') >= 0) {
                         continue;
                     }
-                    value = args[a];
+                    value = arg;
                 }
                 if (value.startsWith("X-")) {
                     value = value.substring(2);
@@ -1115,7 +1111,7 @@ public class AndroidUtilities {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
             String line;
             String originalLine;
-            String pendingLine = null;
+            StringBuilder pendingLine = null;
             boolean currentIsPhoto = false;
             VcardItem currentItem = null;
             while ((originalLine = line = bufferedReader.readLine()) != null) {
@@ -1181,12 +1177,12 @@ public class AndroidUtilities {
                     }
                 }
                 if (pendingLine != null) {
-                    pendingLine += line;
-                    line = pendingLine;
+                    pendingLine.append(line);
+                    line = pendingLine.toString();
                     pendingLine = null;
                 }
                 if (line.contains("=QUOTED-PRINTABLE") && line.endsWith("=")) {
-                    pendingLine = line.substring(0, line.length() - 1);
+                    pendingLine = new StringBuilder(line.substring(0, line.length() - 1));
                     continue;
                 }
                 if (!currentIsPhoto && currentData != null && currentItem != null) {
@@ -1457,16 +1453,16 @@ public class AndroidUtilities {
         if (Build.VERSION.SDK_INT >= 19) {
             File[] dirs = ApplicationLoader.applicationContext.getExternalFilesDirs(null);
             if (dirs != null) {
-                for (int a = 0; a < dirs.length; a++) {
-                    if (dirs[a] == null) {
+                for (File dir : dirs) {
+                    if (dir == null) {
                         continue;
                     }
-                    String path = dirs[a].getAbsolutePath();
+                    String path = dir.getAbsolutePath();
 
                     if (result == null) {
                         result = new ArrayList<>();
                     }
-                    result.add(dirs[a]);
+                    result.add(dir);
                 }
             }
         }
@@ -1474,7 +1470,7 @@ public class AndroidUtilities {
             result = new ArrayList<>();
         }
         if (result.isEmpty()) {
-            result.add(Environment.getExternalStorageDirectory());
+            result.add(ApplicationLoader.applicationContext.getExternalFilesDir(null));
         }
         return result;
     }
@@ -1484,11 +1480,11 @@ public class AndroidUtilities {
         if (Build.VERSION.SDK_INT >= 19) {
             File[] dirs = ApplicationLoader.applicationContext.getExternalFilesDirs(null);
             if (dirs != null) {
-                for (int a = 0; a < dirs.length; a++) {
-                    if (dirs[a] == null) {
+                for (File dir : dirs) {
+                    if (dir == null) {
                         continue;
                     }
-                    String path = dirs[a].getAbsolutePath();
+                    String path = dir.getAbsolutePath();
                     int idx = path.indexOf("/Android");
                     if (idx >= 0) {
                         if (result == null) {
@@ -1503,7 +1499,7 @@ public class AndroidUtilities {
             result = new ArrayList<>();
         }
         if (result.isEmpty()) {
-            result.add(Environment.getExternalStorageDirectory());
+            result.add(ApplicationLoader.applicationContext.getExternalFilesDir(null));
         }
         return result;
     }
@@ -1522,9 +1518,9 @@ public class AndroidUtilities {
                     File[] dirs = ApplicationLoader.applicationContext.getExternalCacheDirs();
                     file = dirs[0];
                     if (!TextUtils.isEmpty(SharedConfig.storageCacheDir)) {
-                        for (int a = 0; a < dirs.length; a++) {
-                            if (dirs[a] != null && dirs[a].getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
-                                file = dirs[a];
+                        for (File dir : dirs) {
+                            if (dir != null && dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
+                                file = dir;
                                 break;
                             }
                         }
@@ -1603,10 +1599,16 @@ public class AndroidUtilities {
             usingHardwareInput = configuration.keyboard != Configuration.KEYBOARD_NOKEYS && configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO;
             WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
             if (manager != null) {
-                Display display = manager.getDefaultDisplay();
+                Display display = ApplicationLoader.applicationContext.getDisplay();
                 if (display != null) {
-                    display.getMetrics(displayMetrics);
-                    display.getSize(displaySize);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        display.getMetrics(displayMetrics);
+                        display.getSize(displaySize);
+                    } else {
+                        manager.getDefaultDisplay().getMetrics(displayMetrics);
+                        manager.getDefaultDisplay().getSize(displaySize);
+                    }
+
                     screenRefreshRate = display.getRefreshRate();
                 }
             }
@@ -1651,9 +1653,9 @@ public class AndroidUtilities {
             String lang = null;
             String[] availableLangs = new String[]{"ru_RU", "tr_TR"};
             LocaleController.LocaleInfo localeInfo = LocaleController.getInstance().getCurrentLocaleInfo();
-            for (int a = 0; a < availableLangs.length; a++) {
-                if (availableLangs[a].toLowerCase().contains(localeInfo.shortName)) {
-                    lang = availableLangs[a];
+            for (String availableLang : availableLangs) {
+                if (availableLang.toLowerCase().contains(localeInfo.shortName)) {
+                    lang = availableLang;
                 }
             }
             if (lang == null) {
@@ -1828,8 +1830,7 @@ public class AndroidUtilities {
         phone = PhoneFormat.stripExceptNumbers(phone);
         int checkStart = 0;
         int index;
-        for (int a = 0; a < args.length; a++) {
-            String arg = args[a];
+        for (String arg : args) {
             if (!TextUtils.isEmpty(arg)) {
                 if ((index = phone.indexOf(arg, checkStart)) == -1) {
                     return false;
@@ -1850,7 +1851,7 @@ public class AndroidUtilities {
         try {
             if (Build.VERSION.SDK_INT >= 23) {
                 WindowInsets insets = view.getRootWindowInsets();
-                return insets != null ? insets.getStableInsetBottom() : 0;
+                return insets != null ? insets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).bottom : 0;
             } else {
                 if (mAttachInfoField == null) {
                     mAttachInfoField = View.class.getDeclaredField("mAttachInfo");
@@ -1877,14 +1878,14 @@ public class AndroidUtilities {
         try {
             WindowManager windowManager = (WindowManager) ApplicationLoader.applicationContext.getSystemService(Context.WINDOW_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                windowManager.getDefaultDisplay().getRealSize(size);
+                ApplicationLoader.applicationContext.getDisplay().getRealSize(size);
             } else {
                 try {
                     Method mGetRawW = Display.class.getMethod("getRawWidth");
                     Method mGetRawH = Display.class.getMethod("getRawHeight");
-                    size.set((Integer) mGetRawW.invoke(windowManager.getDefaultDisplay()), (Integer) mGetRawH.invoke(windowManager.getDefaultDisplay()));
+                    size.set((Integer) mGetRawW.invoke(ApplicationLoader.applicationContext.getDisplay()), (Integer) mGetRawH.invoke(ApplicationLoader.applicationContext.getDisplay()));
                 } catch (Exception e) {
-                    size.set(windowManager.getDefaultDisplay().getWidth(), windowManager.getDefaultDisplay().getHeight());
+                    size.set(windowManager.getCurrentWindowMetrics().getBounds().width(), windowManager.getCurrentWindowMetrics().getBounds().height());
                     FileLog.e(e);
                 }
             }
@@ -2198,6 +2199,7 @@ public class AndroidUtilities {
     }
 
     private static long lastUpdateCheckTime;
+
     public static void checkForUpdates() {
         try {
             if (BuildVars.DEBUG_VERSION) {
@@ -2561,8 +2563,7 @@ public class AndroidUtilities {
                 return String.format(Locale.US, "%d:%02d:%02d / %02d:%02d", ph, pm, ps, m, s);
             } else if (ph == 0) {
                 return String.format(Locale.US, "%02d:%02d / %d:%02d:%02d", pm, ps, h, m, s);
-            }
-            else {
+            } else {
                 return String.format(Locale.US, "%d:%02d:%02d / %d:%02d:%02d", ph, pm, ps, h, m, s);
             }
         }
@@ -2612,7 +2613,7 @@ public class AndroidUtilities {
         if (num_ < 0.1) {
             return "0";
         } else {
-            if ((num_ * 10)== (int) (num_ * 10)) {
+            if ((num_ * 10) == (int) (num_ * 10)) {
                 return String.format(Locale.ENGLISH, "%s%s", AndroidUtilities.formatCount((int) num_), numbersSignatureArray[count]);
             } else {
                 return String.format(Locale.ENGLISH, "%.1f%s", (int) (num_ * 10) / 10f, numbersSignatureArray[count]);
@@ -3132,7 +3133,7 @@ public class AndroidUtilities {
                 editor.putString("proxy_secret", secret);
                 info = new SharedConfig.ProxyInfo(address, p, "", "", secret);
             }
-            editor.commit();
+            editor.apply();
 
             SharedConfig.currentProxy = SharedConfig.addProxy(info);
 
@@ -3307,7 +3308,7 @@ public class AndroidUtilities {
         hsb[1] = Math.min(1.0f, hsb[1] + 0.05f);
         if (hsb[2] > 0.5f) {
             hsb[2] = Math.max(0.0f, hsb[2] * 0.90f);
-        } else{
+        } else {
             hsb[2] = Math.max(0.0f, hsb[2] * 0.90f);
         }
         return HSBtoRGB(hsb[0], hsb[1], hsb[2]) | 0xff000000;
@@ -3480,15 +3481,15 @@ public class AndroidUtilities {
         return "";
     }
 
-    private static char[] characters = new char[] {' ', '!', '"', '#', '%', '&', '\'', '(', ')', '*', ',', '-', '.', '/', ':', ';', '?', '@', '[', '\\', ']', '_', '{', '}', '¡', '§', '«', '¶', '·', '»', '¿', ';', '·', '՚', '՛', '՜', '՝', '՞', '՟', '։', '֊', '־', '׀', '׃', '׆', '׳', '״', '؉', '؊', '،', '؍', '؛', '؞', '؟', '٪', '٫', '٬', '٭', '۔', '܀', '܁', '܂', '܃', '܄', '܅', '܆', '܇', '܈', '܉', '܊', '܋', '܌', '܍', '߷', '߸', '߹', '࠰', '࠱', '࠲', '࠳', '࠴', '࠵', '࠶', '࠷', '࠸', '࠹', '࠺', '࠻', '࠼', '࠽', '࠾', '࡞', '।', '॥', '॰', '৽', '੶', '૰', '౷', '಄', '෴', '๏', '๚', '๛', '༄', '༅', '༆', '༇', '༈', '༉', '༊', '་', '༌', '།', '༎', '༏', '༐', '༑', '༒', '༔', '༺', '༻', '༼', '༽', '྅', '࿐', '࿑', '࿒', '࿓', '࿔', '࿙', '࿚', '၊', '။', '၌', '၍', '၎', '၏', '჻', '፠', '፡', '።', '፣', '፤', '፥', '፦', '፧', '፨', '᐀', '᙮', '᚛', '᚜', '᛫', '᛬', '᛭', '᜵', '᜶', '។', '៕', '៖', '៘', '៙', '៚', '᠀', '᠁', '᠂', '᠃', '᠄', '᠅', '᠆', '᠇', '᠈', '᠉', '᠊', '᥄', '᥅', '᨞', '᨟', '᪠', '᪡', '᪢', '᪣', '᪤', '᪥', '᪦', '᪨', '᪩', '᪪', '᪫', '᪬', '᪭', '᭚', '᭛', '᭜', '᭝', '᭞', '᭟', '᭠', '᯼', '᯽', '᯾', '᯿', '᰻', '᰼', '᰽', '᰾', '᰿', '᱾', '᱿', '᳀', '᳁', '᳂', '᳃', '᳄', '᳅', '᳆', '᳇', '᳓', '‐', '‑', '‒', '–', '—', '―', '‖', '‗', '‘', '’', '‚', '‛', '“', '”', '„', '‟', '†', '‡', '•', '‣', '․', '‥', '…', '‧', '‰', '‱', '′', '″', '‴', '‵', '‶', '‷', '‸', '‹', '›', '※', '‼', '‽', '‾', '‿', '⁀', '⁁', '⁂', '⁃', '⁅', '⁆', '⁇', '⁈', '⁉', '⁊', '⁋', '⁌', '⁍', '⁎', '⁏', '⁐', '⁑', '⁓', '⁔', '⁕', '⁖', '⁗', '⁘', '⁙', '⁚', '⁛', '⁜', '⁝', '⁞', '⁽', '⁾', '₍', '₎', '⌈', '⌉', '⌊', '⌋', '〈', '〉', '❨', '❩', '❪', '❫', '❬', '❭', '❮', '❯', '❰', '❱', '❲', '❳', '❴', '❵', '⟅', '⟆', '⟦', '⟧', '⟨', '⟩', '⟪', '⟫', '⟬', '⟭', '⟮', '⟯', '⦃', '⦄', '⦅', '⦆', '⦇', '⦈', '⦉', '⦊', '⦋', '⦌', '⦍', '⦎', '⦏', '⦐', '⦑', '⦒', '⦓', '⦔', '⦕', '⦖', '⦗', '⦘', '⧘', '⧙', '⧚', '⧛', '⧼', '⧽', '⳹', '⳺', '⳻', '⳼', '⳾', '⳿', '⵰', '⸀', '⸁', '⸂', '⸃', '⸄', '⸅', '⸆', '⸇', '⸈', '⸉', '⸊', '⸋', '⸌', '⸍', '⸎', '⸏', '⸐', '⸑', '⸒', '⸓', '⸔', '⸕', '⸖', '⸗', '⸘', '⸙', '⸚', '⸛', '⸜', '⸝', '⸞', '⸟', '⸠', '⸡', '⸢', '⸣', '⸤', '⸥', '⸦', '⸧', '⸨', '⸩', '⸪', '⸫', '⸬', '⸭', '⸮', '⸰', '⸱', '⸲', '⸳', '⸴', '⸵', '⸶', '⸷', '⸸', '⸹', '⸺', '⸻', '⸼', '⸽', '⸾', '⸿', '⹀', '⹁', '⹂', '⹃', '⹄', '⹅', '⹆', '⹇', '⹈', '⹉', '⹊', '⹋', '⹌', '⹍', '⹎', '⹏', '、', '。', '〃', '〈', '〉', '《', '》', '「', '」', '『', '』', '【', '】', '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〜', '〝', '〞', '〟', '〰', '〽', '゠', '・', '꓾', '꓿', '꘍', '꘎', '꘏', '꙳', '꙾', '꛲', '꛳', '꛴', '꛵', '꛶', '꛷', '꡴', '꡵', '꡶', '꡷', '꣎', '꣏', '꣸', '꣹', '꣺', '꣼', '꤮', '꤯', '꥟', '꧁', '꧂', '꧃', '꧄', '꧅', '꧆', '꧇', '꧈', '꧉', '꧊', '꧋', '꧌', '꧍', '꧞', '꧟', '꩜', '꩝', '꩞', '꩟', '꫞', '꫟', '꫰', '꫱', '꯫', '﴾', '﴿', '︐', '︑', '︒', '︓', '︔', '︕', '︖', '︗', '︘', '︙', '︰', '︱', '︲', '︳', '︴', '︵', '︶', '︷', '︸', '︹', '︺', '︻', '︼', '︽', '︾', '︿', '﹀', '﹁', '﹂', '﹃', '﹄', '﹅', '﹆', '﹇', '﹈', '﹉', '﹊', '﹋', '﹌', '﹍', '﹎', '﹏', '﹐', '﹑', '﹒', '﹔', '﹕', '﹖', '﹗', '﹘', '﹙', '﹚', '﹛', '﹜', '﹝', '﹞', '﹟', '﹠', '﹡', '﹣', '﹨', '﹪', '﹫', '！', '＂', '＃', '％', '＆', '＇', '（', '）', '＊', '，', '－', '．', '／', '：', '；', '？', '＠', '［', '＼', '］', '＿', '｛', '｝', '｟', '｠', '｡', '｢', '｣', '､', '･'};
+    private static char[] characters = new char[]{' ', '!', '"', '#', '%', '&', '\'', '(', ')', '*', ',', '-', '.', '/', ':', ';', '?', '@', '[', '\\', ']', '_', '{', '}', '¡', '§', '«', '¶', '·', '»', '¿', ';', '·', '՚', '՛', '՜', '՝', '՞', '՟', '։', '֊', '־', '׀', '׃', '׆', '׳', '״', '؉', '؊', '،', '؍', '؛', '؞', '؟', '٪', '٫', '٬', '٭', '۔', '܀', '܁', '܂', '܃', '܄', '܅', '܆', '܇', '܈', '܉', '܊', '܋', '܌', '܍', '߷', '߸', '߹', '࠰', '࠱', '࠲', '࠳', '࠴', '࠵', '࠶', '࠷', '࠸', '࠹', '࠺', '࠻', '࠼', '࠽', '࠾', '࡞', '।', '॥', '॰', '৽', '੶', '૰', '౷', '಄', '෴', '๏', '๚', '๛', '༄', '༅', '༆', '༇', '༈', '༉', '༊', '་', '༌', '།', '༎', '༏', '༐', '༑', '༒', '༔', '༺', '༻', '༼', '༽', '྅', '࿐', '࿑', '࿒', '࿓', '࿔', '࿙', '࿚', '၊', '။', '၌', '၍', '၎', '၏', '჻', '፠', '፡', '።', '፣', '፤', '፥', '፦', '፧', '፨', '᐀', '᙮', '᚛', '᚜', '᛫', '᛬', '᛭', '᜵', '᜶', '។', '៕', '៖', '៘', '៙', '៚', '᠀', '᠁', '᠂', '᠃', '᠄', '᠅', '᠆', '᠇', '᠈', '᠉', '᠊', '᥄', '᥅', '᨞', '᨟', '᪠', '᪡', '᪢', '᪣', '᪤', '᪥', '᪦', '᪨', '᪩', '᪪', '᪫', '᪬', '᪭', '᭚', '᭛', '᭜', '᭝', '᭞', '᭟', '᭠', '᯼', '᯽', '᯾', '᯿', '᰻', '᰼', '᰽', '᰾', '᰿', '᱾', '᱿', '᳀', '᳁', '᳂', '᳃', '᳄', '᳅', '᳆', '᳇', '᳓', '‐', '‑', '‒', '–', '—', '―', '‖', '‗', '‘', '’', '‚', '‛', '“', '”', '„', '‟', '†', '‡', '•', '‣', '․', '‥', '…', '‧', '‰', '‱', '′', '″', '‴', '‵', '‶', '‷', '‸', '‹', '›', '※', '‼', '‽', '‾', '‿', '⁀', '⁁', '⁂', '⁃', '⁅', '⁆', '⁇', '⁈', '⁉', '⁊', '⁋', '⁌', '⁍', '⁎', '⁏', '⁐', '⁑', '⁓', '⁔', '⁕', '⁖', '⁗', '⁘', '⁙', '⁚', '⁛', '⁜', '⁝', '⁞', '⁽', '⁾', '₍', '₎', '⌈', '⌉', '⌊', '⌋', '〈', '〉', '❨', '❩', '❪', '❫', '❬', '❭', '❮', '❯', '❰', '❱', '❲', '❳', '❴', '❵', '⟅', '⟆', '⟦', '⟧', '⟨', '⟩', '⟪', '⟫', '⟬', '⟭', '⟮', '⟯', '⦃', '⦄', '⦅', '⦆', '⦇', '⦈', '⦉', '⦊', '⦋', '⦌', '⦍', '⦎', '⦏', '⦐', '⦑', '⦒', '⦓', '⦔', '⦕', '⦖', '⦗', '⦘', '⧘', '⧙', '⧚', '⧛', '⧼', '⧽', '⳹', '⳺', '⳻', '⳼', '⳾', '⳿', '⵰', '⸀', '⸁', '⸂', '⸃', '⸄', '⸅', '⸆', '⸇', '⸈', '⸉', '⸊', '⸋', '⸌', '⸍', '⸎', '⸏', '⸐', '⸑', '⸒', '⸓', '⸔', '⸕', '⸖', '⸗', '⸘', '⸙', '⸚', '⸛', '⸜', '⸝', '⸞', '⸟', '⸠', '⸡', '⸢', '⸣', '⸤', '⸥', '⸦', '⸧', '⸨', '⸩', '⸪', '⸫', '⸬', '⸭', '⸮', '⸰', '⸱', '⸲', '⸳', '⸴', '⸵', '⸶', '⸷', '⸸', '⸹', '⸺', '⸻', '⸼', '⸽', '⸾', '⸿', '⹀', '⹁', '⹂', '⹃', '⹄', '⹅', '⹆', '⹇', '⹈', '⹉', '⹊', '⹋', '⹌', '⹍', '⹎', '⹏', '、', '。', '〃', '〈', '〉', '《', '》', '「', '」', '『', '』', '【', '】', '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〜', '〝', '〞', '〟', '〰', '〽', '゠', '・', '꓾', '꓿', '꘍', '꘎', '꘏', '꙳', '꙾', '꛲', '꛳', '꛴', '꛵', '꛶', '꛷', '꡴', '꡵', '꡶', '꡷', '꣎', '꣏', '꣸', '꣹', '꣺', '꣼', '꤮', '꤯', '꥟', '꧁', '꧂', '꧃', '꧄', '꧅', '꧆', '꧇', '꧈', '꧉', '꧊', '꧋', '꧌', '꧍', '꧞', '꧟', '꩜', '꩝', '꩞', '꩟', '꫞', '꫟', '꫰', '꫱', '꯫', '﴾', '﴿', '︐', '︑', '︒', '︓', '︔', '︕', '︖', '︗', '︘', '︙', '︰', '︱', '︲', '︳', '︴', '︵', '︶', '︷', '︸', '︹', '︺', '︻', '︼', '︽', '︾', '︿', '﹀', '﹁', '﹂', '﹃', '﹄', '﹅', '﹆', '﹇', '﹈', '﹉', '﹊', '﹋', '﹌', '﹍', '﹎', '﹏', '﹐', '﹑', '﹒', '﹔', '﹕', '﹖', '﹗', '﹘', '﹙', '﹚', '﹛', '﹜', '﹝', '﹞', '﹟', '﹠', '﹡', '﹣', '﹨', '﹪', '﹫', '！', '＂', '＃', '％', '＆', '＇', '（', '）', '＊', '，', '－', '．', '／', '：', '；', '？', '＠', '［', '＼', '］', '＿', '｛', '｝', '｟', '｠', '｡', '｢', '｣', '､', '･'};
     //private static String[] longCharacters = new String[] {"𐄀", "𐄁", "𐄂", "𐎟", "𐏐", "𐕯", "𐡗", "𐤟", "𐤿", "𐩐", "𐩑", "𐩒", "𐩓", "𐩔", "𐩕", "𐩖", "𐩗", "𐩘", "𐩿", "𐫰", "𐫱", "𐫲", "𐫳", "𐫴", "𐫵", "𐫶", "𐬹", "𐬺", "𐬻", "𐬼", "𐬽", "𐬾", "𐬿", "𐮙", "𐮚", "𐮛", "𐮜", "𐽕", "𐽖", "𐽗", "𐽘", "𐽙", "𑁇", "𑁈", "𑁉", "𑁊", "𑁋", "𑁌", "𑁍", "𑂻", "𑂼", "𑂾", "𑂿", "𑃀", "𑃁", "𑅀", "𑅁", "𑅂", "𑅃", "𑅴", "𑅵", "𑇅", "𑇆", "𑇇", "𑇈", "𑇍", "𑇛", "𑇝", "𑇞", "𑇟", "𑈸", "𑈹", "𑈺", "𑈻", "𑈼", "𑈽", "𑊩", "𑑋", "𑑌", "𑑍", "𑑎", "𑑏", "𑑛", "𑑝", "𑓆", "𑗁", "𑗂", "𑗃", "𑗄", "𑗅", "𑗆", "𑗇", "𑗈", "𑗉", "𑗊", "𑗋", "𑗌", "𑗍", "𑗎", "𑗏", "𑗐", "𑗑", "𑗒", "𑗓", "𑗔", "𑗕", "𑗖", "𑗗", "𑙁", "𑙂", "𑙃", "𑙠", "𑙡", "𑙢", "𑙣", "𑙤", "𑙥", "𑙦", "𑙧", "𑙨", "𑙩", "𑙪", "𑙫", "𑙬", "𑜼", "𑜽", "𑜾", "𑠻", "𑧢", "𑨿", "𑩀", "𑩁", "𑩂", "𑩃", "𑩄", "𑩅", "𑩆", "𑪚", "𑪛", "𑪜", "𑪞", "𑪟", "𑪠", "𑪡", "𑪢", "𑱁", "𑱂", "𑱃", "𑱄", "𑱅", "𑱰", "𑱱", "𑻷", "𑻸", "𑿿", "𒑰", "𒑱", "𒑲", "𒑳", "𒑴", "𖩮", "𖩯", "𖫵", "𖬷", "𖬸", "𖬹", "𖬺", "𖬻", "𖭄", "𖺗", "𖺘", "𖺙", "𖺚", "𖿢", "𛲟", "𝪇", "𝪈", "𝪉", "𝪊", "𝪋", "𞥞", "𞥟"};
     private static HashSet<Character> charactersMap;
 
     public static boolean isPunctuationCharacter(char ch) {
         if (charactersMap == null) {
             charactersMap = new HashSet<>();
-            for (int a = 0; a < characters.length; a++) {
-                charactersMap.add(characters[a]);
+            for (char character : characters) {
+                charactersMap.add(character);
             }
         }
         //int len = longCharacters[0].length();
@@ -3548,13 +3549,23 @@ public class AndroidUtilities {
     public static void setLightNavigationBar(Window window, boolean enable) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             final View decorView = window.getDecorView();
-            int flags = decorView.getSystemUiVisibility();
-            if (enable) {
-                flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                int flags = decorView.getWindowInsetsController().getSystemBarsAppearance();
+                if (enable) {
+                    flags |= WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
+                } else  {
+                    flags &= ~WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
+                }
+                decorView.getWindowInsetsController().setSystemBarsAppearance(flags, flags);
             } else {
-                flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+                int flags = decorView.getSystemUiVisibility();
+                if (enable) {
+                    flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+                } else {
+                    flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+                }
+                decorView.setSystemUiVisibility(flags);
             }
-            decorView.setSystemUiVisibility(flags);
         }
     }
 
@@ -3618,10 +3629,7 @@ public class AndroidUtilities {
     }
 
     public static boolean checkInlinePermissions(Context context) {
-        if (Build.VERSION.SDK_INT < 23 || Settings.canDrawOverlays(context)) {
-            return true;
-        }
-        return false;
+        return Build.VERSION.SDK_INT < 23 || Settings.canDrawOverlays(context);
     }
 
     public static void updateVisibleRows(RecyclerListView listView) {

@@ -133,7 +133,7 @@ public class ActionBar extends FrameLayout {
         }
         backButtonImageView = new ImageView(getContext());
         backButtonImageView.setScaleType(ImageView.ScaleType.CENTER);
-        backButtonImageView.setBackgroundDrawable(Theme.createSelectorDrawable(itemsBackgroundColor));
+        backButtonImageView.setBackground(Theme.createSelectorDrawable(itemsBackgroundColor));
         if (itemsColor != 0) {
             backButtonImageView.setColorFilter(new PorterDuffColorFilter(itemsColor, PorterDuff.Mode.MULTIPLY));
         }
@@ -493,9 +493,9 @@ public class ActionBar extends FrameLayout {
         ArrayList<Animator> animators = new ArrayList<>();
         animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f, 1.0f));
         if (hidingViews != null) {
-            for (int a = 0; a < hidingViews.length; a++) {
-                if (hidingViews[a] != null) {
-                    animators.add(ObjectAnimator.ofFloat(hidingViews[a], View.ALPHA, 1.0f, 0.0f));
+            for (View hidingView : hidingViews) {
+                if (hidingView != null) {
+                    animators.add(ObjectAnimator.ofFloat(hidingView, View.ALPHA, 1.0f, 0.0f));
                 }
             }
         }
@@ -572,7 +572,7 @@ public class ActionBar extends FrameLayout {
             if (drawable instanceof BackDrawable) {
                 ((BackDrawable) drawable).setRotation(1, true);
             }
-            backButtonImageView.setBackgroundDrawable(Theme.createSelectorDrawable(itemsActionModeBackgroundColor));
+            backButtonImageView.setBackground(Theme.createSelectorDrawable(itemsActionModeBackgroundColor));
         }
     }
 
@@ -585,10 +585,10 @@ public class ActionBar extends FrameLayout {
         ArrayList<Animator> animators = new ArrayList<>();
         animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f));
         if (actionModeHidingViews != null) {
-            for (int a = 0; a < actionModeHidingViews.length; a++) {
+            for (View actionModeHidingView : actionModeHidingViews) {
                 if (actionModeHidingViews != null) {
-                    actionModeHidingViews[a].setVisibility(VISIBLE);
-                    animators.add(ObjectAnimator.ofFloat(actionModeHidingViews[a], View.ALPHA, 1.0f));
+                    actionModeHidingView.setVisibility(VISIBLE);
+                    animators.add(ObjectAnimator.ofFloat(actionModeHidingView, View.ALPHA, 1.0f));
                 }
             }
         }
@@ -654,7 +654,7 @@ public class ActionBar extends FrameLayout {
             if (drawable instanceof BackDrawable) {
                 ((BackDrawable) drawable).setRotation(0, true);
             }
-            backButtonImageView.setBackgroundDrawable(Theme.createSelectorDrawable(itemsBackgroundColor));
+            backButtonImageView.setBackground(Theme.createSelectorDrawable(itemsBackgroundColor));
         }
     }
 
@@ -1082,7 +1082,7 @@ public class ActionBar extends FrameLayout {
             itemsActionModeBackgroundColor = color;
             if (actionModeVisible) {
                 if (backButtonImageView != null) {
-                    backButtonImageView.setBackgroundDrawable(Theme.createSelectorDrawable(itemsActionModeBackgroundColor));
+                    backButtonImageView.setBackground(Theme.createSelectorDrawable(itemsActionModeBackgroundColor));
                 }
             }
             if (actionMode != null) {
@@ -1091,7 +1091,7 @@ public class ActionBar extends FrameLayout {
         } else {
             itemsBackgroundColor = color;
             if (backButtonImageView != null) {
-                backButtonImageView.setBackgroundDrawable(Theme.createSelectorDrawable(itemsBackgroundColor));
+                backButtonImageView.setBackground(Theme.createSelectorDrawable(itemsBackgroundColor));
             }
             if (menu != null) {
                 menu.updateItemsBackgroundColor();

@@ -25,6 +25,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
+
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,11 +37,13 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.R;
@@ -106,13 +109,13 @@ public class DrawerLayoutContainer extends FrameLayout {
                 if (AndroidUtilities.statusBarHeight != insets.getSystemWindowInsetTop()) {
                     drawerLayoutContainer.requestLayout();
                 }
-                int newTopInset = insets.getSystemWindowInsetTop();
+                int newTopInset = insets.getInsets(WindowInsets.Type.systemBars()).top;
                 if ((newTopInset != 0 || AndroidUtilities.isInMultiwindow || firstLayout) && AndroidUtilities.statusBarHeight != newTopInset) {
                     AndroidUtilities.statusBarHeight = newTopInset;
                 }
                 firstLayout = false;
                 lastInsets = insets;
-                drawerLayoutContainer.setWillNotDraw(insets.getSystemWindowInsetTop() <= 0 && getBackground() == null);
+                drawerLayoutContainer.setWillNotDraw(insets.getInsets(WindowInsets.Type.systemBars()).top <= 0 && getBackground() == null);
 
                 if (Build.VERSION.SDK_INT >= 28) {
                     DisplayCutout cutout = insets.getDisplayCutout();
@@ -125,7 +128,11 @@ public class DrawerLayoutContainer extends FrameLayout {
                     return insets.consumeSystemWindowInsets();
                 }
             });
-            setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                getWindowInsetsController().setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+            } else {
+                setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            }
         }
 
         shadowLeft = getResources().getDrawable(R.drawable.menu_shadow);
@@ -355,7 +362,7 @@ public class DrawerLayoutContainer extends FrameLayout {
         canvas.scale(1.0f / 6.0f, 1.0f / 6.0f);
         draw(canvas);
         Utilities.stackBlurBitmap(bitmap, Math.max(7, Math.max(w, h) / 180));
-        previewBlurDrawable = new BitmapDrawable(bitmap);
+        previewBlurDrawable = new BitmapDrawable(ApplicationLoader.applicationContext.getResources(), bitmap);
         previewBlurDrawable.setBounds(0, 0, measuredWidth, measuredHeight);
     }
 
@@ -391,10 +398,10 @@ public class DrawerLayoutContainer extends FrameLayout {
 
             if ((allowOpenDrawerBySwipe || drawerOpened) && allowOpenDrawer && parentActionBarLayout.fragmentsStack.size() == 1) {
                 if (ev != null && (ev.getAction() == MotionEvent.ACTION_DOWN || ev.getAction() == MotionEvent.ACTION_MOVE) && !startedTracking && !maybeStartTracking) {
-                   View scrollingChild = findScrollingChild(this, ev.getX(),ev.getY());
-                   if (scrollingChild != null) {
-                       return false;
-                   }
+                    View scrollingChild = findScrollingChild(this, ev.getX(), ev.getY());
+                    if (scrollingChild != null) {
+                        return false;
+                    }
                     parentActionBarLayout.getHitRect(rect);
                     startedTrackingX = (int) ev.getX();
                     startedTrackingY = (int) ev.getY();
@@ -684,7 +691,7 @@ public class DrawerLayoutContainer extends FrameLayout {
         if (Build.VERSION.SDK_INT >= 21 && lastInsets != null) {
             WindowInsets insets = (WindowInsets) lastInsets;
 
-            int bottomInset = insets.getSystemWindowInsetBottom();
+            int bottomInset = insets.getInsets(WindowInsets.Type.systemBars()).bottom;
             if (bottomInset > 0) {
                 backgroundPaint.setColor(behindKeyboardColor);
                 canvas.drawRect(0, getMeasuredHeight() - bottomInset, getMeasuredWidth(), getMeasuredHeight(), backgroundPaint);
@@ -692,11 +699,11 @@ public class DrawerLayoutContainer extends FrameLayout {
 
             if (hasCutout) {
                 backgroundPaint.setColor(0xff000000);
-                int left = insets.getSystemWindowInsetLeft();
+                int left = insets.getInsets(WindowInsets.Type.systemBars()).left;
                 if (left != 0) {
                     canvas.drawRect(0, 0, left, getMeasuredHeight(), backgroundPaint);
                 }
-                int right = insets.getSystemWindowInsetRight();
+                int right = insets.getInsets(WindowInsets.Type.systemBars()).right;
                 if (right != 0) {
                     canvas.drawRect(right, 0, getMeasuredWidth(), getMeasuredHeight(), backgroundPaint);
                 }

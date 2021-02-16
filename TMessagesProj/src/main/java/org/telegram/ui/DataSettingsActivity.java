@@ -215,7 +215,7 @@ public class DataSettingsActivity extends BaseFragment {
                     SharedPreferences.Editor editor = MessagesController.getMainSettings(currentAccount).edit();
                     editor.putString(key, preset.toString());
                     editor.putInt(key2, 3);
-                    editor.commit();
+                    editor.apply();
 
                     cell.setChecked(!checked);
                     RecyclerView.ViewHolder holder = listView.findContainingViewHolder(view);
@@ -272,7 +272,7 @@ public class DataSettingsActivity extends BaseFragment {
                         editor.putInt("currentRoamingPreset", DownloadController.getInstance(currentAccount).currentRoamingPreset = 3);
                         editor.putString(key, preset.toString());
                     }
-                    editor.commit();
+                    editor.apply();
                     DownloadController.getInstance(currentAccount).checkAutodownloadSettings();
                     for (int a = 0; a < 3; a++) {
                         DownloadController.getInstance(currentAccount).savePresetToServer(a);
@@ -327,7 +327,7 @@ public class DataSettingsActivity extends BaseFragment {
                                     break;
                             }
                             if (val != -1) {
-                                preferences.edit().putInt("VoipDataSaving", val).commit();
+                                preferences.edit().putInt("VoipDataSaving", val).apply();
                             }
                             if (listAdapter != null) {
                                 listAdapter.notifyItemChanged(position);
@@ -455,9 +455,9 @@ public class DataSettingsActivity extends BaseFragment {
             switch (holder.getItemViewType()) {
                 case 0: {
                     if (position == clearDraftsSectionRow) {
-                        holder.itemView.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+                        holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                     } else {
-                        holder.itemView.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
+                        holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                     }
                     break;
                 }
@@ -679,7 +679,7 @@ public class DataSettingsActivity extends BaseFragment {
                     break;
                 case 4:
                     view = new TextInfoPrivacyCell(mContext);
-                    view.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
+                    view.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                     break;
                 case 5:
                 default:

@@ -35,6 +35,7 @@ import android.view.TextureView;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
@@ -44,6 +45,7 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.ImageReceiver;
 import org.telegram.messenger.LocaleController;
@@ -536,8 +538,8 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
                         }
                         heightSize += AndroidUtilities.statusBarHeight;
                     }
-                    heightSize -= insets.getSystemWindowInsetBottom();
-                    widthSize -= insets.getSystemWindowInsetRight();
+                    heightSize -= insets.getInsets(WindowInsets.Type.systemBars()).bottom;
+                    widthSize -= insets.getInsets(WindowInsets.Type.systemBars()).right;
                 } else {
                     if (heightSize > AndroidUtilities.displaySize.y) {
                         heightSize = AndroidUtilities.displaySize.y;
@@ -545,7 +547,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
                 }
                 setMeasuredDimension(widthSize, heightSize);
                 if (Build.VERSION.SDK_INT >= 21 && lastInsets != null) {
-                    widthSize -= ((WindowInsets) lastInsets).getSystemWindowInsetLeft();
+                    widthSize -= ((WindowInsets) lastInsets).getInsets(WindowInsets.Type.systemBars()).left;
                 }
                 containerView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY));
             }
@@ -555,7 +557,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
             protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
                 int x = 0;
                 if (Build.VERSION.SDK_INT >= 21 && lastInsets != null) {
-                    x += ((WindowInsets) lastInsets).getSystemWindowInsetLeft();
+                    x += ((WindowInsets) lastInsets).getInsets(WindowInsets.Type.systemBars()).left;
                 }
                 containerView.layout(x, 0, x + containerView.getMeasuredWidth(), containerView.getMeasuredHeight());
                 if (changed) {
@@ -577,11 +579,11 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
                     } else {
                         blackPaint.setAlpha(255);
                     }
-                    canvas.drawRect(0, getMeasuredHeight(), getMeasuredWidth(), getMeasuredHeight() + insets.getSystemWindowInsetBottom(), blackPaint);
+                    canvas.drawRect(0, getMeasuredHeight(), getMeasuredWidth(), getMeasuredHeight() + insets.getInsets(WindowInsets.Type.systemBars()).bottom, blackPaint);
                 }
             }
         };
-        windowView.setBackgroundDrawable(photoBackgroundDrawable);
+        windowView.setBackground(photoBackgroundDrawable);
         windowView.setFocusable(true);
         windowView.setFocusableInTouchMode(true);
 
@@ -616,6 +618,10 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
                     return insets.consumeSystemWindowInsets();
                 }
             });
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                containerView.getWindowInsetsController().setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+            }
             containerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
 
@@ -759,7 +765,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
         if (document != null) {
             if (MessageObject.isGifDocument(document)) {
                 actionBar.setTitle(LocaleController.getString("DisappearingGif", R.string.DisappearingGif));
-                centerImage.setImage(ImageLocation.getForDocument(document), null, currentThumb != null ? new BitmapDrawable(currentThumb.bitmap) : null, -1, null, messageObject, 1);
+                centerImage.setImage(ImageLocation.getForDocument(document), null, currentThumb != null ? new BitmapDrawable(ApplicationLoader.applicationContext.getResources(), currentThumb.bitmap) : null, -1, null, messageObject, 1);
                 secretDeleteTimer.setDestroyTime((long) messageObject.messageOwner.destroyTime * 1000, messageObject.messageOwner.ttl, false);
             } else {
                 playerRetryPlayCount = 1;
@@ -776,7 +782,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
                     preparePlayer(file);
                 }
                 isVideo = true;
-                centerImage.setImage(null, null, currentThumb != null ? new BitmapDrawable(currentThumb.bitmap) : null, -1, null, messageObject, 2);
+                centerImage.setImage(null, null, currentThumb != null ? new BitmapDrawable(ApplicationLoader.applicationContext.getResources(), currentThumb.bitmap) : null, -1, null, messageObject, 2);
                 long destroyTime = (long) messageObject.messageOwner.destroyTime * 1000;
                 long currentTime = System.currentTimeMillis() + ConnectionsManager.getInstance(currentAccount).getTimeDifference() * 1000;
                 long timeToDestroy = destroyTime - currentTime;
@@ -790,7 +796,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
         } else {
             actionBar.setTitle(LocaleController.getString("DisappearingPhoto", R.string.DisappearingPhoto));
             TLRPC.PhotoSize sizeFull = FileLoader.getClosestPhotoSizeWithSize(messageObject.photoThumbs, AndroidUtilities.getPhotoSize());
-            centerImage.setImage(ImageLocation.getForObject(sizeFull, messageObject.photoThumbsObject), null, currentThumb != null ? new BitmapDrawable(currentThumb.bitmap) : null, -1, null, messageObject, 2);
+            centerImage.setImage(ImageLocation.getForObject(sizeFull, messageObject.photoThumbsObject), null, currentThumb != null ? new BitmapDrawable(ApplicationLoader.applicationContext.getResources(), currentThumb.bitmap) : null, -1, null, messageObject, 2);
             secretDeleteTimer.setDestroyTime((long) messageObject.messageOwner.destroyTime * 1000, messageObject.messageOwner.ttl, false);
         }
         try {

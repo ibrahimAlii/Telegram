@@ -378,7 +378,7 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
             drawable = combinedDrawable;
         }
-        floatingButton.setBackgroundDrawable(drawable);
+        floatingButton.setBackground(drawable);
         floatingButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
         floatingButton.setImageResource(R.drawable.floating_pencil);
         if (Build.VERSION.SDK_INT >= 21) {
@@ -441,9 +441,9 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
                 if (bottomOverlayChat != null) {
                     measureChildWithMargins(bottomOverlayChat, widthMeasureSpec, 0, heightMeasureSpec, 0);
                 }
-                for (int a = 0; a < patternLayout.length; a++) {
-                    if (patternLayout[a] != null) {
-                        measureChildWithMargins(patternLayout[a], widthMeasureSpec, 0, heightMeasureSpec, 0);
+                for (FrameLayout layout : patternLayout) {
+                    if (layout != null) {
+                        measureChildWithMargins(layout, widthMeasureSpec, 0, heightMeasureSpec, 0);
                     }
                 }
             }
@@ -1234,7 +1234,7 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
                         patternsCancelButton[a].setText(LocaleController.getString("Cancel", R.string.Cancel).toUpperCase());
                         patternsCancelButton[a].setGravity(Gravity.CENTER);
                         patternsCancelButton[a].setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), 0);
-                        patternsCancelButton[a].setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 0));
+                        patternsCancelButton[a].setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 0));
                         patternsButtonsContainer[a].addView(patternsCancelButton[a], LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP));
                         patternsCancelButton[a].setOnClickListener(v -> {
                             if (patternViewAnimation != null) {
@@ -1281,7 +1281,7 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
                         patternsSaveButton[a].setText(LocaleController.getString("ApplyTheme", R.string.ApplyTheme).toUpperCase());
                         patternsSaveButton[a].setGravity(Gravity.CENTER);
                         patternsSaveButton[a].setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), 0);
-                        patternsSaveButton[a].setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 0));
+                        patternsSaveButton[a].setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 0));
                         patternsButtonsContainer[a].addView(patternsSaveButton[a], LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.RIGHT | Gravity.TOP));
                         patternsSaveButton[a].setOnClickListener(v -> {
                             if (patternViewAnimation != null) {
@@ -1620,7 +1620,7 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             cancelButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             cancelButton.setTextColor(getButtonsColor(Theme.key_chat_fieldOverlayText));
             cancelButton.setGravity(Gravity.CENTER);
-            cancelButton.setBackgroundDrawable(Theme.createSelectorDrawable(0x0f000000, 0));
+            cancelButton.setBackground(Theme.createSelectorDrawable(0x0f000000, 0));
             cancelButton.setPadding(AndroidUtilities.dp(29), 0, AndroidUtilities.dp(29), 0);
             cancelButton.setText(LocaleController.getString("Cancel", R.string.Cancel).toUpperCase());
             cancelButton.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
@@ -1631,7 +1631,7 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             doneButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             doneButton.setTextColor(getButtonsColor(Theme.key_chat_fieldOverlayText));
             doneButton.setGravity(Gravity.CENTER);
-            doneButton.setBackgroundDrawable(Theme.createSelectorDrawable(0x0f000000, 0));
+            doneButton.setBackground(Theme.createSelectorDrawable(0x0f000000, 0));
             doneButton.setPadding(AndroidUtilities.dp(29), 0, AndroidUtilities.dp(29), 0);
             doneButton.setText(LocaleController.getString("ApplyTheme", R.string.ApplyTheme).toUpperCase());
             doneButton.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
@@ -2580,12 +2580,12 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             backgroundGradientColor = color;
         }
         if (checkBoxView != null) {
-            for (int a = 0; a < checkBoxView.length; a++) {
-                if (checkBoxView[a] != null) {
+            for (WallpaperCheckBoxView wallpaperCheckBoxView : checkBoxView) {
+                if (wallpaperCheckBoxView != null) {
                     if (num == 0) {
-                        checkBoxView[a].setBackgroundColor(color);
+                        wallpaperCheckBoxView.setBackgroundColor(color);
                     } else {
-                        checkBoxView[a].setBackgroundGradientColor(color);
+                        wallpaperCheckBoxView.setBackgroundGradientColor(color);
                     }
                 }
             }
@@ -2721,8 +2721,8 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
                 backgroundImage.invalidate();
             }
             if (checkBoxView != null) {
-                for (int a = 0; a < checkBoxView.length; a++) {
-                    checkBoxView[a].setBackgroundColor(color1);
+                for (WallpaperCheckBoxView wallpaperCheckBoxView : checkBoxView) {
+                    wallpaperCheckBoxView.setBackgroundColor(color1);
                 }
             }
         }
@@ -3474,25 +3474,25 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
         }
 
         if (patternLayout != null) {
-            for (int a = 0; a < patternLayout.length; a++) {
-                items.add(new ThemeDescription(patternLayout[a], 0, null, null, new Drawable[]{Theme.chat_composeShadowDrawable}, null, Theme.key_chat_messagePanelShadow));
-                items.add(new ThemeDescription(patternLayout[a], 0, null, Theme.chat_composeBackgroundPaint, null, null, Theme.key_chat_messagePanelBackground));
+            for (FrameLayout layout : patternLayout) {
+                items.add(new ThemeDescription(layout, 0, null, null, new Drawable[]{Theme.chat_composeShadowDrawable}, null, Theme.key_chat_messagePanelShadow));
+                items.add(new ThemeDescription(layout, 0, null, Theme.chat_composeBackgroundPaint, null, null, Theme.key_chat_messagePanelBackground));
             }
 
-            for (int a = 0; a < patternsButtonsContainer.length; a++) {
-                items.add(new ThemeDescription(patternsButtonsContainer[a], 0, null, null, new Drawable[]{Theme.chat_composeShadowDrawable}, null, Theme.key_chat_messagePanelShadow));
-                items.add(new ThemeDescription(patternsButtonsContainer[a], 0, null, Theme.chat_composeBackgroundPaint, null, null, Theme.key_chat_messagePanelBackground));
+            for (FrameLayout layout : patternsButtonsContainer) {
+                items.add(new ThemeDescription(layout, 0, null, null, new Drawable[]{Theme.chat_composeShadowDrawable}, null, Theme.key_chat_messagePanelShadow));
+                items.add(new ThemeDescription(layout, 0, null, Theme.chat_composeBackgroundPaint, null, null, Theme.key_chat_messagePanelBackground));
             }
 
             items.add(new ThemeDescription(bottomOverlayChat, 0, null, null, new Drawable[]{Theme.chat_composeShadowDrawable}, null, Theme.key_chat_messagePanelShadow));
             items.add(new ThemeDescription(bottomOverlayChat, 0, null, Theme.chat_composeBackgroundPaint, null, null, Theme.key_chat_messagePanelBackground));
             items.add(new ThemeDescription(bottomOverlayChatText, ThemeDescription.FLAG_TEXTCOLOR, null, null, null, null, Theme.key_chat_fieldOverlayText));
 
-            for (int a = 0; a < patternsSaveButton.length; a++) {
-                items.add(new ThemeDescription(patternsSaveButton[a], ThemeDescription.FLAG_TEXTCOLOR, null, null, null, null, Theme.key_chat_fieldOverlayText));
+            for (TextView textView : patternsSaveButton) {
+                items.add(new ThemeDescription(textView, ThemeDescription.FLAG_TEXTCOLOR, null, null, null, null, Theme.key_chat_fieldOverlayText));
             }
-            for (int a = 0; a < patternsCancelButton.length; a++) {
-                items.add(new ThemeDescription(patternsCancelButton[a], ThemeDescription.FLAG_TEXTCOLOR, null, null, null, null, Theme.key_chat_fieldOverlayText));
+            for (TextView textView : patternsCancelButton) {
+                items.add(new ThemeDescription(textView, ThemeDescription.FLAG_TEXTCOLOR, null, null, null, null, Theme.key_chat_fieldOverlayText));
             }
 
             items.add(new ThemeDescription(intensitySeekBar, 0, new Class[]{SeekBarView.class}, new String[]{"innerPaint1"}, null, null, null, Theme.key_player_progressBackground));

@@ -566,10 +566,10 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
             enabled = false;
         }
         boolean hasAnswers = false;
-        for (int a = 0; a < answers.length; a++) {
-            if (!TextUtils.isEmpty(getFixedString(answers[a]))) {
+        for (String answer : answers) {
+            if (!TextUtils.isEmpty(getFixedString(answer))) {
                 hasAnswers = true;
-                if (answers[a].length() > MAX_ANSWER_LENGTH) {
+                if (answer.length() > MAX_ANSWER_LENGTH) {
                     count = 0;
                     break;
                 }
@@ -579,11 +579,7 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
         if (count < 2 || quizPoll && checksCount < 1) {
             enabled = false;
         }
-        if (!TextUtils.isEmpty(solutionString) || !TextUtils.isEmpty(questionString) || hasAnswers) {
-            allowNesterScroll = false;
-        } else {
-            allowNesterScroll = true;
-        }
+        allowNesterScroll = TextUtils.isEmpty(solutionString) && TextUtils.isEmpty(questionString) && !hasAnswers;
         parentAlert.setAllowNestedScroll(allowNesterScroll);
         parentAlert.doneItem.setEnabled(quizPoll && checksCount == 0 || enabled);
         parentAlert.doneItem.setAlpha(enabled ? 1.0f : 0.5f);
@@ -771,7 +767,7 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
                     Drawable drawable = Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow);
                     CombinedDrawable combinedDrawable = new CombinedDrawable(new ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray)), drawable);
                     combinedDrawable.setFullsize(true);
-                    cell.setBackgroundDrawable(combinedDrawable);
+                    cell.setBackground(combinedDrawable);
                     if (position == solutionInfoRow) {
                         cell.setText(LocaleController.getString("AddAnExplanationInfo", R.string.AddAnExplanationInfo));
                     } else if (position == settingsSectionRow) {
@@ -876,7 +872,7 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
                     Drawable drawable = Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow);
                     CombinedDrawable combinedDrawable = new CombinedDrawable(new ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray)), drawable);
                     combinedDrawable.setFullsize(true);
-                    view.setBackgroundDrawable(combinedDrawable);
+                    view.setBackground(combinedDrawable);
                     break;
                 case 2:
                     view = new TextInfoPrivacyCell(mContext);
@@ -1025,9 +1021,7 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
                             RecyclerView.ViewHolder holder = listView.findContainingViewHolder(this);
                             if (holder != null) {
                                 int position = holder.getAdapterPosition();
-                                if (answersCount == 10 && position == answerStartRow + answersCount - 1) {
-                                    return false;
-                                }
+                                return answersCount != 10 || position != answerStartRow + answersCount - 1;
                             }
                             return true;
                         }

@@ -237,9 +237,9 @@ public class LoginActivity extends BaseFragment {
     @Override
     public void onFragmentDestroy() {
         super.onFragmentDestroy();
-        for (int a = 0; a < views.length; a++) {
-            if (views[a] != null) {
-                views[a].onDestroyActivity();
+        for (SlideView view : views) {
+            if (view != null) {
+                view.onDestroyActivity();
             }
         }
     }
@@ -349,7 +349,7 @@ public class LoginActivity extends BaseFragment {
             combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
             drawable = combinedDrawable;
         }
-        floatingButtonContainer.setBackgroundDrawable(drawable);
+        floatingButtonContainer.setBackground(drawable);
         if (Build.VERSION.SDK_INT >= 21) {
             StateListAnimator animator = new StateListAnimator();
             animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButtonIcon, "translationZ", AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
@@ -401,11 +401,7 @@ public class LoginActivity extends BaseFragment {
                 views[a].setVisibility(View.VISIBLE);
                 views[a].onShow();
                 currentDoneType = DONE_TYPE_FLOATING;
-                if (a == 1 || a == 2 || a == 3 || a == 4 || a == 8) {
-                    showDoneButton(false, false);
-                } else {
-                    showDoneButton(true, false);
-                }
+                showDoneButton(a != 1 && a != 2 && a != 3 && a != 4 && a != 8, false);
                 if (a == 1 || a == 2 || a == 3 || a == 4) {
                     currentDoneType = DONE_TYPE_ACTION;
                 }
@@ -512,7 +508,7 @@ public class LoginActivity extends BaseFragment {
         SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("logininfo2", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
-        editor.commit();
+        editor.apply();
     }
 
     private void putBundleToEditor(Bundle bundle, SharedPreferences.Editor editor, String prefix) {
@@ -562,9 +558,9 @@ public class LoginActivity extends BaseFragment {
     @Override
     public boolean onBackPressed() {
         if (currentViewNum == 0) {
-            for (int a = 0; a < views.length; a++) {
-                if (views[a] != null) {
-                    views[a].onDestroyActivity();
+            for (SlideView view : views) {
+                if (view != null) {
+                    view.onDestroyActivity();
                 }
             }
             clearCurrentState();
@@ -999,7 +995,7 @@ public class LoginActivity extends BaseFragment {
             SharedPreferences.Editor editor = preferences.edit();
             editor.clear();
             putBundleToEditor(bundle, editor, null);
-            editor.commit();
+            editor.apply();
         } catch (Exception e) {
             FileLog.e(e);
         }
@@ -1147,7 +1143,7 @@ public class LoginActivity extends BaseFragment {
             codeField = new EditTextBoldCursor(context);
             codeField.setInputType(InputType.TYPE_CLASS_PHONE);
             codeField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-            codeField.setBackgroundDrawable(Theme.createEditTextDrawable(context, false));
+            codeField.setBackground(Theme.createEditTextDrawable(context, false));
             codeField.setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             codeField.setCursorSize(AndroidUtilities.dp(20));
             codeField.setCursorWidth(1.5f);
@@ -1258,7 +1254,7 @@ public class LoginActivity extends BaseFragment {
             phoneField.setInputType(InputType.TYPE_CLASS_PHONE);
             phoneField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             phoneField.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
-            phoneField.setBackgroundDrawable(Theme.createEditTextDrawable(context, false));
+            phoneField.setBackground(Theme.createEditTextDrawable(context, false));
             phoneField.setPadding(0, 0, 0, 0);
             phoneField.setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             phoneField.setCursorSize(AndroidUtilities.dp(20));
@@ -1541,7 +1537,7 @@ public class LoginActivity extends BaseFragment {
                     if (!permissionsItems.isEmpty()) {
                         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                         if (preferences.getBoolean("firstlogin", true) || getParentActivity().shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE) || getParentActivity().shouldShowRequestPermissionRationale(Manifest.permission.READ_CALL_LOG)) {
-                            preferences.edit().putBoolean("firstlogin", false).commit();
+                            preferences.edit().putBoolean("firstlogin", false).apply();
                             AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
                             builder.setTitle(LocaleController.getString("AppName", R.string.AppName));
                             builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
@@ -1618,9 +1614,9 @@ public class LoginActivity extends BaseFragment {
             req.settings.allow_app_hash = ApplicationLoader.hasPlayServices;
             SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
             if (req.settings.allow_app_hash) {
-                preferences.edit().putString("sms_hash", BuildVars.SMS_HASH).commit();
+                preferences.edit().putString("sms_hash", BuildVars.SMS_HASH).apply();
             } else {
-                preferences.edit().remove("sms_hash").commit();
+                preferences.edit().remove("sms_hash").apply();
             }
             if (req.settings.allow_flashcall) {
                 try {
@@ -1697,7 +1693,7 @@ public class LoginActivity extends BaseFragment {
                             if (!permissionsShowItems.isEmpty()) {
                                 SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                                 if (preferences.getBoolean("firstloginshow", true) || getParentActivity().shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE)) {
-                                    preferences.edit().putBoolean("firstloginshow", false).commit();
+                                    preferences.edit().putBoolean("firstloginshow", false).apply();
                                     AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
                                     builder.setTitle(LocaleController.getString("AppName", R.string.AppName));
                                     builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
@@ -2112,7 +2108,7 @@ public class LoginActivity extends BaseFragment {
                     Drawable pressedDrawable = getResources().getDrawable(R.drawable.search_dark_activated).mutate();
                     pressedDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteInputFieldActivated), PorterDuff.Mode.MULTIPLY));
 
-                    codeField[a].setBackgroundDrawable(pressedDrawable);
+                    codeField[a].setBackground(pressedDrawable);
                     codeField[a].setImeOptions(EditorInfo.IME_ACTION_NEXT | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
                     codeField[a].setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
                     codeField[a].setMaxLines(1);
@@ -2187,8 +2183,8 @@ public class LoginActivity extends BaseFragment {
                     });
                 }
             } else {
-                for (int a = 0; a < codeField.length; a++) {
-                    codeField[a].setText("");
+                for (EditTextBoldCursor editTextBoldCursor : codeField) {
+                    editTextBoldCursor.setText("");
                 }
             }
 
@@ -2407,8 +2403,8 @@ public class LoginActivity extends BaseFragment {
                 return "";
             }
             StringBuilder codeBuilder = new StringBuilder();
-            for (int a = 0; a < codeField.length; a++) {
-                codeBuilder.append(PhoneFormat.stripExceptNumbers(codeField[a].getText().toString()));
+            for (EditTextBoldCursor editTextBoldCursor : codeField) {
+                codeBuilder.append(PhoneFormat.stripExceptNumbers(editTextBoldCursor.getText().toString()));
             }
             return codeBuilder.toString();
         }
@@ -2516,8 +2512,8 @@ public class LoginActivity extends BaseFragment {
                                 needShowAlert(LocaleController.getString("AppName", R.string.AppName), LocaleController.getString("InvalidPhoneNumber", R.string.InvalidPhoneNumber));
                             } else if (error.text.contains("PHONE_CODE_EMPTY") || error.text.contains("PHONE_CODE_INVALID")) {
                                 needShowAlert(LocaleController.getString("AppName", R.string.AppName), LocaleController.getString("InvalidCode", R.string.InvalidCode));
-                                for (int a = 0; a < codeField.length; a++) {
-                                    codeField[a].setText("");
+                                for (EditTextBoldCursor editTextBoldCursor : codeField) {
+                                    editTextBoldCursor.setText("");
                                 }
                                 codeField[0].requestFocus();
                             } else if (error.text.contains("PHONE_CODE_EXPIRED")) {
@@ -2724,7 +2720,7 @@ public class LoginActivity extends BaseFragment {
             codeField.setCursorSize(AndroidUtilities.dp(20));
             codeField.setCursorWidth(1.5f);
             codeField.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
-            codeField.setBackgroundDrawable(Theme.createEditTextDrawable(context, false));
+            codeField.setBackground(Theme.createEditTextDrawable(context, false));
             codeField.setHint(LocaleController.getString("LoginPassword", R.string.LoginPassword));
             codeField.setImeOptions(EditorInfo.IME_ACTION_NEXT | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
             codeField.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
@@ -3257,7 +3253,7 @@ public class LoginActivity extends BaseFragment {
             codeField.setCursorSize(AndroidUtilities.dp(20));
             codeField.setCursorWidth(1.5f);
             codeField.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
-            codeField.setBackgroundDrawable(Theme.createEditTextDrawable(context, false));
+            codeField.setBackground(Theme.createEditTextDrawable(context, false));
             codeField.setHint(LocaleController.getString("PasswordCode", R.string.PasswordCode));
             codeField.setImeOptions(EditorInfo.IME_ACTION_NEXT | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
             codeField.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
@@ -3627,7 +3623,7 @@ public class LoginActivity extends BaseFragment {
             firstNameField = new EditTextBoldCursor(context);
             firstNameField.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
             firstNameField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-            firstNameField.setBackgroundDrawable(Theme.createEditTextDrawable(context, false));
+            firstNameField.setBackground(Theme.createEditTextDrawable(context, false));
             firstNameField.setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             firstNameField.setCursorSize(AndroidUtilities.dp(20));
             firstNameField.setCursorWidth(1.5f);
@@ -3649,7 +3645,7 @@ public class LoginActivity extends BaseFragment {
             lastNameField.setHint(LocaleController.getString("LastName", R.string.LastName));
             lastNameField.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
             lastNameField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-            lastNameField.setBackgroundDrawable(Theme.createEditTextDrawable(context, false));
+            lastNameField.setBackground(Theme.createEditTextDrawable(context, false));
             lastNameField.setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             lastNameField.setCursorSize(AndroidUtilities.dp(20));
             lastNameField.setCursorWidth(1.5f);
@@ -3957,8 +3953,8 @@ public class LoginActivity extends BaseFragment {
 
     @Override
     public ArrayList<ThemeDescription> getThemeDescriptions() {
-        for (int a = 0;a < views.length; a++) {
-            if (views[a] == null) {
+        for (SlideView view : views) {
+            if (view == null) {
                 return new ArrayList<>();
             }
         }

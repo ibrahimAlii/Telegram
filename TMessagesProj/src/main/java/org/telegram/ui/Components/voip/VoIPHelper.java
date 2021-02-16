@@ -386,7 +386,7 @@ public class VoIPHelper {
 		commentBox.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
 		commentBox.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
 		commentBox.setHintTextColor(Theme.getColor(Theme.key_dialogTextHint));
-		commentBox.setBackgroundDrawable(Theme.createEditTextDrawable(context, true));
+		commentBox.setBackground(Theme.createEditTextDrawable(context, true));
 		commentBox.setPadding(0, AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4));
 		commentBox.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
 		commentBox.setVisibility(View.GONE);
@@ -538,7 +538,7 @@ public class VoIPHelper {
 			boolean force = preferences.getBoolean("dbg_force_tcp_in_calls", false);
 			SharedPreferences.Editor editor = preferences.edit();
 			editor.putBoolean("dbg_force_tcp_in_calls", !force);
-			editor.commit();
+			editor.apply();
 			tcpCell.setChecked(!force);
 		});
 		ll.addView(tcpCell);
@@ -550,7 +550,7 @@ public class VoIPHelper {
 				boolean force = preferences.getBoolean("dbg_dump_call_stats", false);
 				SharedPreferences.Editor editor = preferences.edit();
 				editor.putBoolean("dbg_dump_call_stats", !force);
-				editor.commit();
+				editor.apply();
 				dumpCell.setChecked(!force);
 			});
 			ll.addView(dumpCell);
@@ -563,7 +563,7 @@ public class VoIPHelper {
 				boolean force = preferences.getBoolean("dbg_force_connection_service", false);
 				SharedPreferences.Editor editor = preferences.edit();
 				editor.putBoolean("dbg_force_connection_service", !force);
-				editor.commit();
+				editor.apply();
 				connectionServiceCell.setChecked(!force);
 			});
 			ll.addView(connectionServiceCell);

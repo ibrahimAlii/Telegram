@@ -393,7 +393,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
             backgroundTablet = new View(this);
             BitmapDrawable drawable = (BitmapDrawable) getResources().getDrawable(R.drawable.catstile);
             drawable.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
-            backgroundTablet.setBackgroundDrawable(drawable);
+            backgroundTablet.setBackground(drawable);
             launchLayout.addView(backgroundTablet, LayoutHelper.createRelative(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
             launchLayout.addView(actionBarLayout);
@@ -1537,10 +1537,10 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
                                                         mode = mode.toLowerCase();
                                                         String[] modes = mode.split(" ");
                                                         if (modes != null && modes.length > 0) {
-                                                            for (int a = 0; a < modes.length; a++) {
-                                                                if ("blur".equals(modes[a])) {
+                                                            for (String s : modes) {
+                                                                if ("blur".equals(s)) {
                                                                     wallPaper.settings.blur = true;
-                                                                } else if ("motion".equals(modes[a])) {
+                                                                } else if ("motion".equals(s)) {
                                                                     wallPaper.settings.motion = true;
                                                                 }
                                                             }
@@ -1745,10 +1745,10 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
                                                 mode = mode.toLowerCase();
                                                 String[] modes = mode.split(" ");
                                                 if (modes != null && modes.length > 0) {
-                                                    for (int a = 0; a < modes.length; a++) {
-                                                        if ("blur".equals(modes[a])) {
+                                                    for (String s : modes) {
+                                                        if ("blur".equals(s)) {
                                                             wallPaper.settings.blur = true;
-                                                        } else if ("motion".equals(modes[a])) {
+                                                        } else if ("motion".equals(s)) {
                                                             wallPaper.settings.motion = true;
                                                         }
                                                     }
@@ -3282,8 +3282,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
                                 if (q == null) {
                                     continue;
                                 }
-                                for (int j = 0; j < names.length; j++) {
-                                    final String name = names[j];
+                                for (final String name : names) {
                                     if (name != null && (name.startsWith(q) || name.contains(" " + q))) {
                                         found = true;
                                         break;
@@ -3315,7 +3314,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
         }
         TLRPC.TL_help_getAppUpdate req = new TLRPC.TL_help_getAppUpdate();
         try {
-            req.source = ApplicationLoader.applicationContext.getPackageManager().getInstallerPackageName(ApplicationLoader.applicationContext.getPackageName());
+            req.source = ApplicationLoader.applicationContext.getPackageManager().getInstallSourceInfo(ApplicationLoader.applicationContext.getPackageName()).getInstallingPackageName();
         } catch (Exception ignore) {
 
         }
@@ -4371,7 +4370,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
                     long freeSpace;
                     StatFs statFs = new StatFs(path.getAbsolutePath());
                     if (Build.VERSION.SDK_INT < 18) {
-                        freeSpace = Math.abs(statFs.getAvailableBlocks() * statFs.getBlockSize());
+                        freeSpace = Math.abs(statFs.getAvailableBlocksLong() * statFs.getBlockSizeLong());
                     } else {
                         freeSpace = statFs.getAvailableBlocksLong() * statFs.getBlockSizeLong();
                     }
@@ -4413,7 +4412,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
                 cells[a] = new LanguageCell(LaunchActivity.this, true);
                 cells[a].setLanguage(locales[a], locales[a] == englishInfo ? englishName : null, true);
                 cells[a].setTag(a);
-                cells[a].setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 2));
+                cells[a].setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 2));
                 cells[a].setLanguageSelected(a == 0);
                 linearLayout.addView(cells[a], LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 50));
                 cells[a].setOnClickListener(v -> {

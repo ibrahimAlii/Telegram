@@ -761,8 +761,8 @@ public class AnimatedFileDrawable extends BitmapDrawable implements Animatable {
     }
 
     private boolean hasRoundRadius() {
-        for (int a = 0; a < roundRadius.length; a++) {
-            if (roundRadius[a] != 0) {
+        for (int radius : roundRadius) {
+            if (radius != 0) {
                 return true;
             }
         }

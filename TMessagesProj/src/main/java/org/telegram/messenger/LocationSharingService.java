@@ -13,6 +13,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -35,7 +37,7 @@ public class LocationSharingService extends Service implements NotificationCente
     @Override
     public void onCreate() {
         super.onCreate();
-        handler = new Handler();
+        handler = new Handler(Looper.myLooper());
         runnable = () -> {
             handler.postDelayed(runnable, 1000);
             Utilities.stageQueue.postRunnable(() -> {
@@ -134,7 +136,7 @@ public class LocationSharingService extends Service implements NotificationCente
             intent2.addCategory(Intent.CATEGORY_LAUNCHER);
             PendingIntent contentIntent = PendingIntent.getActivity(ApplicationLoader.applicationContext, 0, intent2, 0);
 
-            builder = new NotificationCompat.Builder(ApplicationLoader.applicationContext);
+            builder = new NotificationCompat.Builder(ApplicationLoader.applicationContext, NotificationsController.OTHER_NOTIFICATIONS_CHANNEL);
             builder.setWhen(System.currentTimeMillis());
             builder.setSmallIcon(R.drawable.live_loc);
             builder.setContentIntent(contentIntent);

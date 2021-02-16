@@ -28,7 +28,7 @@ public class ThemePreviewDrawable extends BitmapDrawable {
     private DocumentObject.ThemeDocument themeDocument;
 
     public ThemePreviewDrawable(File pattern, DocumentObject.ThemeDocument document) {
-        super(createPreview(pattern, document));
+        super(ApplicationLoader.applicationContext.getResources(), createPreview(pattern, document));
         themeDocument = document;
     }
     

@@ -715,9 +715,7 @@ public class ChatAttachAlertAudioLayout extends ChatAttachAlert.AttachAlertLayou
 
                         for (int a = 0; a < copy.size(); a++) {
                             MediaController.AudioEntry entry = copy.get(a);
-                            for (int b = 0; b < search.length; b++) {
-                                String q = search[b];
-
+                            for (String q : search) {
                                 boolean ok = false;
                                 if (entry.author != null) {
                                     ok = entry.author.toLowerCase().contains(q);

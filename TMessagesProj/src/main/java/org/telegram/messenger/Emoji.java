@@ -279,7 +279,7 @@ public class Emoji {
                 b = getBounds();
             }
 
-            if (!canvas.quickReject(b.left, b.top, b.right, b.bottom, Canvas.EdgeType.AA)) {
+            if (!canvas.quickReject(b.left, b.top, b.right, b.bottom)) {
                 canvas.drawBitmap(emojiBmp[info.page][info.page2], null, b, paint);
             }
         }
@@ -604,12 +604,12 @@ public class Emoji {
             stringBuilder.append("=");
             stringBuilder.append(entry.getValue());
         }
-        preferences.edit().putString("emojis2", stringBuilder.toString()).commit();
+        preferences.edit().putString("emojis2", stringBuilder.toString()).apply();
     }
 
     public static void clearRecentEmoji() {
         SharedPreferences preferences = MessagesController.getGlobalEmojiSettings();
-        preferences.edit().putBoolean("filled_default", true).commit();
+        preferences.edit().putBoolean("filled_default", true).apply();
         emojiUseHistory.clear();
         recentEmoji.clear();
         saveRecentEmoji();
@@ -646,7 +646,7 @@ public class Emoji {
                         }
                     }
                 }
-                preferences.edit().remove("emojis").commit();
+                preferences.edit().remove("emojis").apply();
                 saveRecentEmoji();
             } else {
                 str = preferences.getString("emojis2", "");
@@ -670,7 +670,7 @@ public class Emoji {
                     for (int i = 0; i < newRecent.length; i++) {
                         emojiUseHistory.put(newRecent[i], newRecent.length - i);
                     }
-                    preferences.edit().putBoolean("filled_default", true).commit();
+                    preferences.edit().putBoolean("filled_default", true).apply();
                     saveRecentEmoji();
                 }
             }
@@ -683,8 +683,7 @@ public class Emoji {
             str = preferences.getString("color", "");
             if (str != null && str.length() > 0) {
                 String[] args = str.split(",");
-                for (int a = 0; a < args.length; a++) {
-                    String arg = args[a];
+                for (String arg : args) {
                     String[] args2 = arg.split("=");
                     emojiColor.put(args2[0], args2[1]);
                 }
@@ -705,6 +704,6 @@ public class Emoji {
             stringBuilder.append("=");
             stringBuilder.append(entry.getValue());
         }
-        preferences.edit().putString("color", stringBuilder.toString()).commit();
+        preferences.edit().putString("color", stringBuilder.toString()).apply();
     }
 }

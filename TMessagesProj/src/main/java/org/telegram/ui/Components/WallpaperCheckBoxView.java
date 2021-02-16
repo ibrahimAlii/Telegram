@@ -59,7 +59,7 @@ public class WallpaperCheckBoxView extends View {
         rect = new RectF();
 
         if (check) {
-            drawBitmap = Bitmap.createBitmap(AndroidUtilities.dp(18), AndroidUtilities.dp(18), Bitmap.Config.ARGB_4444);
+            drawBitmap = Bitmap.createBitmap(AndroidUtilities.dp(18), AndroidUtilities.dp(18), Bitmap.Config.ARGB_8888);
             drawCanvas = new Canvas(drawBitmap);
         }
 

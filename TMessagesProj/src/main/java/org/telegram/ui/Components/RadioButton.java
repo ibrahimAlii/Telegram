@@ -53,7 +53,7 @@ public class RadioButton extends View {
         }
 
         try {
-            bitmap = Bitmap.createBitmap(AndroidUtilities.dp(size), AndroidUtilities.dp(size), Bitmap.Config.ARGB_4444);
+            bitmap = Bitmap.createBitmap(AndroidUtilities.dp(size), AndroidUtilities.dp(size), Bitmap.Config.ARGB_8888);
             bitmapCanvas = new Canvas(bitmap);
         } catch (Throwable e) {
             FileLog.e(e);

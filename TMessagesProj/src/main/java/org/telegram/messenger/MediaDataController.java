@@ -242,7 +242,7 @@ public class MediaDataController extends BaseController {
 
         drafts.clear();
         draftMessages.clear();
-        draftPreferences.edit().clear().commit();
+        draftPreferences.edit().clear().apply();
 
         botInfos.clear();
         botKeyboards.clear();
@@ -924,7 +924,7 @@ public class MediaDataController extends BaseController {
                 if (gif) {
                     loadingRecentGifs = false;
                     recentGifsLoaded = true;
-                    editor.putLong("lastGifLoadTime", System.currentTimeMillis()).commit();
+                    editor.putLong("lastGifLoadTime", System.currentTimeMillis()).apply();
                 } else {
                     loadingRecentStickers[type] = false;
                     recentStickersLoaded[type] = true;
@@ -1326,7 +1326,7 @@ public class MediaDataController extends BaseController {
                     TLRPC.TL_messages_archivedStickers res = (TLRPC.TL_messages_archivedStickers) response;
                     archivedStickersCount[type] = res.count;
                     SharedPreferences preferences = MessagesController.getNotificationsSettings(currentAccount);
-                    preferences.edit().putInt("archivedStickersCount" + type, res.count).commit();
+                    preferences.edit().putInt("archivedStickersCount" + type, res.count).apply();
                     getNotificationCenter().postNotificationName(NotificationCenter.archivedStickersCountDidLoad, type);
                 }
             }));
@@ -2882,7 +2882,7 @@ public class MediaDataController extends BaseController {
             try {
                 if (SharedConfig.directShareHash == null) {
                     SharedConfig.directShareHash = UUID.randomUUID().toString();
-                    ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE).edit().putString("directShareHash2", SharedConfig.directShareHash).commit();
+                    ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE).edit().putString("directShareHash2", SharedConfig.directShareHash).apply();
                 }
 
                 List<ShortcutInfoCompat> currentShortcuts = ShortcutManagerCompat.getDynamicShortcuts(ApplicationLoader.applicationContext);
@@ -4295,8 +4295,7 @@ public class MediaDataController extends BaseController {
         try {
             CharacterStyle[] spans = editable.getSpans(start, end, CharacterStyle.class);
             if (spans != null && spans.length > 0) {
-                for (int a = 0; a < spans.length; a++) {
-                    CharacterStyle oldSpan = spans[a];
+                for (CharacterStyle oldSpan : spans) {
                     TextStyleSpan.TextStyleRun textStyleRun;
                     TextStyleSpan.TextStyleRun newStyleRun = span != null ? span.getTextStyleRun() : new TextStyleSpan.TextStyleRun();
                     if (oldSpan instanceof TextStyleSpan) {
@@ -4556,8 +4555,7 @@ public class MediaDataController extends BaseController {
             Spanned spannable = (Spanned) message[0];
             TextStyleSpan[] spans = spannable.getSpans(0, message[0].length(), TextStyleSpan.class);
             if (spans != null && spans.length > 0) {
-                for (int a = 0; a < spans.length; a++) {
-                    TextStyleSpan span = spans[a];
+                for (TextStyleSpan span : spans) {
                     int spanStart = spannable.getSpanStart(span);
                     int spanEnd = spannable.getSpanEnd(span);
                     if (checkInclusion(spanStart, entities, false) || checkInclusion(spanEnd, entities, true) || checkIntersection(spanStart, spanEnd, entities)) {
@@ -4611,12 +4609,12 @@ public class MediaDataController extends BaseController {
                 if (entities == null) {
                     entities = new ArrayList<>();
                 }
-                for (int b = 0; b < spansMentions.length; b++) {
+                for (URLSpanUserMention spansMention : spansMentions) {
                     TLRPC.TL_inputMessageEntityMentionName entity = new TLRPC.TL_inputMessageEntityMentionName();
-                    entity.user_id = getMessagesController().getInputUser(Utilities.parseInt(spansMentions[b].getURL()));
+                    entity.user_id = getMessagesController().getInputUser(Utilities.parseInt(spansMention.getURL()));
                     if (entity.user_id != null) {
-                        entity.offset = spannable.getSpanStart(spansMentions[b]);
-                        entity.length = Math.min(spannable.getSpanEnd(spansMentions[b]), message[0].length()) - entity.offset;
+                        entity.offset = spannable.getSpanStart(spansMention);
+                        entity.length = Math.min(spannable.getSpanEnd(spansMention), message[0].length()) - entity.offset;
                         if (message[0].charAt(entity.offset + entity.length - 1) == ' ') {
                             entity.length--;
                         }
@@ -4630,11 +4628,11 @@ public class MediaDataController extends BaseController {
                 if (entities == null) {
                     entities = new ArrayList<>();
                 }
-                for (int b = 0; b < spansUrlReplacement.length; b++) {
+                for (URLSpanReplacement urlSpanReplacement : spansUrlReplacement) {
                     TLRPC.TL_messageEntityTextUrl entity = new TLRPC.TL_messageEntityTextUrl();
-                    entity.offset = spannable.getSpanStart(spansUrlReplacement[b]);
-                    entity.length = Math.min(spannable.getSpanEnd(spansUrlReplacement[b]), message[0].length()) - entity.offset;
-                    entity.url = spansUrlReplacement[b].getURL();
+                    entity.offset = spannable.getSpanStart(urlSpanReplacement);
+                    entity.length = Math.min(spannable.getSpanEnd(urlSpanReplacement), message[0].length()) - entity.offset;
+                    entity.url = urlSpanReplacement.getURL();
                     entities.add(entity);
                 }
             }
@@ -4852,9 +4850,9 @@ public class MediaDataController extends BaseController {
                 }
             }
             if (threadId == 0) {
-                draftPreferences.edit().remove("" + did).remove("r_" + did).commit();
+                draftPreferences.edit().remove("" + did).remove("r_" + did).apply();
             } else {
-                draftPreferences.edit().remove("t_" + did + "_" + threadId).remove("rt_" + did + "_" + threadId).commit();
+                draftPreferences.edit().remove("t_" + did + "_" + threadId).remove("rt_" + did + "_" + threadId).apply();
             }
             messagesController.removeDraftDialogIfNeed(did);
         } else {
@@ -4901,7 +4899,7 @@ public class MediaDataController extends BaseController {
             editor.putString(threadId == 0 ? ("r_" + did) : ("rt_" + did + "_" + threadId), Utilities.bytesToHex(serializedData.toByteArray()));
             serializedData.cleanup();
         }
-        editor.commit();
+        editor.apply();
         if (fromServer && threadId == 0) {
             if (draft.reply_to_msg_id != 0 && replyToMessage == null) {
                 int lower_id = (int) did;
@@ -4990,7 +4988,7 @@ public class MediaDataController extends BaseController {
                 threads2.put(threadId, message);
                 SerializedData serializedData = new SerializedData(message.getObjectSize());
                 message.serializeToStream(serializedData);
-                draftPreferences.edit().putString(threadId == 0 ? ("r_" + did) : ("rt_" + did + "_" + threadId), Utilities.bytesToHex(serializedData.toByteArray())).commit();
+                draftPreferences.edit().putString(threadId == 0 ? ("r_" + did) : ("rt_" + did + "_" + threadId), Utilities.bytesToHex(serializedData.toByteArray())).apply();
                 getNotificationCenter().postNotificationName(NotificationCenter.newDraftReceived, did);
                 serializedData.cleanup();
             }
@@ -5001,7 +4999,7 @@ public class MediaDataController extends BaseController {
         drafts.clear();
         draftMessages.clear();
         draftsFolderIds.clear();
-        draftPreferences.edit().clear().commit();
+        draftPreferences.edit().clear().apply();
         if (notify) {
             getMessagesController().sortDialogs(null);
             getNotificationCenter().postNotificationName(NotificationCenter.dialogsNeedReload);
@@ -5034,11 +5032,11 @@ public class MediaDataController extends BaseController {
                 }
             }
             if (threadId == 0) {
-                draftPreferences.edit().remove("" + did).remove("r_" + did).commit();
+                draftPreferences.edit().remove("" + did).remove("r_" + did).apply();
                 getMessagesController().sortDialogs(null);
                 getNotificationCenter().postNotificationName(NotificationCenter.dialogsNeedReload);
             } else {
-                draftPreferences.edit().remove("t_" + did + "_" + threadId).remove("rt_" + did + "_" + threadId).commit();
+                draftPreferences.edit().remove("t_" + did + "_" + threadId).remove("rt_" + did + "_" + threadId).apply();
             }
         } else if (draftMessage.reply_to_msg_id != 0) {
             draftMessage.reply_to_msg_id = 0;
@@ -5228,8 +5226,7 @@ public class MediaDataController extends BaseController {
         if (langCodes == null) {
             return;
         }
-        for (int a = 0; a < langCodes.length; a++) {
-            String langCode = langCodes[a];
+        for (String langCode : langCodes) {
             if (TextUtils.isEmpty(langCode)) {
                 return;
             }
@@ -5376,8 +5373,8 @@ public class MediaDataController extends BaseController {
             try {
                 SQLiteCursor cursor;
                 boolean hasAny = false;
-                for (int a = 0; a < langCodes.length; a++) {
-                    cursor = getMessagesStorage().getDatabase().queryFinalized("SELECT alias FROM emoji_keywords_info_v2 WHERE lang = ?", langCodes[a]);
+                for (String langCode : langCodes) {
+                    cursor = getMessagesStorage().getDatabase().queryFinalized("SELECT alias FROM emoji_keywords_info_v2 WHERE lang = ?", langCode);
                     if (cursor.next()) {
                         alias = cursor.stringValue(0);
                     }
@@ -5388,8 +5385,8 @@ public class MediaDataController extends BaseController {
                 }
                 if (!hasAny) {
                     AndroidUtilities.runOnUIThread(() -> {
-                        for (int a = 0; a < langCodes.length; a++) {
-                            if (currentFetchingEmoji.get(langCodes[a]) != null) {
+                        for (String langCode : langCodes) {
+                            if (currentFetchingEmoji.get(langCode) != null) {
                                 return;
                             }
                         }

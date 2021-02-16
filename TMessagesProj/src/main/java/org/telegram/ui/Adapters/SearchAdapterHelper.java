@@ -358,15 +358,7 @@ public class SearchAdapterHelper {
                     hashMap.put(hashtagObject.hashtag, hashtagObject);
                 }
                 cursor.dispose();
-                Collections.sort(arrayList, (lhs, rhs) -> {
-                    if (lhs.date < rhs.date) {
-                        return 1;
-                    } else if (lhs.date > rhs.date) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                });
+                Collections.sort(arrayList, (lhs, rhs) -> Integer.compare(rhs.date, lhs.date));
                 AndroidUtilities.runOnUIThread(() -> setHashtags(arrayList, hashMap));
             } catch (Exception e) {
                 FileLog.e(e);

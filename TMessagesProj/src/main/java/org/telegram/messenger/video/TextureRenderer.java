@@ -315,8 +315,8 @@ public class TextureRenderer {
             st.getTransformMatrix(mSTMatrix);
             if (BuildVars.LOGS_ENABLED && firstFrame) {
                 StringBuilder builder = new StringBuilder();
-                for (int a = 0; a < mSTMatrix.length; a++) {
-                    builder.append(mSTMatrix[a]).append(", ");
+                for (float stMatrix : mSTMatrix) {
+                    builder.append(stMatrix).append(", ");
                 }
                 FileLog.d("stMatrix = " + builder);
                 firstFrame = false;
@@ -380,8 +380,8 @@ public class TextureRenderer {
             GLES20.glEnableVertexAttribArray(simplePositionHandle);
         }
         if (paintTexture != null) {
-            for (int a = 0; a < paintTexture.length; a++) {
-                drawTexture(true, paintTexture[a]);
+            for (int i : paintTexture) {
+                drawTexture(true, i);
             }
         }
         if (stickerTexture != null) {

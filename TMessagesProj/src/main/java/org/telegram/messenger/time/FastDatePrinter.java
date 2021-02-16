@@ -168,7 +168,7 @@ public class FastDatePrinter implements DatePrinter, Serializable {
 
     protected List<Rule> parsePattern() {
         final DateFormatSymbols symbols = new DateFormatSymbols(mLocale);
-        final List<Rule> rules = new ArrayList<Rule>();
+        final List<Rule> rules = new ArrayList<>();
 
         final String[] ERAs = symbols.getEras();
         final String[] months = symbols.getMonths();
@@ -202,7 +202,7 @@ public class FastDatePrinter implements DatePrinter, Serializable {
                     if (tokenLen == 2) {
                         rule = TwoDigitYearField.INSTANCE;
                     } else {
-                        rule = selectNumberRule(Calendar.YEAR, tokenLen < 4 ? 4 : tokenLen);
+                        rule = selectNumberRule(Calendar.YEAR, Math.max(tokenLen, 4));
                     }
                     break;
                 case 'L': // month in year (text and number)
@@ -397,7 +397,7 @@ public class FastDatePrinter implements DatePrinter, Serializable {
         } else if (obj instanceof Calendar) {
             return format((Calendar) obj, toAppendTo);
         } else if (obj instanceof Long) {
-            return format(((Long) obj).longValue(), toAppendTo);
+            return format((Long) obj, toAppendTo);
         } else {
             throw new IllegalArgumentException("Unknown class: " +
                     (obj == null ? "<null>" : obj.getClass().getName()));
@@ -775,7 +775,7 @@ public class FastDatePrinter implements DatePrinter, Serializable {
                 buffer.append((char) (value / 10 + '0'));
                 buffer.append((char) (value % 10 + '0'));
             } else {
-                buffer.append(Integer.toString(value));
+                buffer.append(value);
             }
         }
     }
@@ -882,7 +882,7 @@ public class FastDatePrinter implements DatePrinter, Serializable {
                 for (int i = mSize; --i >= digits; ) {
                     buffer.append('0');
                 }
-                buffer.append(Integer.toString(value));
+                buffer.append(value);
             }
         }
     }
@@ -927,7 +927,7 @@ public class FastDatePrinter implements DatePrinter, Serializable {
                 buffer.append((char) (value / 10 + '0'));
                 buffer.append((char) (value % 10 + '0'));
             } else {
-                buffer.append(Integer.toString(value));
+                buffer.append(value);
             }
         }
     }

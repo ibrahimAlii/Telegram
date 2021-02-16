@@ -10,6 +10,7 @@ package org.telegram.ui;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -387,9 +388,9 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
             if (holder != null && holder.itemView instanceof TextSizeCell) {
                 TextSizeCell cell = (TextSizeCell) holder.itemView;
                 ChatMessageCell[] cells = cell.messagesCell.getCells();
-                for (int a = 0; a < cells.length; a++) {
-                    cells[a].getMessageObject().resetLayout();
-                    cells[a].requestLayout();
+                for (ChatMessageCell chatMessageCell : cells) {
+                    chatMessageCell.getMessageObject().resetLayout();
+                    chatMessageCell.requestLayout();
                 }
                 cell.invalidate();
             }
@@ -423,9 +424,9 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
             if (holder != null && holder.itemView instanceof TextSizeCell) {
                 TextSizeCell cell = (TextSizeCell) holder.itemView;
                 ChatMessageCell[] cells = cell.messagesCell.getCells();
-                for (int a = 0; a < cells.length; a++) {
-                    cells[a].getMessageObject().resetLayout();
-                    cells[a].requestLayout();
+                for (ChatMessageCell chatMessageCell : cells) {
+                    chatMessageCell.getMessageObject().resetLayout();
+                    chatMessageCell.requestLayout();
                 }
             }
             updateMenuItem();
@@ -1170,6 +1171,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
         }
     }
 
+    @SuppressLint("MissingPermission")
     private void startLocationUpdate() {
         if (updatingLocation) {
             return;
@@ -1624,7 +1626,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
                     break;
                 case 2:
                     view = new TextInfoPrivacyCell(mContext);
-                    view.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
+                    view.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                     break;
                 case 3:
                     view = new ShadowSectionCell(mContext);
@@ -1899,9 +1901,9 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
                 }
                 case 3: {
                     if (position == stickersSection2Row || position == nightTypeInfoRow && themeInfoRow == -1 || position == themeInfoRow && nightTypeInfoRow != -1) {
-                        holder.itemView.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+                        holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                     } else {
-                        holder.itemView.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
+                        holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                     }
                     break;
                 }

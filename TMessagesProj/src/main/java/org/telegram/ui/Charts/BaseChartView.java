@@ -313,7 +313,7 @@ public abstract class BaseChartView<T extends ChartData, L extends LineViewData>
         if (getMeasuredWidth() != lastW || getMeasuredHeight() != lastH) {
             lastW = getMeasuredWidth();
             lastH = getMeasuredHeight();
-            bottomChartBitmap = Bitmap.createBitmap((int) (getMeasuredWidth() - (HORIZONTAL_PADDING * 2f)), pikerHeight, Bitmap.Config.ARGB_4444);
+            bottomChartBitmap = Bitmap.createBitmap((int) (getMeasuredWidth() - (HORIZONTAL_PADDING * 2f)), pikerHeight, Bitmap.Config.ARGB_8888);
             bottomChartCanvas = new Canvas(bottomChartBitmap);
 
             sharedUiComponents.getPickerMaskBitmap(pikerHeight, (int) (getMeasuredWidth() - HORIZONTAL_PADDING * 2));

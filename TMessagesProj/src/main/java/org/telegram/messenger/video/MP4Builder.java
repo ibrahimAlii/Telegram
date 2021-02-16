@@ -403,8 +403,7 @@ public class MP4Builder {
         CompositionTimeToSample.Entry lastEntry = null;
         List<CompositionTimeToSample.Entry> entries = new ArrayList<>();
 
-        for (int a = 0; a < sampleCompositions.length; a++) {
-            int offset = sampleCompositions[a];
+        for (int offset : sampleCompositions) {
             if (lastEntry != null && lastEntry.getOffset() == offset) {
                 lastEntry.setCount(lastEntry.getCount() + 1);
             } else {
@@ -422,8 +421,7 @@ public class MP4Builder {
         List<TimeToSampleBox.Entry> entries = new ArrayList<>();
         long[] deltas = track.getSampleDurations();
 
-        for (int a = 0; a < deltas.length; a++) {
-            long delta = deltas[a];
+        for (long delta : deltas) {
             if (lastEntry != null && lastEntry.getDelta() == delta) {
                 lastEntry.setCount(lastEntry.getCount() + 1);
             } else {

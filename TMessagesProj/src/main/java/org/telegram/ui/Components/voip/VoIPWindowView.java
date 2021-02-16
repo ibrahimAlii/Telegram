@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
+import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
@@ -33,7 +34,12 @@ public class VoIPWindowView extends FrameLayout {
     public VoIPWindowView(Activity activity, boolean enterAnimation) {
         super(activity);
         this.activity = activity;
-        setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            getWindowInsetsController().setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+            getWindowInsetsController().setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
+        } else {
+            setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        }
         setFitsSystemWindows(true);
 
         orientationBefore = activity.getRequestedOrientation();
@@ -201,14 +207,23 @@ public class VoIPWindowView extends FrameLayout {
     }
 
     public void requestFullscreen(boolean request) {
-        if (request) {
-            setSystemUiVisibility(getSystemUiVisibility() | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (request) {
+                getWindowInsetsController().setSystemBarsAppearance(getWindowInsetsController().getSystemBarsAppearance(), WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+            } else {
+                int flags = getWindowInsetsController().getSystemBarsAppearance();
+                flags  &= ~WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
+                getWindowInsetsController().setSystemBarsAppearance(flags, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+            }
         } else {
-            int flags = getSystemUiVisibility();
-            flags &= ~View.SYSTEM_UI_FLAG_FULLSCREEN;
-            setSystemUiVisibility(flags);
+            if (request) {
+                setSystemUiVisibility(getSystemUiVisibility() | View.SYSTEM_UI_FLAG_FULLSCREEN);
+            } else {
+                int flags = getSystemUiVisibility();
+                flags &= ~View.SYSTEM_UI_FLAG_FULLSCREEN;
+                setSystemUiVisibility(flags);
+            }
         }
-
     }
 
     public void finishImmediate() {

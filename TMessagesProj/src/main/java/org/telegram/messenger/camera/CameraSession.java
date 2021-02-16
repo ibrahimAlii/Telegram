@@ -9,7 +9,6 @@
 package org.telegram.messenger.camera;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.hardware.Camera;
@@ -18,7 +17,6 @@ import android.media.MediaRecorder;
 import android.os.Build;
 import android.view.OrientationEventListener;
 import android.view.Surface;
-import android.view.WindowManager;
 
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
@@ -75,8 +73,7 @@ public class CameraSession {
                     return;
                 }
                 jpegOrientation = roundOrientation(orientation, jpegOrientation);
-                WindowManager mgr = (WindowManager) ApplicationLoader.applicationContext.getSystemService(Context.WINDOW_SERVICE);
-                int rotation = mgr.getDefaultDisplay().getRotation();
+                int rotation = ApplicationLoader.applicationContext.getDisplay().getRotation();
                 if (lastOrientation != jpegOrientation || rotation != lastDisplayOrientation) {
                     if (!isVideo) {
                         configurePhotoCamera();
@@ -494,8 +491,7 @@ public class CameraSession {
     }
 
     private int getDisplayOrientation(Camera.CameraInfo info, boolean isStillCapture) {
-        WindowManager mgr = (WindowManager) ApplicationLoader.applicationContext.getSystemService(Context.WINDOW_SERVICE);
-        int rotation = mgr.getDefaultDisplay().getRotation();
+        int rotation = ApplicationLoader.applicationContext.getDisplay().getRotation();
         int degrees = 0;
 
         switch (rotation) {

@@ -279,8 +279,8 @@ public class ClippingImageView extends View {
         }
         System.arraycopy(value, 0, radius, 0, value.length);
         needRadius = false;
-        for (int a = 0; a < value.length; a++) {
-            if (value[a] != 0) {
+        for (int i : value) {
+            if (i != 0) {
                 needRadius = true;
                 break;
             }

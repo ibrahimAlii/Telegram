@@ -180,8 +180,8 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
             setAnimationRunnable = null;
         }
         if (animationDrawables != null) {
-            for (int a = 0; a < animationDrawables.length; a++) {
-                animationDrawables[a].recycle();
+            for (RLottieDrawable animationDrawable : animationDrawables) {
+                animationDrawable.recycle();
             }
             animationDrawables = null;
         }
@@ -198,7 +198,7 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
 
     @Override
     public View createView(Context context) {
-        actionBar.setBackgroundDrawable(null);
+        actionBar.setBackground(null);
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
         actionBar.setAllowOverlayTitle(false);
         actionBar.setTitleColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
@@ -314,7 +314,7 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
         buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
         buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        buttonTextView.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(4), Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
+        buttonTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(4), Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
         buttonTextView.setOnClickListener(v -> {
             if (getParentActivity() == null) {
                 return;
@@ -736,7 +736,7 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
                 passwordEditText.setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
                 passwordEditText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
                 passwordEditText.setHintColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
-                passwordEditText.setBackgroundDrawable(Theme.createEditTextDrawable(context, false));
+                passwordEditText.setBackground(Theme.createEditTextDrawable(context, false));
                 passwordEditText.setMaxLines(1);
                 passwordEditText.setLines(1);
                 passwordEditText.setGravity(Gravity.LEFT);
@@ -780,7 +780,7 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
                 showPasswordButton.setScaleType(ImageView.ScaleType.CENTER);
                 showPasswordButton.setContentDescription(LocaleController.getString("TwoStepVerificationShowPassword", R.string.TwoStepVerificationShowPassword));
                 if (Build.VERSION.SDK_INT >= 21) {
-                    showPasswordButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
+                    showPasswordButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
                 }
                 showPasswordButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_messagePanelIcons), PorterDuff.Mode.MULTIPLY));
                 showPasswordButton.setVisibility(View.GONE);

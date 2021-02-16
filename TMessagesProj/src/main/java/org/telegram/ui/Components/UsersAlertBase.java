@@ -23,7 +23,6 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.FrameLayout;
@@ -32,8 +31,6 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.exoplayer2.util.Log;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -207,7 +204,7 @@ public class UsersAlertBase extends BottomSheet {
             super(context);
 
             searchBackground = new View(context);
-            searchBackground.setBackgroundDrawable(Theme.createRoundRectDrawable(AndroidUtilities.dp(18), Theme.getColor(keySearchBackground)));
+            searchBackground.setBackground(Theme.createRoundRectDrawable(AndroidUtilities.dp(18), Theme.getColor(keySearchBackground)));
             addView(searchBackground, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36, Gravity.LEFT | Gravity.TOP, 14, 11, 14, 0));
 
             searchIconImageView = new ImageView(context);
@@ -246,7 +243,7 @@ public class UsersAlertBase extends BottomSheet {
             searchEditText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
             searchEditText.setHintTextColor(Theme.getColor(keySearchPlaceholder));
             searchEditText.setTextColor(Theme.getColor(keySearchText));
-            searchEditText.setBackgroundDrawable(null);
+            searchEditText.setBackground(null);
             searchEditText.setPadding(0, 0, 0, 0);
             searchEditText.setMaxLines(1);
             searchEditText.setLines(1);

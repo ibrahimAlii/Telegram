@@ -32,7 +32,6 @@ import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
-import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
@@ -340,13 +339,13 @@ public class InviteLinkBottomSheet extends BottomSheet {
                 Drawable background = new ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray));
                 CombinedDrawable combinedDrawable = new CombinedDrawable(background, shadowDrawable, 0, 0);
                 combinedDrawable.setFullsize(true);
-                view.setBackgroundDrawable(combinedDrawable);
+                view.setBackground(combinedDrawable);
             } else if (holder.getItemViewType() == 2) {
                 Drawable shadowDrawable = Theme.getThemedDrawable(view.getContext(), R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow);
                 Drawable background = new ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray));
                 CombinedDrawable combinedDrawable = new CombinedDrawable(background, shadowDrawable, 0, 0);
                 combinedDrawable.setFullsize(true);
-                view.setBackgroundDrawable(combinedDrawable);
+                view.setBackground(combinedDrawable);
             }
         }
     }
@@ -509,7 +508,7 @@ public class InviteLinkBottomSheet extends BottomSheet {
                     Drawable background = new ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray));
                     combinedDrawable = new CombinedDrawable(background, shadowDrawable, 0, 0);
                     combinedDrawable.setFullsize(true);
-                    view.setBackgroundDrawable(combinedDrawable);
+                    view.setBackground(combinedDrawable);
                     break;
             }
             view.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -605,10 +604,7 @@ public class InviteLinkBottomSheet extends BottomSheet {
         @Override
         public boolean isEnabled(RecyclerView.ViewHolder holder) {
             int position = holder.getAdapterPosition();
-            if (position == creatorRow || (position >= usersStartRow && position < usersEndRow)) {
-                return true;
-            }
-            return false;
+            return position == creatorRow || (position >= usersStartRow && position < usersEndRow);
         }
     }
 

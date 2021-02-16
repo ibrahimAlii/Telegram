@@ -11,7 +11,6 @@ package org.telegram.ui;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,10 +33,12 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -76,9 +77,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class WallpapersListActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -312,8 +310,8 @@ public class WallpapersListActivity extends BaseFragment implements Notification
             NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.wallpapersNeedReload);
             MessagesStorage.getInstance(currentAccount).getWallpapers();
         } else {
-            for (int a = 0; a < defaultColors.length; a++) {
-                wallPapers.add(new ColorWallpaper(Theme.COLOR_BACKGROUND_SLUG, defaultColors[a], 0, 45));
+            for (int defaultColor : defaultColors) {
+                wallPapers.add(new ColorWallpaper(Theme.COLOR_BACKGROUND_SLUG, defaultColor, 0, 45));
             }
             if (currentType == TYPE_COLOR && patterns.isEmpty()) {
                 NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.wallpapersDidLoad);
@@ -943,13 +941,7 @@ public class WallpapersListActivity extends BaseFragment implements Notification
                 int index1 = allWallPapers.indexOf(wallPaper1);
                 int index2 = allWallPapers.indexOf(wallPaper2);
                 if (wallPaper1.dark && wallPaper2.dark || !wallPaper1.dark && !wallPaper2.dark) {
-                    if (index1 > index2) {
-                        return 1;
-                    } else if (index1 < index2) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
+                    return Integer.compare(index1, index2);
                 } else if (wallPaper1.dark && !wallPaper2.dark) {
                     if (currentThemeDark) {
                         return -1;
@@ -1056,8 +1048,7 @@ public class WallpapersListActivity extends BaseFragment implements Notification
         if (getParentActivity() == null) {
             return;
         }
-        WindowManager manager = (WindowManager) ApplicationLoader.applicationContext.getSystemService(Activity.WINDOW_SERVICE);
-        int rotation = manager.getDefaultDisplay().getRotation();
+        int rotation = ApplicationLoader.applicationContext.getDisplay().getRotation();
 
         if (AndroidUtilities.isTablet()) {
             columnsCount = 3;
@@ -1469,7 +1460,7 @@ public class WallpapersListActivity extends BaseFragment implements Notification
                     Drawable drawable = Theme.getThemedDrawable(mContext, wallPaperStartRow == -1 ? R.drawable.greydivider_bottom : R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow);
                     CombinedDrawable combinedDrawable = new CombinedDrawable(new ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray)), drawable);
                     combinedDrawable.setFullsize(true);
-                    view.setBackgroundDrawable(combinedDrawable);
+                    view.setBackground(combinedDrawable);
                     break;
                 }
                 case 3: {
@@ -1477,7 +1468,7 @@ public class WallpapersListActivity extends BaseFragment implements Notification
                     Drawable drawable = Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow);
                     CombinedDrawable combinedDrawable = new CombinedDrawable(new ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray)), drawable);
                     combinedDrawable.setFullsize(true);
-                    view.setBackgroundDrawable(combinedDrawable);
+                    view.setBackground(combinedDrawable);
                     break;
                 }
                 case 2:

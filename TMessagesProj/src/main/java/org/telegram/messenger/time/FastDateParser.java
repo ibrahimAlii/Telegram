@@ -137,7 +137,7 @@ public class FastDateParser implements DateParser, Serializable {
     private void init(Calendar definingCalendar) {
 
         final StringBuilder regex = new StringBuilder();
-        final List<Strategy> collector = new ArrayList<Strategy>();
+        final List<Strategy> collector = new ArrayList<>();
 
         final Matcher patternMatcher = formatPattern.matcher(pattern);
         if (!patternMatcher.lookingAt()) {
@@ -399,7 +399,7 @@ public class FastDateParser implements DateParser, Serializable {
     }
 
     private static Map<String, Integer> getDisplayNames(int field, Locale locale) {
-        Map<String, Integer> result = new HashMap<String, Integer>();
+        Map<String, Integer> result = new HashMap<>();
         insertValuesInMap(result, getDisplayNameArray(field, false, locale));
         insertValuesInMap(result, getDisplayNameArray(field, true, locale));
         return result.isEmpty() ? null : result;
@@ -672,7 +672,7 @@ public class FastDateParser implements DateParser, Serializable {
                 sb.setCharAt(sb.length() - 1, ')');
                 throw new IllegalArgumentException(sb.toString());
             }
-            cal.set(field, iVal.intValue());
+            cal.set(field, iVal);
         }
     }
 
@@ -753,7 +753,7 @@ public class FastDateParser implements DateParser, Serializable {
     private static class TimeZoneStrategy extends Strategy {
 
         private final String validTimeZoneChars;
-        private final SortedMap<String, TimeZone> tzNames = new TreeMap<String, TimeZone>(String.CASE_INSENSITIVE_ORDER);
+        private final SortedMap<String, TimeZone> tzNames = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
         /**
          * Index of zone id

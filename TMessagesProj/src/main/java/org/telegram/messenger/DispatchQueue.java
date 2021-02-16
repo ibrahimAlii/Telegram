@@ -57,8 +57,8 @@ public class DispatchQueue extends Thread {
     public void cancelRunnables(Runnable[] runnables) {
         try {
             syncLatch.await();
-            for (int i = 0; i < runnables.length; i++) {
-                handler.removeCallbacks(runnables[i]);
+            for (Runnable runnable : runnables) {
+                handler.removeCallbacks(runnable);
             }
         } catch (Exception e) {
             FileLog.e(e);
@@ -107,7 +107,7 @@ public class DispatchQueue extends Thread {
     @Override
     public void run() {
         Looper.prepare();
-        handler = new Handler() {
+        handler = new Handler(Looper.myLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 DispatchQueue.this.handleMessage(msg);

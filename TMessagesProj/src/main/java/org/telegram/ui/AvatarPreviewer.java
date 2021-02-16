@@ -3,6 +3,7 @@ package org.telegram.ui;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -23,6 +24,7 @@ import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Consumer;
 import androidx.core.util.Preconditions;
@@ -69,6 +71,7 @@ public class AvatarPreviewer {
     private Layout layout;
     private boolean visible;
 
+    @SuppressLint("RestrictedApi")
     public void show(ViewGroup parentContainer, Data data, Callback callback) {
         Preconditions.checkNotNull(parentContainer);
         Preconditions.checkNotNull(data);
@@ -469,11 +472,18 @@ public class AvatarPreviewer {
             visibleSheet.show();
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
         @Override
         public WindowInsets onApplyWindowInsets(WindowInsets insets) {
             this.insets = insets;
             invalidateSize();
-            return insets.consumeStableInsets();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                return WindowInsets.CONSUMED;
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                return insets.consumeStableInsets();
+            } else  {
+                return insets.consumeSystemWindowInsets();
+            }
         }
 
         @Override
@@ -496,9 +506,10 @@ public class AvatarPreviewer {
             int lPadding = padding, rPadding = padding, vPadding = padding;
 
             if (Build.VERSION.SDK_INT >= 21) {
-                lPadding += insets.getStableInsetLeft();
-                rPadding += insets.getStableInsetRight();
-                vPadding += Math.max(insets.getStableInsetTop(), insets.getStableInsetBottom());
+                lPadding += insets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).left;
+                rPadding += insets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).right;
+                vPadding += Math.max(insets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).top,
+                        insets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).bottom);
             }
 
             final int arrowWidth = arrowDrawable.getIntrinsicWidth();
@@ -554,7 +565,7 @@ public class AvatarPreviewer {
             }
 
             final int statusBarHeight = Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight : 0;
-            final int navBarHeight = Build.VERSION.SDK_INT >= 21 ? insets.getStableInsetBottom() : 0;
+            final int navBarHeight = Build.VERSION.SDK_INT >= 21 ? insets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).bottom : 0;
             final int sheetHeight = menuItems.length * AndroidUtilities.dp(48) + AndroidUtilities.dp(16);
             final float maxBottom = getHeight() - (navBarHeight + sheetHeight + AndroidUtilities.dp(16));
             final float translationY = Math.min(0, maxBottom - imageReceiver.getImageY2());

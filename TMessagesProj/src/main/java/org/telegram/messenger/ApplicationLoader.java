@@ -31,6 +31,7 @@ import android.text.TextUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.installations.FirebaseInstallations;
 
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
@@ -263,7 +264,7 @@ public class ApplicationLoader extends Application {
                 }
                 Utilities.globalQueue.postRunnable(() -> {
                     try {
-                        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(instanceIdResult -> {
+                        FirebaseInstallations.getInstance().getToken(true).addOnSuccessListener(instanceIdResult -> {
                             String token = instanceIdResult.getToken();
                             if (!TextUtils.isEmpty(token)) {
                                 GcmPushListenerService.sendRegistrationToServer(token);

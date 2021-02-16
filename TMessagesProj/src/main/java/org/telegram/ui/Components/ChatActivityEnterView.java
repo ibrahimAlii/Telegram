@@ -1611,7 +1611,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
             emojiButton[a].setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_messagePanelIcons), PorterDuff.Mode.MULTIPLY));
             emojiButton[a].setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             if (Build.VERSION.SDK_INT >= 21) {
-                emojiButton[a].setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
+                emojiButton[a].setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
             }
             frameLayout.addView(emojiButton[a], LayoutHelper.createFrame(48, 48, Gravity.BOTTOM | Gravity.LEFT, 3, 0, 0, 0));
             emojiButton[a].setOnClickListener(view -> {
@@ -1803,7 +1803,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
         messageEditText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         messageEditText.setGravity(Gravity.BOTTOM);
         messageEditText.setPadding(0, AndroidUtilities.dp(11), 0, AndroidUtilities.dp(12));
-        messageEditText.setBackgroundDrawable(null);
+        messageEditText.setBackground(null);
         messageEditText.setTextColor(Theme.getColor(Theme.key_chat_messagePanelText));
         messageEditText.setHintColor(Theme.getColor(Theme.key_chat_messagePanelHint));
         messageEditText.setHintTextColor(Theme.getColor(Theme.key_chat_messagePanelHint));
@@ -1921,8 +1921,8 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
                     }
                     if (processChange) {
                         ImageSpan[] spans = editable.getSpans(0, editable.length(), ImageSpan.class);
-                        for (int i = 0; i < spans.length; i++) {
-                            editable.removeSpan(spans[i]);
+                        for (ImageSpan span : spans) {
+                            editable.removeSpan(span);
                         }
                         Emoji.replaceEmoji(editable, messageEditText.getPaint().getFontMetricsInt(), AndroidUtilities.dp(20), false);
                         processChange = false;
@@ -1992,7 +1992,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
                 scheduledButton.setContentDescription(LocaleController.getString("ScheduledMessages", R.string.ScheduledMessages));
                 scheduledButton.setScaleType(ImageView.ScaleType.CENTER);
                 if (Build.VERSION.SDK_INT >= 21) {
-                    scheduledButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
+                    scheduledButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
                 }
                 frameLayout.addView(scheduledButton, LayoutHelper.createFrame(48, 48, Gravity.BOTTOM | Gravity.RIGHT));
                 scheduledButton.setOnClickListener(v -> {
@@ -2015,7 +2015,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
             botButtonDrawablel.setIcon(R.drawable.input_bot2, false);
             botButton.setScaleType(ImageView.ScaleType.CENTER);
             if (Build.VERSION.SDK_INT >= 21) {
-                botButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
+                botButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
             }
             botButton.setVisibility(GONE);
             attachLayout.addView(botButton, LayoutHelper.createLinear(48, 48));
@@ -2055,7 +2055,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
             notifyButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_messagePanelIcons), PorterDuff.Mode.MULTIPLY));
             notifyButton.setScaleType(ImageView.ScaleType.CENTER);
             if (Build.VERSION.SDK_INT >= 21) {
-                notifyButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
+                notifyButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
             }
             notifyButton.setVisibility(canWriteToChannel && (delegate == null || !delegate.hasScheduledMessages()) ? VISIBLE : GONE);
             attachLayout.addView(notifyButton, LayoutHelper.createLinear(48, 48));
@@ -2091,7 +2091,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
             attachButton.setImageResource(R.drawable.input_attach);
             attachButton.setScaleType(ImageView.ScaleType.CENTER);
             if (Build.VERSION.SDK_INT >= 21) {
-                attachButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
+                attachButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
             }
             attachLayout.addView(attachButton, LayoutHelper.createLinear(48, 48));
             attachButton.setOnClickListener(v -> {
@@ -2118,7 +2118,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
 
         recordDeleteImageView.setContentDescription(LocaleController.getString("Delete", R.string.Delete));
         if (Build.VERSION.SDK_INT >= 21) {
-            recordDeleteImageView.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
+            recordDeleteImageView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
         }
         recordedAudioPanel.addView(recordDeleteImageView, LayoutHelper.createFrame(48, 48));
         recordDeleteImageView.setOnClickListener(v -> {
@@ -2179,7 +2179,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
         sizeNotifierLayout.addView(videoTimeHintView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM, 0, 0, 0, 52));
 
         recordedAudioBackground = new View(context);
-        recordedAudioBackground.setBackgroundDrawable(Theme.createRoundRectDrawable(AndroidUtilities.dp(18), Theme.getColor(Theme.key_chat_recordedVoiceBackground)));
+        recordedAudioBackground.setBackground(Theme.createRoundRectDrawable(AndroidUtilities.dp(18), Theme.getColor(Theme.key_chat_recordedVoiceBackground)));
         recordedAudioPanel.addView(recordedAudioBackground, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36, Gravity.CENTER_VERTICAL | Gravity.LEFT, 48, 0, 0, 0));
 
         recordedAudioSeekBar = new SeekBarWaveformView(context);
@@ -2426,7 +2426,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
         cancelBotButton.setScaleY(0.1f);
         cancelBotButton.setAlpha(0.0f);
         if (Build.VERSION.SDK_INT >= 21) {
-            cancelBotButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
+            cancelBotButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
         }
         sendButtonContainer.addView(cancelBotButton, LayoutHelper.createFrame(48, 48));
         cancelBotButton.setOnClickListener(view -> {
@@ -2562,7 +2562,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
         sendButton.setScaleY(0.1f);
         sendButton.setAlpha(0.0f);
         if (Build.VERSION.SDK_INT >= 21) {
-            sendButton.setBackgroundDrawable(Theme.createSelectorDrawable(Color.argb(24, Color.red(color), Color.green(color), Color.blue(color)), 1));
+            sendButton.setBackground(Theme.createSelectorDrawable(Color.argb(24, Color.red(color), Color.green(color), Color.blue(color)), 1));
         }
         sendButtonContainer.addView(sendButton, LayoutHelper.createFrame(48, 48));
         sendButton.setOnClickListener(view -> {
@@ -2612,7 +2612,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
         expandStickersButton.setScaleY(0.1f);
         expandStickersButton.setAlpha(0.0f);
         if (Build.VERSION.SDK_INT >= 21) {
-            expandStickersButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
+            expandStickersButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
         }
         sendButtonContainer.addView(expandStickersButton, LayoutHelper.createFrame(48, 48));
         expandStickersButton.setOnClickListener(v -> {
@@ -5319,8 +5319,8 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
                 SpannableStringBuilder stringBuilder = new SpannableStringBuilder(editingText);
                 Object[] spansToRemove = stringBuilder.getSpans(0, stringBuilder.length(), Object.class);
                 if (spansToRemove != null && spansToRemove.length > 0) {
-                    for (int a = 0; a < spansToRemove.length; a++) {
-                        stringBuilder.removeSpan(spansToRemove[a]);
+                    for (Object o : spansToRemove) {
+                        stringBuilder.removeSpan(o);
                     }
                 }
                 if (entities != null) {
@@ -7032,8 +7032,8 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
             }
         } else if (id == NotificationCenter.featuredStickersDidLoad) {
             if (emojiButton != null) {
-                for (int a = 0; a < emojiButton.length; a++) {
-                    emojiButton[a].invalidate();
+                for (ImageView imageView : emojiButton) {
+                    imageView.invalidate();
                 }
             }
         } else if (id == NotificationCenter.messageReceivedByServer) {
@@ -7266,10 +7266,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
         if (recordingAudioVideo) {
             return false;
         }
-        if ((videoSendButton != null) && isInVideoMode() && recordedAudioPanel != null && recordedAudioPanel.getVisibility() == View.VISIBLE) {
-            return false;
-        }
-        return true;
+        return (videoSendButton == null) || !isInVideoMode() || recordedAudioPanel == null || recordedAudioPanel.getVisibility() != View.VISIBLE;
     }
 
     public int getHeightWithTopView() {

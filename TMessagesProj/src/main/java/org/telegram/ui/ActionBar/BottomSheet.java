@@ -31,6 +31,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.view.NestedScrollingParent;
 import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
+
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -41,6 +42,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
@@ -364,7 +366,7 @@ public class BottomSheet extends Dialog {
             }
             keyboardVisible = keyboardHeight > AndroidUtilities.dp(20);
             if (lastInsets != null && Build.VERSION.SDK_INT >= 21) {
-                bottomInset = lastInsets.getSystemWindowInsetBottom();
+                bottomInset = lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
                 if (Build.VERSION.SDK_INT >= 29) {
                     bottomInset += getAdditionalMandatoryOffsets();
                 }
@@ -377,14 +379,15 @@ public class BottomSheet extends Dialog {
             }
             setMeasuredDimension(width, containerHeight);
             if (lastInsets != null && Build.VERSION.SDK_INT >= 21) {
-                int inset = lastInsets.getSystemWindowInsetBottom();
+                int inset = lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
                 if (Build.VERSION.SDK_INT >= 29) {
                     inset += getAdditionalMandatoryOffsets();
                 }
                 height -= inset;
             }
             if (lastInsets != null && Build.VERSION.SDK_INT >= 21) {
-                width -= lastInsets.getSystemWindowInsetRight() + lastInsets.getSystemWindowInsetLeft();
+                width -= lastInsets.getInsets(WindowInsets.Type.systemBars()).right +
+                        lastInsets.getInsets(WindowInsets.Type.systemBars()).left;
             }
             boolean isPortrait = width < height;
 
@@ -419,12 +422,12 @@ public class BottomSheet extends Dialog {
             if (containerView != null) {
                 int t = (bottom - top) - containerView.getMeasuredHeight();
                 if (lastInsets != null && Build.VERSION.SDK_INT >= 21) {
-                    left += lastInsets.getSystemWindowInsetLeft();
-                    right -= lastInsets.getSystemWindowInsetRight();
+                    left += lastInsets.getInsets(WindowInsets.Type.systemBars()).left;
+                    right -= lastInsets.getInsets(WindowInsets.Type.systemBars()).right;
                     if (useSmoothKeyboard) {
                         t = 0;
                     } else {
-                        t -= lastInsets.getSystemWindowInsetBottom() - (drawNavigationBar ? 0 : bottomInset);
+                        t -= lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom - (drawNavigationBar ? 0 : bottomInset);
                         if (Build.VERSION.SDK_INT >= 29) {
                             t -= getAdditionalMandatoryOffsets();
                         }
@@ -432,7 +435,7 @@ public class BottomSheet extends Dialog {
                 }
                 int l = ((right - left) - containerView.getMeasuredWidth()) / 2;
                 if (lastInsets != null && Build.VERSION.SDK_INT >= 21) {
-                    l += lastInsets.getSystemWindowInsetLeft();
+                    l += lastInsets.getInsets(WindowInsets.Type.systemBars()).left;
                 }
                 containerView.layout(l, t, l + containerView.getMeasuredWidth(), t + containerView.getMeasuredHeight());
             }
@@ -483,7 +486,7 @@ public class BottomSheet extends Dialog {
                             childTop = lp.topMargin;
                     }
                     if (lastInsets != null && Build.VERSION.SDK_INT >= 21) {
-                        childLeft += lastInsets.getSystemWindowInsetLeft();
+                        childLeft += lastInsets.getInsets(WindowInsets.Type.systemBars()).left;
                     }
                     child.layout(childLeft, childTop, childLeft + width, childTop + height);
                 }
@@ -555,13 +558,15 @@ public class BottomSheet extends Dialog {
         if (!calcMandatoryInsets) {
             return 0;
         }
-        Insets insets = lastInsets.getSystemGestureInsets();
+        Insets insets = lastInsets.getInsets(WindowInsets.Type.systemGestures());
         return !keyboardVisible && drawNavigationBar && insets != null && (insets.left != 0 || insets.right != 0) ? insets.bottom : 0;
     }
 
     public interface BottomSheetDelegateInterface {
         void onOpenAnimationStart();
+
         void onOpenAnimationEnd();
+
         boolean canDismiss();
     }
 
@@ -597,7 +602,7 @@ public class BottomSheet extends Dialog {
             super(context);
 
             currentType = type;
-            setBackgroundDrawable(Theme.getSelectorDrawable(false));
+            setBackground(Theme.getSelectorDrawable(false));
             //setPadding(AndroidUtilities.dp(16), 0, AndroidUtilities.dp(16), 0);
 
             imageView = new ImageView(context);
@@ -720,7 +725,7 @@ public class BottomSheet extends Dialog {
                 return true;
             }
         };
-        container.setBackgroundDrawable(backDrawable);
+        container.setBackground(backDrawable);
         focusable = needFocus;
         if (Build.VERSION.SDK_INT >= 21) {
             container.setFitsSystemWindows(true);
@@ -733,7 +738,12 @@ public class BottomSheet extends Dialog {
                     return insets.consumeSystemWindowInsets();
                 }
             });
-            container.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                container.getWindowInsetsController().setSystemBarsAppearance(
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+            } else {
+                container.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            }
         }
 
         backDrawable.setAlpha(0);
@@ -775,7 +785,7 @@ public class BottomSheet extends Dialog {
                     onContainerTranslationYChanged(translationY);
                 }
             };
-            containerView.setBackgroundDrawable(shadowDrawable);
+            containerView.setBackground(shadowDrawable);
             containerView.setPadding(backgroundPaddingLeft, (applyTopPadding ? AndroidUtilities.dp(8) : 0) + backgroundPaddingTop - 1, backgroundPaddingLeft, (applyBottomPadding ? AndroidUtilities.dp(8) : 0));
         }
         containerView.setVisibility(View.INVISIBLE);
@@ -845,7 +855,12 @@ public class BottomSheet extends Dialog {
                         WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
             }
             params.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-            container.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_FULLSCREEN);
+            if (Build.VERSION.SDK_INT >= 30) {
+                container.getWindowInsetsController().setSystemBarsAppearance(
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+            } else {
+                container.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_FULLSCREEN);
+            }
         }
         params.height = ViewGroup.LayoutParams.MATCH_PARENT;
         if (Build.VERSION.SDK_INT >= 28) {
@@ -862,9 +877,19 @@ public class BottomSheet extends Dialog {
             if (useLightStatusBar && color == 0xffffffff) {
                 flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             } else {
-                flags &=~ View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             }
-            container.setSystemUiVisibility(flags);
+            if (Build.VERSION.SDK_INT >= 30) {
+                if (useLightStatusBar && color == 0xffffffff) {
+                    flags |= container.getWindowInsetsController().getSystemBarsAppearance();
+                } else {
+                    flags &= ~container.getWindowInsetsController().getSystemBarsAppearance();
+                }
+                container.getWindowInsetsController().setSystemBarsAppearance(flags, flags);
+            } else {
+                container.setSystemUiVisibility(flags);
+            }
+
         }
     }
 
@@ -881,7 +906,7 @@ public class BottomSheet extends Dialog {
         WindowManager.LayoutParams params = window.getAttributes();
         if (focusable) {
             params.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
-            params.flags &=~ WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
+            params.flags &= ~WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
         } else {
             params.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
             params.flags |= WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
@@ -941,7 +966,7 @@ public class BottomSheet extends Dialog {
     public void setAllowDrawContent(boolean value) {
         if (allowDrawContent != value) {
             allowDrawContent = value;
-            container.setBackgroundDrawable(allowDrawContent ? backDrawable : null);
+            container.setBackground(allowDrawContent ? backDrawable : null);
             container.invalidate();
         }
     }
@@ -1355,14 +1380,14 @@ public class BottomSheet extends Dialog {
 
     public int getLeftInset() {
         if (lastInsets != null && Build.VERSION.SDK_INT >= 21) {
-            return lastInsets.getSystemWindowInsetLeft();
+            return lastInsets.getInsets(WindowInsets.Type.systemBars()).left;
         }
         return 0;
     }
 
     public int getRightInset() {
         if (lastInsets != null && Build.VERSION.SDK_INT >= 21) {
-            return lastInsets.getSystemWindowInsetRight();
+            return lastInsets.getInsets(WindowInsets.Type.systemBars()).right;
         }
         return 0;
     }

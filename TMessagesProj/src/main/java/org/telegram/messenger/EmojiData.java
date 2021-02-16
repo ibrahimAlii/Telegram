@@ -826,11 +826,11 @@ public class EmojiData {
     }
 
     static {
-        for (int a = 0; a < emojiToFE0F.length; a++) {
-            emojiToFE0FMap.put(emojiToFE0F[a], true);
+        for (char c : emojiToFE0F) {
+            emojiToFE0FMap.put(c, true);
         }
-        for (int a = 0; a < dataChars.length; a++) {
-            dataCharsMap.put(dataChars[a], true);
+        for (char dataChar : dataChars) {
+            dataCharsMap.put(dataChar, true);
         }
         Collections.addAll(emojiColoredMap, emojiColored);
         Collections.addAll(emojiBigColoredMap, emojiBigColored);

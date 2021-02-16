@@ -8,8 +8,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.text.LineBreaker;
 import android.os.Build;
-import android.text.Layout;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.FrameLayout;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.ImageReceiver;
@@ -40,7 +41,8 @@ public class PaintingOverlay extends FrameLayout {
     public void setData(String paintPath, ArrayList<VideoEditedInfo.MediaEntity> entities, boolean isVideo, boolean startAfterSet) {
         if (paintPath != null) {
             paintBitmap = BitmapFactory.decodeFile(paintPath);
-            setBackground(backgroundDrawable = new BitmapDrawable(paintBitmap));
+            setBackground(backgroundDrawable = new BitmapDrawable(
+                    ApplicationLoader.applicationContext.getResources(), paintBitmap));
         } else {
             paintBitmap = null;
             setBackground(backgroundDrawable = null);
@@ -193,7 +195,7 @@ public class PaintingOverlay extends FrameLayout {
                     editText.setEnabled(false);
                     editText.setInputType(editText.getInputType() | EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES);
                     if (Build.VERSION.SDK_INT >= 23) {
-                        editText.setBreakStrategy(Layout.BREAK_STRATEGY_SIMPLE);
+                        editText.setBreakStrategy(LineBreaker.BREAK_STRATEGY_SIMPLE);
                     }
                     if ((entity.subType & 1) != 0) {
                         editText.setTextColor(0xffffffff);
@@ -220,7 +222,8 @@ public class PaintingOverlay extends FrameLayout {
     }
 
     public void setBitmap(Bitmap bitmap) {
-        setBackground(backgroundDrawable = new BitmapDrawable(paintBitmap = bitmap));
+        setBackground(backgroundDrawable = new BitmapDrawable(
+                ApplicationLoader.applicationContext.getResources(), paintBitmap = bitmap));
     }
 
     public Bitmap getBitmap() {

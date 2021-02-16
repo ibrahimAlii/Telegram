@@ -502,7 +502,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putInt("iv_font_size", SharedConfig.ivFontSize);
-                        editor.commit();
+                        editor.apply();
                         adapter[0].searchTextOffset.clear();
                         updatePaintSize();
                         invalidate();
@@ -557,7 +557,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         public FontCell(Context context) {
             super(context);
 
-            setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
+            setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
 
             radioButton = new RadioButton(context);
             radioButton.setSize(AndroidUtilities.dp(20));
@@ -682,19 +682,19 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                     }
                     heightSize += AndroidUtilities.statusBarHeight;
                 }
-                heightSize -= insets.getSystemWindowInsetBottom();
-                widthSize -= insets.getSystemWindowInsetRight() + insets.getSystemWindowInsetLeft();
-                if (insets.getSystemWindowInsetRight() != 0) {
-                    bWidth = insets.getSystemWindowInsetRight();
+                heightSize -= insets.getInsets(WindowInsets.Type.systemBars()).bottom;
+                widthSize -= insets.getInsets(WindowInsets.Type.systemBars()).right + insets.getInsets(WindowInsets.Type.systemBars()).left;
+                if (insets.getInsets(WindowInsets.Type.systemBars()).right != 0) {
+                    bWidth = insets.getInsets(WindowInsets.Type.systemBars()).right;
                     bHeight = heightSize;
-                } else if (insets.getSystemWindowInsetLeft() != 0) {
-                    bWidth = insets.getSystemWindowInsetLeft();
+                } else if (insets.getInsets(WindowInsets.Type.systemBars()).left != 0) {
+                    bWidth = insets.getInsets(WindowInsets.Type.systemBars()).left;
                     bHeight = heightSize;
                 } else {
                     bWidth = widthSize;
-                    bHeight = insets.getStableInsetBottom();
+                    bHeight = insets.getInsets(WindowInsets.Type.systemBars()).bottom;
                 }
-                heightSize -= insets.getSystemWindowInsetTop();
+                heightSize -= insets.getInsets(WindowInsets.Type.systemBars()).top;
             } else {
                 setMeasuredDimension(widthSize, heightSize);
             }
@@ -747,19 +747,19 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             int y = 0;
             if (Build.VERSION.SDK_INT >= 21 && lastInsets != null) {
                 WindowInsets insets = (WindowInsets) lastInsets;
-                x = insets.getSystemWindowInsetLeft();
+                x = insets.getInsets(WindowInsets.Type.systemBars()).left;
 
-                if (insets.getSystemWindowInsetRight() != 0) {
+                if (insets.getInsets(WindowInsets.Type.systemBars()).right != 0) {
                     bX = width - bWidth;
                     bY = 0;
-                } else if (insets.getSystemWindowInsetLeft() != 0) {
+                } else if (insets.getInsets(WindowInsets.Type.systemBars()).left != 0) {
                     bX = 0;
                     bY = 0;
                 } else {
                     bX = 0;
                     bY = bottom - top - bHeight;
                 }
-                y += insets.getSystemWindowInsetTop();
+                y += insets.getInsets(WindowInsets.Type.systemBars()).top;
             } else {
                 x = 0;
             }
@@ -934,7 +934,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                             @Override
                             public void onAnimationEnd(Animator animator) {
                                 if (movingPage) {
-                                    listView[0].setBackgroundDrawable(null);
+                                    listView[0].setBackground(null);
                                     if (!backAnimation) {
                                         WebpageAdapter adapterToUpdate = adapter[1];
                                         adapter[1] = adapter[0];
@@ -1017,13 +1017,13 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             canvas.drawRect(innerTranslationX, 0, w, h, backgroundPaint);
             if (Build.VERSION.SDK_INT >= 21 && lastInsets != null) {
                 WindowInsets insets = (WindowInsets) lastInsets;
-                canvas.drawRect(innerTranslationX, 0, w, insets.getSystemWindowInsetTop(), statusBarPaint);
+                canvas.drawRect(innerTranslationX, 0, w, insets.getInsets(WindowInsets.Type.systemBars()).top, statusBarPaint);
                 if (hasCutout) {
-                    int left = insets.getSystemWindowInsetLeft();
+                    int left = insets.getInsets(WindowInsets.Type.systemBars()).left;
                     if (left != 0) {
                         canvas.drawRect(0, 0, left, h, statusBarPaint);
                     }
-                    int right = insets.getSystemWindowInsetRight();
+                    int right = insets.getInsets(WindowInsets.Type.systemBars()).right;
                     if (right != 0) {
                         canvas.drawRect(getMeasuredWidth() - right, 0, getMeasuredWidth(), h, statusBarPaint);
                     }
@@ -1099,8 +1099,8 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                     pressedLinkOwnerView.invalidate();
                     drawBlockSelection = true;
                     showPopup(pressedLinkOwnerView, Gravity.TOP, 0, y);
-                    listView[0].setLayoutFrozen(true);
-                    listView[0].setLayoutFrozen(false);
+                    listView[0].suppressLayout(true);
+                    listView[0].suppressLayout(false);
                 }
             }
         }
@@ -1247,7 +1247,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             popupLayout.setShowedFromBotton(false);
 
             deleteView = new TextView(parentActivity);
-            deleteView.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
+            deleteView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
             deleteView.setGravity(Gravity.CENTER_VERTICAL);
             deleteView.setPadding(AndroidUtilities.dp(20), 0, AndroidUtilities.dp(20), 0);
             deleteView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
@@ -1538,7 +1538,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                     listView[1].setVisibility(View.GONE);
                     textSelectionHelper.setParentView(listView[0]);
                     textSelectionHelper.layoutManager = layoutManager[0];
-                    listView[index].setBackgroundDrawable(null);
+                    listView[index].setBackground(null);
                     if (Build.VERSION.SDK_INT >= 18) {
                         listView[index].setLayerType(View.LAYER_TYPE_NONE, null);
                     }
@@ -2502,11 +2502,11 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                 AnchorSpan[] innerSpans = spanned.getSpans(0, spanned.length(), AnchorSpan.class);
                 int linesCount = result.getLineCount();
                 if (innerSpans != null && innerSpans.length > 0) {
-                    for (int a = 0; a < innerSpans.length; a++) {
+                    for (AnchorSpan innerSpan : innerSpans) {
                         if (linesCount <= 1) {
-                            parentAdapter.anchorsOffset.put(innerSpans[a].getName(), textY);
+                            parentAdapter.anchorsOffset.put(innerSpan.getName(), textY);
                         } else {
-                            parentAdapter.anchorsOffset.put(innerSpans[a].getName(), textY + result.getLineTop(result.getLineForOffset(spanned.getSpanStart(innerSpans[a]))));
+                            parentAdapter.anchorsOffset.put(innerSpan.getName(), textY + result.getLineTop(result.getLineForOffset(spanned.getSpanStart(innerSpan))));
                         }
                     }
                 }
@@ -2518,11 +2518,11 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                 if (innerSpans != null && innerSpans.length > 0) {
                     textPath = new LinkPath(true);
                     textPath.setAllowReset(false);
-                    for (int a = 0; a < innerSpans.length; a++) {
-                        int start = spanned.getSpanStart(innerSpans[a]);
-                        int end = spanned.getSpanEnd(innerSpans[a]);
+                    for (TextPaintWebpageUrlSpan innerSpan : innerSpans) {
+                        int start = spanned.getSpanStart(innerSpan);
+                        int end = spanned.getSpanEnd(innerSpan);
                         textPath.setCurrentLayout(result, start, 0);
-                        int shift = innerSpans[a].getTextPaint() != null ? innerSpans[a].getTextPaint().baselineShift : 0;
+                        int shift = innerSpan.getTextPaint() != null ? innerSpan.getTextPaint().baselineShift : 0;
                         textPath.setBaselineShift(shift != 0 ? shift + AndroidUtilities.dp(shift > 0 ? 5 : -2) : 0);
                         result.getSelectionPath(start, end, textPath);
                     }
@@ -2536,11 +2536,11 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                 if (innerSpans != null && innerSpans.length > 0) {
                     markPath = new LinkPath(true);
                     markPath.setAllowReset(false);
-                    for (int a = 0; a < innerSpans.length; a++) {
-                        int start = spanned.getSpanStart(innerSpans[a]);
-                        int end = spanned.getSpanEnd(innerSpans[a]);
+                    for (TextPaintMarkSpan innerSpan : innerSpans) {
+                        int start = spanned.getSpanStart(innerSpan);
+                        int end = spanned.getSpanEnd(innerSpan);
                         markPath.setCurrentLayout(result, start, 0);
-                        int shift = innerSpans[a].getTextPaint() != null ? innerSpans[a].getTextPaint().baselineShift : 0;
+                        int shift = innerSpan.getTextPaint() != null ? innerSpan.getTextPaint().baselineShift : 0;
                         markPath.setBaselineShift(shift != 0 ? shift + AndroidUtilities.dp(shift > 0 ? 5 : -2) : 0);
                         result.getSelectionPath(start, end, markPath);
                     }
@@ -2747,10 +2747,10 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         if (id == NotificationCenter.messagePlayingDidStart) {
             MessageObject messageObject = (MessageObject) args[0];
             if (listView != null) {
-                for (int i = 0; i < listView.length; i++) {
-                    int count = listView[i].getChildCount();
+                for (RecyclerListView recyclerListView : listView) {
+                    int count = recyclerListView.getChildCount();
                     for (int a = 0; a < count; a++) {
-                        View view = listView[i].getChildAt(a);
+                        View view = recyclerListView.getChildAt(a);
                         if (view instanceof BlockAudioCell) {
                             BlockAudioCell cell = (BlockAudioCell) view;
                             cell.updateButtonState(true);
@@ -2760,10 +2760,10 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             }
         } else if (id == NotificationCenter.messagePlayingDidReset || id == NotificationCenter.messagePlayingPlayStateChanged) {
             if (listView != null) {
-                for (int i = 0; i < listView.length; i++) {
-                    int count = listView[i].getChildCount();
+                for (RecyclerListView recyclerListView : listView) {
+                    int count = recyclerListView.getChildCount();
                     for (int a = 0; a < count; a++) {
-                        View view = listView[i].getChildAt(a);
+                        View view = recyclerListView.getChildAt(a);
                         if (view instanceof BlockAudioCell) {
                             BlockAudioCell cell = (BlockAudioCell) view;
                             MessageObject messageObject = cell.getMessageObject();
@@ -2777,10 +2777,10 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         } else if (id == NotificationCenter.messagePlayingProgressDidChanged) {
             Integer mid = (Integer) args[0];
             if (listView != null) {
-                for (int i = 0; i < listView.length; i++) {
-                    int count = listView[i].getChildCount();
+                for (RecyclerListView recyclerListView : listView) {
+                    int count = recyclerListView.getChildCount();
                     for (int a = 0; a < count; a++) {
-                        View view = listView[i].getChildAt(a);
+                        View view = recyclerListView.getChildAt(a);
                         if (view instanceof BlockAudioCell) {
                             BlockAudioCell cell = (BlockAudioCell) view;
                             MessageObject playing = cell.getMessageObject();
@@ -2823,7 +2823,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
     }
 
     private void updatePaintFonts() {
-        ApplicationLoader.applicationContext.getSharedPreferences("articles", Activity.MODE_PRIVATE).edit().putInt("font_type", selectedFont).commit();
+        ApplicationLoader.applicationContext.getSharedPreferences("articles", Activity.MODE_PRIVATE).edit().putInt("font_type", selectedFont).apply();
         Typeface typefaceNormal = selectedFont == 0 ? Typeface.DEFAULT : Typeface.SERIF;
         Typeface typefaceItalic = selectedFont == 0 ? AndroidUtilities.getTypeface("fonts/ritalic.ttf") : Typeface.create("serif", Typeface.ITALIC);
         Typeface typefaceBold = selectedFont == 0 ? AndroidUtilities.getTypeface("fonts/rmedium.ttf") : Typeface.create("serif", Typeface.BOLD);
@@ -2892,8 +2892,8 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
 
     private void updatePaintColors() {
         backgroundPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-        for (int i = 0; i < listView.length; i++) {
-            listView[i].setGlowColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+        for (RecyclerListView recyclerListView : listView) {
+            recyclerListView.setGlowColor(Theme.getColor(Theme.key_windowBackgroundWhite));
         }
 
         if (listTextPointerPaint != null) {
@@ -3473,7 +3473,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         backDrawable.setRotatedColor(0xffb3b3b3);
         backDrawable.setRotation(1.0f, false);
         backButton.setImageDrawable(backDrawable);
-        backButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.ACTION_BAR_WHITE_SELECTOR_COLOR));
+        backButton.setBackground(Theme.createSelectorDrawable(Theme.ACTION_BAR_WHITE_SELECTOR_COLOR));
         headerView.addView(backButton, LayoutHelper.createFrame(54, 56));
         backButton.setOnClickListener(v -> {
             /*if (collapsed) {
@@ -3505,7 +3505,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         menuButton.addSubItem(share_item, R.drawable.msg_share, LocaleController.getString("ShareFile", R.string.ShareFile));
         menuButton.addSubItem(open_item, R.drawable.msg_openin, LocaleController.getString("OpenInExternalApp", R.string.OpenInExternalApp));
         menuButton.addSubItem(settings_item, R.drawable.menu_settings, LocaleController.getString("Settings", R.string.Settings));
-        menuButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.ACTION_BAR_WHITE_SELECTOR_COLOR));
+        menuButton.setBackground(Theme.createSelectorDrawable(Theme.ACTION_BAR_WHITE_SELECTOR_COLOR));
         menuButton.setContentDescription(LocaleController.getString("AccDescrMoreOptions", R.string.AccDescrMoreOptions));
         menuContainer.addView(menuButton, LayoutHelper.createFrame(48, 56));
         progressView = new ContextProgressView(activity, 2);
@@ -3600,7 +3600,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         searchUpButton.setScaleType(ImageView.ScaleType.CENTER);
         searchUpButton.setImageResource(R.drawable.msg_go_up);
         searchUpButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText), PorterDuff.Mode.MULTIPLY));
-        searchUpButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), 1));
+        searchUpButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), 1));
         searchPanel.addView(searchUpButton, LayoutHelper.createFrame(48, 48, Gravity.RIGHT | Gravity.TOP, 0, 0, 48, 0));
         searchUpButton.setOnClickListener(view -> scrollToSearchIndex(currentSearchIndex - 1));
         searchUpButton.setContentDescription(LocaleController.getString("AccDescrSearchNext", R.string.AccDescrSearchNext));
@@ -3609,7 +3609,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         searchDownButton.setScaleType(ImageView.ScaleType.CENTER);
         searchDownButton.setImageResource(R.drawable.msg_go_down);
         searchDownButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText), PorterDuff.Mode.MULTIPLY));
-        searchDownButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), 1));
+        searchDownButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), 1));
         searchPanel.addView(searchDownButton, LayoutHelper.createFrame(48, 48, Gravity.RIGHT | Gravity.TOP, 0, 0, 0, 0));
         searchDownButton.setOnClickListener(view -> scrollToSearchIndex(currentSearchIndex + 1));
         searchDownButton.setContentDescription(LocaleController.getString("AccDescrSearchPrev", R.string.AccDescrSearchPrev));
@@ -3983,8 +3983,8 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         searchShadow.setTranslationY(currentHeaderHeight - maxHeight);
         menuButton.setAdditionalYOffset(-(currentHeaderHeight - maxHeight) / 2 + (Build.VERSION.SDK_INT < 21 ? AndroidUtilities.statusBarHeight : 0));
         textSelectionHelper.setTopOffset(currentHeaderHeight);
-        for (int i = 0; i < listView.length; i++) {
-            listView[i].setTopGlowOffset(currentHeaderHeight);
+        for (RecyclerListView recyclerListView : listView) {
+            recyclerListView.setTopGlowOffset(currentHeaderHeight);
         }
     }
 
@@ -4095,7 +4095,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                         }
                         pagesStack.set(0, webPage);
                         if (pagesStack.size() == 1) {
-                            ApplicationLoader.applicationContext.getSharedPreferences("articles", Activity.MODE_PRIVATE).edit().remove("article" + webPage.id).commit();
+                            ApplicationLoader.applicationContext.getSharedPreferences("articles", Activity.MODE_PRIVATE).edit().remove("article" + webPage.id).apply();
                             updateInterfaceForCurrentPage(webPage, false, 0);
                             if (anchorFinal != null) {
                                 scrollToAnchor(anchorFinal);
@@ -4420,13 +4420,13 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             }
             SharedPreferences.Editor editor = ApplicationLoader.applicationContext.getSharedPreferences("articles", Activity.MODE_PRIVATE).edit();
             String key = "article" + adapter[0].currentPage.id;
-            editor.putInt(key, position).putInt(key + "o", offset).putBoolean(key + "r", AndroidUtilities.displaySize.x > AndroidUtilities.displaySize.y).commit();
+            editor.putInt(key, position).putInt(key + "o", offset).putBoolean(key + "r", AndroidUtilities.displaySize.x > AndroidUtilities.displaySize.y).apply();
         }
     }
 
     private void refreshThemeColors() {
         if (deleteView != null) {
-            deleteView.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
+            deleteView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
             deleteView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
         }
         if (popupLayout != null) {
@@ -4442,11 +4442,11 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         }
         if (searchUpButton != null) {
             searchUpButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText), PorterDuff.Mode.MULTIPLY));
-            searchUpButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), 1));
+            searchUpButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), 1));
         }
         if (searchDownButton != null) {
             searchDownButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText), PorterDuff.Mode.MULTIPLY));
-            searchDownButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), 1));
+            searchDownButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), 1));
         }
         if (searchCountText != null) {
             searchCountText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
@@ -5500,10 +5500,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         @Override
         public boolean isEnabled(RecyclerView.ViewHolder holder) {
             int type = holder.getItemViewType();
-            if (type == 23 || type == 24) {
-                return true;
-            }
-            return false;
+            return type == 23 || type == 24;
         }
 
         @Override
@@ -9134,7 +9131,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             Drawable drawable = Theme.getThemedDrawable(context, R.drawable.greydivider_bottom, 0xff000000);
             shadowDrawable = new CombinedDrawable(new ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray)), drawable);
             shadowDrawable.setFullsize(true);
-            setBackgroundDrawable(shadowDrawable);
+            setBackground(shadowDrawable);
         }
 
         @Override
@@ -10577,8 +10574,8 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                         if (idx != -1) {
                             Spannable spannable = Spannable.Factory.getInstance().newSpannable(text);
                             text = spannable;
-                            for (int a = 0; a < spans.length; a++) {
-                                spannable.setSpan(spans[a], idx + spannableAuthor.getSpanStart(spans[a]), idx + spannableAuthor.getSpanEnd(spans[a]), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            for (MetricAffectingSpan span : spans) {
+                                spannable.setSpan(span, idx + spannableAuthor.getSpanStart(span), idx + spannableAuthor.getSpanEnd(span), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                             }
                         }
                     }
@@ -11228,13 +11225,13 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                     SpannableStringBuilder builder = new SpannableStringBuilder(caption.toString());
                     caption = builder;
                     if (spans != null && spans.length > 0) {
-                        for (int a = 0; a < spans.length; a++) {
-                            builder.setSpan(new URLSpan(spans[a].getUrl()) {
+                        for (TextPaintUrlSpan span : spans) {
+                            builder.setSpan(new URLSpan(span.getUrl()) {
                                 @Override
                                 public void onClick(View widget) {
                                     openWebpageUrl(getURL(), null);
                                 }
-                            }, spannable.getSpanStart(spans[a]), spannable.getSpanEnd(spans[a]), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }, spannable.getSpanStart(span), spannable.getSpanEnd(span), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         }
                     }
                 }

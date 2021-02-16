@@ -7,7 +7,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
@@ -45,7 +44,6 @@ import org.telegram.ui.FilteredSearchView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 public class SearchViewPager extends ViewPagerFixed implements FilteredSearchView.UiCallback {
@@ -394,9 +392,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
             DialogsActivity fragment = new DialogsActivity(args);
             fragment.setDelegate((fragment1, dids, message, param) -> {
                 ArrayList<MessageObject> fmessages = new ArrayList<>();
-                Iterator<FilteredSearchView.MessageHashId> idIterator = selectedFiles.keySet().iterator();
-                while (idIterator.hasNext()) {
-                    FilteredSearchView.MessageHashId hashId = idIterator.next();
+                for (FilteredSearchView.MessageHashId hashId : selectedFiles.keySet()) {
                     fmessages.add(selectedFiles.get(hashId));
                 }
                 selectedFiles.clear();
@@ -660,9 +656,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
         noMediaFiltersSearchView.messagesDeleted(channelId, markAsDeletedMessages);
         if (!selectedFiles.isEmpty()) {
             ArrayList<FilteredSearchView.MessageHashId> toRemove = null;
-            Iterator<FilteredSearchView.MessageHashId> iterator = selectedFiles.keySet().iterator();
-            while (iterator.hasNext()) {
-                FilteredSearchView.MessageHashId hashId = iterator.next();
+            for (FilteredSearchView.MessageHashId hashId : selectedFiles.keySet()) {
                 MessageObject messageObject = selectedFiles.get(hashId);
                 long dialogId = messageObject.getDialogId();
                 int currentChannelId = dialogId < 0 && ChatObject.isChannel((int) -dialogId, currentAccount) ? (int) -dialogId : 0;

@@ -161,7 +161,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
             super(context);
 
             searchBackground = new View(context);
-            searchBackground.setBackgroundDrawable(Theme.createRoundRectDrawable(AndroidUtilities.dp(18), Theme.getColor(Theme.key_dialogSearchBackground)));
+            searchBackground.setBackground(Theme.createRoundRectDrawable(AndroidUtilities.dp(18), Theme.getColor(Theme.key_dialogSearchBackground)));
             addView(searchBackground, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36, Gravity.LEFT | Gravity.TOP, 14, 11, 14, 0));
 
             searchIconImageView = new ImageView(context);
@@ -200,7 +200,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
             searchEditText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
             searchEditText.setHintTextColor(Theme.getColor(Theme.key_dialogSearchHint));
             searchEditText.setTextColor(Theme.getColor(Theme.key_dialogSearchText));
-            searchEditText.setBackgroundDrawable(null);
+            searchEditText.setBackground(null);
             searchEditText.setPadding(0, 0, 0, 0);
             searchEditText.setMaxLines(1);
             searchEditText.setLines(1);
@@ -851,7 +851,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
 
         if (isChannel || linkToCopy != null) {
             pickerBottomLayout = new TextView(context);
-            pickerBottomLayout.setBackgroundDrawable(Theme.createSelectorWithBackgroundDrawable(Theme.getColor(Theme.key_dialogBackground), Theme.getColor(Theme.key_listSelector)));
+            pickerBottomLayout.setBackground(Theme.createSelectorWithBackgroundDrawable(Theme.getColor(Theme.key_dialogBackground), Theme.getColor(Theme.key_listSelector)));
             pickerBottomLayout.setTextColor(Theme.getColor(Theme.key_dialogTextBlue2));
             pickerBottomLayout.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             pickerBottomLayout.setPadding(AndroidUtilities.dp(18), 0, AndroidUtilities.dp(18), 0);
@@ -877,7 +877,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                     sharesCountLayout = new LinearLayout(context);
                     sharesCountLayout.setOrientation(LinearLayout.HORIZONTAL);
                     sharesCountLayout.setGravity(Gravity.CENTER_VERTICAL);
-                    sharesCountLayout.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
+                    sharesCountLayout.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
                     containerView.addView(sharesCountLayout, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 48, Gravity.RIGHT | Gravity.BOTTOM, 6, 0, -6, 0));
                     sharesCountLayout.setOnClickListener(view -> parentFragment.presentFragment(new MessageStatisticActivity(messageObject)));
 
@@ -1037,7 +1037,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
             combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
             drawable = combinedDrawable;
         }
-        writeButton.setBackgroundDrawable(drawable);
+        writeButton.setBackground(drawable);
         writeButton.setImageResource(R.drawable.attach_send);
         writeButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         writeButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_dialogFloatingIcon), PorterDuff.Mode.MULTIPLY));
@@ -1422,10 +1422,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
 
         @Override
         public boolean isEnabled(RecyclerView.ViewHolder holder) {
-            if (holder.getItemViewType() == 1) {
-                return false;
-            }
-            return true;
+            return holder.getItemViewType() != 1;
         }
 
         @Override
@@ -1586,8 +1583,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                             if (name.equals(tName)) {
                                 tName = null;
                             }
-                            for (int a = 0; a < search.length; a++) {
-                                String q = search[a];
+                            for (String q : search) {
                                 if (name.startsWith(q) || name.contains(" " + q) || tName != null && (tName.startsWith(q) || tName.contains(" " + q))) {
                                     NativeByteBuffer data = cursor.byteBufferValue(0);
                                     if (data != null) {
@@ -1754,10 +1750,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
 
         @Override
         public boolean isEnabled(RecyclerView.ViewHolder holder) {
-            if (holder.getItemViewType() == 1) {
-                return false;
-            }
-            return true;
+            return holder.getItemViewType() != 1;
         }
 
         @Override

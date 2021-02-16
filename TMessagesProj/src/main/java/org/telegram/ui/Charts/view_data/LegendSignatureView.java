@@ -41,11 +41,11 @@ public class LegendSignatureView extends FrameLayout {
     public ImageView chevron;
     private RadialProgressView progressView;
 
-    SimpleDateFormat format = new SimpleDateFormat("E, ");
-    SimpleDateFormat format2 = new SimpleDateFormat("MMM dd");
-    SimpleDateFormat format3 =  new SimpleDateFormat("d MMM yyyy");
-    SimpleDateFormat format4 =  new SimpleDateFormat("d MMM");
-    SimpleDateFormat hourFormat = new SimpleDateFormat(" HH:mm");
+    SimpleDateFormat format = new SimpleDateFormat("E, ", Locale.getDefault());
+    SimpleDateFormat format2 = new SimpleDateFormat("MMM dd", Locale.getDefault());
+    SimpleDateFormat format3 =  new SimpleDateFormat("d MMM yyyy", Locale.getDefault());
+    SimpleDateFormat format4 =  new SimpleDateFormat("d MMM", Locale.getDefault());
+    SimpleDateFormat hourFormat = new SimpleDateFormat(" HH:mm", Locale.getDefault());
 
     public boolean useWeek;
     public boolean useHour;

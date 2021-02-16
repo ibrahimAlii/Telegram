@@ -772,7 +772,7 @@ public class MessageStatisticActivity extends BaseFragment implements Notificati
                     }
                     break;
                 case 1:
-                    holder.itemView.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+                    holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                     break;
                 case 2:
                     HeaderCell headerCell = (HeaderCell) holder.itemView;

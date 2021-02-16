@@ -19,6 +19,7 @@ package org.telegram.ui.Components;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -90,7 +91,7 @@ public class GestureDetector2 {
 
     private class GestureHandler extends Handler {
         GestureHandler() {
-            super();
+            super(Looper.myLooper());
         }
 
         GestureHandler(Handler handler) {
@@ -163,11 +164,12 @@ public class GestureDetector2 {
 
         int touchSlop, doubleTapSlop, doubleTapTouchSlop;
         if (context == null) {
-            touchSlop = ViewConfiguration.getTouchSlop();
+            ViewConfiguration viewConfiguration = ViewConfiguration.get(context);
+            touchSlop = viewConfiguration.getScaledTouchSlop();
             doubleTapTouchSlop = touchSlop;
             doubleTapSlop = 100;
-            mMinimumFlingVelocity = ViewConfiguration.getMinimumFlingVelocity();
-            mMaximumFlingVelocity = ViewConfiguration.getMaximumFlingVelocity();
+            mMinimumFlingVelocity = viewConfiguration.getScaledMinimumFlingVelocity();
+            mMaximumFlingVelocity = viewConfiguration.getScaledMaximumFlingVelocity();
         } else {
             final ViewConfiguration configuration = ViewConfiguration.get(context);
             touchSlop = configuration.getScaledTouchSlop();

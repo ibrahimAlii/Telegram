@@ -270,7 +270,7 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter {
                         buttonClicked[0] = true;
                         if (foundContextBotFinal != null) {
                             SharedPreferences preferences1 = MessagesController.getNotificationsSettings(currentAccount);
-                            preferences1.edit().putBoolean("inlinegeo_" + foundContextBotFinal.id, true).commit();
+                            preferences1.edit().putBoolean("inlinegeo_" + foundContextBotFinal.id, true).apply();
                             checkLocationPermissionsOrStart();
                         }
                     });
@@ -789,7 +789,7 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter {
                     int lhsNum = users.indexOf(id1);
                     int rhsNum = users.indexOf(id2);
                     if (lhsNum != -1 && rhsNum != -1) {
-                        return lhsNum < rhsNum ? -1 : (lhsNum == rhsNum ? 0 : 1);
+                        return Integer.compare(lhsNum, rhsNum);
                     } else if (lhsNum != -1 && rhsNum == -1) {
                         return -1;
                     } else if (lhsNum == -1 && rhsNum != -1) {

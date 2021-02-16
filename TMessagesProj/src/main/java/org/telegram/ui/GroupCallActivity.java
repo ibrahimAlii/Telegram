@@ -1293,12 +1293,8 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
                     @Override
                     public void needOpenSearch(MotionEvent ev, EditTextBoldCursor editText) {
                         if (!enterEventSent) {
-                            if (ev.getX() > editText.getLeft() && ev.getX() < editText.getRight()
-                                    && ev.getY() > editText.getTop() && ev.getY() < editText.getBottom()) {
-                                makeFocusable(editText, true);
-                            } else {
-                                makeFocusable(editText, false);
-                            }
+                            makeFocusable(editText, ev.getX() > editText.getLeft() && ev.getX() < editText.getRight()
+                                    && ev.getY() > editText.getTop() && ev.getY() < editText.getBottom());
                         }
                     }
                 });
@@ -1849,7 +1845,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
         otherItem.setContentDescription(LocaleController.getString("AccDescrMoreOptions", R.string.AccDescrMoreOptions));
         otherItem.setSubMenuOpenSide(2);
         otherItem.setDelegate(id -> actionBar.getActionBarMenuOnItemClick().onItemClick(id));
-        otherItem.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_voipgroup_actionBarItemsSelector), 6));
+        otherItem.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_voipgroup_actionBarItemsSelector), 6));
         otherItem.setOnClickListener(v -> {
             updateItems();
             if (call.call.join_muted) {
@@ -1872,7 +1868,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
         pipItem.setLongClickEnabled(false);
         pipItem.setIcon(R.drawable.msg_voice_pip);
         pipItem.setContentDescription(LocaleController.getString("AccDescrPipMode", R.string.AccDescrPipMode));
-        pipItem.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_voipgroup_actionBarItemsSelector), 6));
+        pipItem.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_voipgroup_actionBarItemsSelector), 6));
         pipItem.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT < 23 || Settings.canDrawOverlays(parentActivity)) {
                 GroupCallPip.clearForce();
@@ -2551,7 +2547,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
         cells[0] = new CheckBoxCell(context, 1);
-        cells[0].setBackgroundDrawable(Theme.getSelectorDrawable(false));
+        cells[0].setBackground(Theme.getSelectorDrawable(false));
         if (fromOverlayWindow) {
             cells[0].setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
         } else {
@@ -2769,7 +2765,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
         if (!participant.muted_by_you && (!participant.muted || participant.can_self_unmute)) {
             Drawable shadowDrawable = getContext().getResources().getDrawable(R.drawable.popup_fixed_alert).mutate();
             shadowDrawable.setColorFilter(new PorterDuffColorFilter(backgroundColor, PorterDuff.Mode.MULTIPLY));
-            volumeLayout.setBackgroundDrawable(shadowDrawable);
+            volumeLayout.setBackground(shadowDrawable);
             linearLayout.addView(volumeLayout, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, 0));
 
             volumeSlider = new VolumeSlider(getContext(), participant);
@@ -2780,7 +2776,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
         buttonsLayout.setOrientation(LinearLayout.VERTICAL);
         Drawable shadowDrawable = getContext().getResources().getDrawable(R.drawable.popup_fixed_alert).mutate();
         shadowDrawable.setColorFilter(new PorterDuffColorFilter(backgroundColor, PorterDuff.Mode.MULTIPLY));
-        buttonsLayout.setBackgroundDrawable(shadowDrawable);
+        buttonsLayout.setBackground(shadowDrawable);
         linearLayout.addView(buttonsLayout, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 0, volumeSlider != null ? -8 : 0, 0, 0));
 
         ScrollView scrollView;

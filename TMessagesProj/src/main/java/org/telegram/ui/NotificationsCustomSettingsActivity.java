@@ -354,7 +354,7 @@ public class NotificationsCustomSettingsActivity extends BaseFragment {
                             dialog.notify_settings = new TLRPC.TL_peerNotifySettings();
                         }
                     }
-                    editor.commit();
+                    editor.apply();
                     for (int a = 0, N = exceptions.size(); a < N; a++) {
                         NotificationsSettingsActivity.NotificationException exception = exceptions.get(a);
                         getNotificationsController().updateServerNotificationsSettings(exception.did, false);
@@ -427,7 +427,7 @@ public class NotificationsCustomSettingsActivity extends BaseFragment {
                     enabled = preferences.getBoolean("EnablePreviewChannel", true);
                     editor.putBoolean("EnablePreviewChannel", !enabled);
                 }
-                editor.commit();
+                editor.apply();
                 getNotificationsController().updateServerNotificationsSettings(currentType);
             } else if (position == messageSoundRow) {
                 if (!view.isEnabled()) {
@@ -850,7 +850,7 @@ public class NotificationsCustomSettingsActivity extends BaseFragment {
                 }
             }
             getNotificationsController().deleteNotificationChannelGlobal(currentType);
-            editor.commit();
+            editor.apply();
             getNotificationsController().updateServerNotificationsSettings(currentType);
             RecyclerView.ViewHolder holder = listView.findViewHolderForAdapterPosition(requestCode);
             if (holder != null) {
@@ -975,8 +975,7 @@ public class NotificationsCustomSettingsActivity extends BaseFragment {
                         }
 
                         int found = 0;
-                        for (int b = 0; b < search.length; b++) {
-                            String q = search[b];
+                        for (String q : search) {
                             if (names[0] != null && (names[0].startsWith(q) || names[0].contains(" " + q)) || tName != null && (tName.startsWith(q) || tName.contains(" " + q))) {
                                 found = 1;
                             } else if (names[1] != null && names[1].startsWith(q)) {
@@ -1212,9 +1211,9 @@ public class NotificationsCustomSettingsActivity extends BaseFragment {
                 }
                 case 4: {
                     if (position == deleteAllSectionRow || position == groupSection2Row && exceptionsSection2Row == -1 || position == exceptionsSection2Row && deleteAllRow == -1) {
-                        holder.itemView.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+                        holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                     } else {
-                        holder.itemView.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
+                        holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                     }
                     break;
                 }

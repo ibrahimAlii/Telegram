@@ -143,8 +143,8 @@ public class ThemePreviewMessagesCell extends LinearLayout {
     @Override
     public void invalidate() {
         super.invalidate();
-        for (int a = 0; a < cells.length; a++) {
-            cells[a].invalidate();
+        for (ChatMessageCell cell : cells) {
+            cell.invalidate();
         }
     }
 

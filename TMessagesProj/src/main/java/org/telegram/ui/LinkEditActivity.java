@@ -356,9 +356,9 @@ public class LinkEditActivity extends BaseFragment {
         });
         buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
 
-        dividerUses.setBackgroundDrawable(Theme.getThemedDrawable(context, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
-        divider.setBackgroundDrawable(Theme.getThemedDrawable(context, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
-        buttonTextView.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(6), Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
+        dividerUses.setBackground(Theme.getThemedDrawable(context, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+        divider.setBackground(Theme.getThemedDrawable(context, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
+        buttonTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(6), Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
 
         usesEditText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
         usesEditText.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
@@ -449,8 +449,8 @@ public class LinkEditActivity extends BaseFragment {
 
     private void resetDates() {
         dispalyedDates.clear();
-        for (int i = 0; i < defaultDates.length; i++) {
-            dispalyedDates.add(defaultDates[i]);
+        for (int defaultDate : defaultDates) {
+            dispalyedDates.add(defaultDate);
         }
         timeChooseView.setOptions(4, LocaleController.formatPluralString("Hours", 1), LocaleController.formatPluralString("Days", 1), LocaleController.formatPluralString("Weeks", 1), LocaleController.getString("NoLimit", R.string.NoLimit));
     }
@@ -493,9 +493,9 @@ public class LinkEditActivity extends BaseFragment {
             public void didSetColor() {
                 if (dividerUses != null) {
                     Context context = dividerUses.getContext();
-                    dividerUses.setBackgroundDrawable(Theme.getThemedDrawable(context, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
-                    divider.setBackgroundDrawable(Theme.getThemedDrawable(context, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
-                    buttonTextView.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(6), Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
+                    dividerUses.setBackground(Theme.getThemedDrawable(context, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+                    divider.setBackground(Theme.getThemedDrawable(context, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
+                    buttonTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(6), Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
 
                     usesEditText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
                     usesEditText.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));

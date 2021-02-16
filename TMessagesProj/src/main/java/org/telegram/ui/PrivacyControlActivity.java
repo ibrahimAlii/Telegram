@@ -930,7 +930,7 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
                     Drawable drawable = Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow);
                     CombinedDrawable combinedDrawable = new CombinedDrawable(new ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray)), drawable);
                     combinedDrawable.setFullsize(true);
-                    view.setBackgroundDrawable(combinedDrawable);
+                    view.setBackground(combinedDrawable);
                     break;
             }
             return new RecyclerListView.Holder(view);
@@ -1044,7 +1044,7 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
                         Drawable drawable = Theme.getThemedDrawable(mContext, backgroundResId, Theme.key_windowBackgroundGrayShadow);
                         CombinedDrawable combinedDrawable = new CombinedDrawable(new ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray)), drawable);
                         combinedDrawable.setFullsize(true);
-                        privacyCell.setBackgroundDrawable(combinedDrawable);
+                        privacyCell.setBackground(combinedDrawable);
                     }
                     break;
                 case 2:

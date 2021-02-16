@@ -432,7 +432,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
             addView(backgroundView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, searchFieldHeight));
 
             searchBackground = new View(context);
-            searchBackground.setBackgroundDrawable(Theme.createRoundRectDrawable(AndroidUtilities.dp(18), Theme.getColor(Theme.key_chat_emojiSearchBackground)));
+            searchBackground.setBackground(Theme.createRoundRectDrawable(AndroidUtilities.dp(18), Theme.getColor(Theme.key_chat_emojiSearchBackground)));
             addView(searchBackground, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36, Gravity.LEFT | Gravity.TOP, 14, 14, 14, 0));
 
             searchIconImageView = new ImageView(context);
@@ -475,7 +475,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
             searchEditText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
             searchEditText.setHintTextColor(Theme.getColor(Theme.key_chat_emojiSearchIcon));
             searchEditText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-            searchEditText.setBackgroundDrawable(null);
+            searchEditText.setBackground(null);
             searchEditText.setPadding(0, 0, 0, 0);
             searchEditText.setMaxLines(1);
             searchEditText.setLines(1);
@@ -1771,7 +1771,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
         pager.setAdapter(new EmojiPagesAdapter());
 
         topShadow = new View(context);
-        topShadow.setBackgroundDrawable(Theme.getThemedDrawable(context, R.drawable.greydivider_bottom, 0xffe2e5e7));
+        topShadow.setBackground(Theme.getThemedDrawable(context, R.drawable.greydivider_bottom, 0xffe2e5e7));
         addView(topShadow, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 6));
 
         backspaceButton = new ImageView(context) {
@@ -1985,7 +1985,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
         addView(pager, 0, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP));
 
         mediaBanTooltip = new CorrectlyMeasuringTextView(context);
-        mediaBanTooltip.setBackgroundDrawable(Theme.createRoundRectDrawable(AndroidUtilities.dp(3), Theme.getColor(Theme.key_chat_gifSaveHintBackground)));
+        mediaBanTooltip.setBackground(Theme.createRoundRectDrawable(AndroidUtilities.dp(3), Theme.getColor(Theme.key_chat_gifSaveHintBackground)));
         mediaBanTooltip.setTextColor(Theme.getColor(Theme.key_chat_gifSaveHintText));
         mediaBanTooltip.setPadding(AndroidUtilities.dp(8), AndroidUtilities.dp(7), AndroidUtilities.dp(8), AndroidUtilities.dp(7));
         mediaBanTooltip.setGravity(Gravity.CENTER_VERTICAL);
@@ -3190,21 +3190,21 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
             gifSearchAdapter.progressEmptyView.progressView.setProgressColor(Theme.getColor(Theme.key_progressCircle));
         }
 
-        for (int a = 0; a < tabIcons.length; a++) {
-            Theme.setEmojiDrawableColor(tabIcons[a], Theme.getColor(Theme.key_chat_emojiBottomPanelIcon), false);
-            Theme.setEmojiDrawableColor(tabIcons[a], Theme.getColor(Theme.key_chat_emojiPanelIconSelected), true);
+        for (Drawable tabIcon : tabIcons) {
+            Theme.setEmojiDrawableColor(tabIcon, Theme.getColor(Theme.key_chat_emojiBottomPanelIcon), false);
+            Theme.setEmojiDrawableColor(tabIcon, Theme.getColor(Theme.key_chat_emojiPanelIconSelected), true);
         }
-        for (int a = 0; a < emojiIcons.length; a++) {
-            Theme.setEmojiDrawableColor(emojiIcons[a], Theme.getColor(Theme.key_chat_emojiPanelIcon), false);
-            Theme.setEmojiDrawableColor(emojiIcons[a], Theme.getColor(Theme.key_chat_emojiPanelIconSelected), true);
+        for (Drawable emojiIcon : emojiIcons) {
+            Theme.setEmojiDrawableColor(emojiIcon, Theme.getColor(Theme.key_chat_emojiPanelIcon), false);
+            Theme.setEmojiDrawableColor(emojiIcon, Theme.getColor(Theme.key_chat_emojiPanelIconSelected), true);
         }
-        for (int a = 0; a < stickerIcons.length; a++) {
-            Theme.setEmojiDrawableColor(stickerIcons[a], Theme.getColor(Theme.key_chat_emojiPanelIcon), false);
-            Theme.setEmojiDrawableColor(stickerIcons[a], Theme.getColor(Theme.key_chat_emojiPanelIconSelected), true);
+        for (Drawable stickerIcon : stickerIcons) {
+            Theme.setEmojiDrawableColor(stickerIcon, Theme.getColor(Theme.key_chat_emojiPanelIcon), false);
+            Theme.setEmojiDrawableColor(stickerIcon, Theme.getColor(Theme.key_chat_emojiPanelIconSelected), true);
         }
-        for (int a = 0; a < gifIcons.length; a++) {
-            Theme.setEmojiDrawableColor(gifIcons[a], Theme.getColor(Theme.key_chat_emojiPanelIcon), false);
-            Theme.setEmojiDrawableColor(gifIcons[a], Theme.getColor(Theme.key_chat_emojiPanelIconSelected), true);
+        for (Drawable gifIcon : gifIcons) {
+            Theme.setEmojiDrawableColor(gifIcon, Theme.getColor(Theme.key_chat_emojiPanelIcon), false);
+            Theme.setEmojiDrawableColor(gifIcon, Theme.getColor(Theme.key_chat_emojiPanelIconSelected), true);
         }
     }
 
@@ -3557,8 +3557,8 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
                     TLRPC.StickerSetCovered stickerSetCovered = cell.getStickerSet();
                     boolean unread = unreadStickers != null && unreadStickers.contains(stickerSetCovered.set.id);
                     boolean forceInstalled = false;
-                    for (int i = 0; i < primaryInstallingStickerSets.length; i++) {
-                        if (primaryInstallingStickerSets[i] != null && primaryInstallingStickerSets[i].set.id == stickerSetCovered.set.id) {
+                    for (TLRPC.StickerSetCovered primaryInstallingStickerSet : primaryInstallingStickerSets) {
+                        if (primaryInstallingStickerSet != null && primaryInstallingStickerSet.set.id == stickerSetCovered.set.id) {
                             forceInstalled = true;
                             break;
                         }
@@ -4150,7 +4150,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
                                         return;
                                     }
                                     loadingUrl[0] = true;
-                                    final AlertDialog progressDialog[] = new AlertDialog[]{new AlertDialog(getContext(), 3)};
+                                    final AlertDialog[] progressDialog = new AlertDialog[]{new AlertDialog(getContext(), 3)};
 
                                     TLRPC.TL_messages_getEmojiURL req = new TLRPC.TL_messages_getEmojiURL();
                                     req.lang_code = lastSearchAlias != null ? lastSearchAlias : lastSearchKeyboardLanguage[0];

@@ -123,9 +123,9 @@ public class CancelAccountDeletionActivity extends BaseFragment {
     @Override
     public void onFragmentDestroy() {
         super.onFragmentDestroy();
-        for (int a = 0; a < views.length; a++) {
-            if (views[a] != null) {
-                views[a].onDestroyActivity();
+        for (SlideView view : views) {
+            if (view != null) {
+                view.onDestroyActivity();
             }
         }
         if (progressDialog != null) {
@@ -210,9 +210,9 @@ public class CancelAccountDeletionActivity extends BaseFragment {
 
     @Override
     public boolean onBackPressed() {
-        for (int a = 0; a < views.length; a++) {
-            if (views[a] != null) {
-                views[a].onDestroyActivity();
+        for (SlideView view : views) {
+            if (view != null) {
+                view.onDestroyActivity();
             }
         }
         return true;
@@ -347,13 +347,13 @@ public class CancelAccountDeletionActivity extends BaseFragment {
             req.settings.allow_app_hash = ApplicationLoader.hasPlayServices;
             SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
             if (req.settings.allow_app_hash) {
-                preferences.edit().putString("sms_hash", BuildVars.SMS_HASH).commit();
+                preferences.edit().putString("sms_hash", BuildVars.SMS_HASH).apply();
             } else {
-                preferences.edit().remove("sms_hash").commit();
+                preferences.edit().remove("sms_hash").apply();
             }
             if (req.settings.allow_flashcall) {
                 try {
-                    @SuppressLint("HardwareIds") String number = tm.getLine1Number();
+                    @SuppressLint({"HardwareIds", "MissingPermission"}) String number = tm.getLine1Number();
                     if (!TextUtils.isEmpty(number)) {
                         req.settings.current_number = PhoneNumberUtils.compare(phone, number);
                         if (!req.settings.current_number) {
@@ -685,7 +685,7 @@ public class CancelAccountDeletionActivity extends BaseFragment {
                     Drawable pressedDrawable = getResources().getDrawable(R.drawable.search_dark_activated).mutate();
                     pressedDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteInputFieldActivated), PorterDuff.Mode.MULTIPLY));
 
-                    codeField[a].setBackgroundDrawable(pressedDrawable);
+                    codeField[a].setBackground(pressedDrawable);
                     codeField[a].setImeOptions(EditorInfo.IME_ACTION_NEXT | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
                     codeField[a].setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
                     codeField[a].setMaxLines(1);
@@ -760,8 +760,8 @@ public class CancelAccountDeletionActivity extends BaseFragment {
                     });
                 }
             } else {
-                for (int a = 0; a < codeField.length; a++) {
-                    codeField[a].setText("");
+                for (EditTextBoldCursor editTextBoldCursor : codeField) {
+                    editTextBoldCursor.setText("");
                 }
             }
 
@@ -951,8 +951,8 @@ public class CancelAccountDeletionActivity extends BaseFragment {
                 return "";
             }
             StringBuilder codeBuilder = new StringBuilder();
-            for (int a = 0; a < codeField.length; a++) {
-                codeBuilder.append(PhoneFormat.stripExceptNumbers(codeField[a].getText().toString()));
+            for (EditTextBoldCursor editTextBoldCursor : codeField) {
+                codeBuilder.append(PhoneFormat.stripExceptNumbers(editTextBoldCursor.getText().toString()));
             }
             return codeBuilder.toString();
         }
@@ -1003,8 +1003,8 @@ public class CancelAccountDeletionActivity extends BaseFragment {
                         AlertsCreator.processError(currentAccount, error, CancelAccountDeletionActivity.this, req);
                     }
                     if (error.text.contains("PHONE_CODE_EMPTY") || error.text.contains("PHONE_CODE_INVALID")) {
-                        for (int a = 0; a < codeField.length; a++) {
-                            codeField[a].setText("");
+                        for (EditTextBoldCursor editTextBoldCursor : codeField) {
+                            editTextBoldCursor.setText("");
                         }
                         codeField[0].requestFocus();
                     } else if (error.text.contains("PHONE_CODE_EXPIRED")) {

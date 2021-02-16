@@ -695,10 +695,7 @@ public class FilterCreateActivity extends BaseFragment {
     }
 
     private boolean hasChanges() {
-        hasUserChanged = false;
-        if (filter.alwaysShow.size() != newAlwaysShow.size()) {
-            hasUserChanged = true;
-        }
+        hasUserChanged = filter.alwaysShow.size() != newAlwaysShow.size();
         if (filter.neverShow.size() != newNeverShow.size()) {
             hasUserChanged = true;
         }
@@ -977,9 +974,9 @@ public class FilterCreateActivity extends BaseFragment {
                 }
                 case 3: {
                     if (position == removeSectionRow) {
-                        holder.itemView.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+                        holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                     } else {
-                        holder.itemView.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
+                        holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                     }
                     break;
                 }
@@ -1011,9 +1008,9 @@ public class FilterCreateActivity extends BaseFragment {
                         cell.setText(LocaleController.getString("FilterExcludeInfo", R.string.FilterExcludeInfo));
                     }
                     if (position == excludeSectionRow && removeSectionRow == -1) {
-                        holder.itemView.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+                        holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                     } else {
-                        holder.itemView.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
+                        holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                     }
                 }
             }

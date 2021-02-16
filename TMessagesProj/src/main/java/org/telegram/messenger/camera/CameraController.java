@@ -221,7 +221,7 @@ public class CameraController implements MediaRecorder.OnInfoListener {
                                 serializedData.writeInt32(size.mHeight);
                             }
                         }
-                        preferences.edit().putString("cameraCache", Base64.encodeToString(serializedData.toByteArray(), Base64.DEFAULT)).commit();
+                        preferences.edit().putString("cameraCache", Base64.encodeToString(serializedData.toByteArray(), Base64.DEFAULT)).apply();
                         serializedData.cleanup();
                     }
                     cameraInfos = result;
@@ -433,7 +433,8 @@ public class CameraController implements MediaRecorder.OnInfoListener {
                             outputStream.getFD().sync();
                             outputStream.close();
                             if (scaled != null) {
-                                ImageLoader.getInstance().putImageToCache(new BitmapDrawable(scaled), key);
+                                ImageLoader.getInstance().putImageToCache(new BitmapDrawable(
+                                        ApplicationLoader.applicationContext.getResources(), scaled), key);
                             }
                             if (callback != null) {
                                 callback.run();
@@ -449,7 +450,8 @@ public class CameraController implements MediaRecorder.OnInfoListener {
                     outputStream.getFD().sync();
                     outputStream.close();
                     if (bitmap != null) {
-                        ImageLoader.getInstance().putImageToCache(new BitmapDrawable(bitmap), key);
+                        ImageLoader.getInstance().putImageToCache(new BitmapDrawable(
+                                ApplicationLoader.applicationContext.getResources(), bitmap), key);
                     }
                 } catch (Exception e) {
                     FileLog.e(e);
@@ -625,7 +627,7 @@ public class CameraController implements MediaRecorder.OnInfoListener {
                         pictureSize = new Size(16, 9);
                         pictureSize = CameraController.chooseOptimalSize(info.getPictureSizes(), 720, 480, pictureSize);
                         int bitrate;
-                        if (Math.min(pictureSize.mHeight,pictureSize.mWidth) >= 720) {
+                        if (Math.min(pictureSize.mHeight, pictureSize.mWidth) >= 720) {
                             bitrate = 3500000;
                         } else {
                             bitrate = 1800000;
@@ -698,7 +700,8 @@ public class CameraController implements MediaRecorder.OnInfoListener {
             if (onVideoTakeCallback != null) {
                 String path = cacheFile.getAbsolutePath();
                 if (bitmapFinal != null) {
-                    ImageLoader.getInstance().putImageToCache(new BitmapDrawable(bitmapFinal), Utilities.MD5(path));
+                    ImageLoader.getInstance().putImageToCache(new BitmapDrawable(
+                            ApplicationLoader.applicationContext.getResources(), bitmapFinal), Utilities.MD5(path));
                 }
                 onVideoTakeCallback.onFinishVideoRecording(path, durationFinal);
                 onVideoTakeCallback = null;

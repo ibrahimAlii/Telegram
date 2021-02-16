@@ -18,12 +18,14 @@ package org.telegram.messenger.support.fingerprint;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.hardware.biometrics.BiometricPrompt;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Handler;
 
 import org.telegram.messenger.FileLog;
 
 import java.security.Signature;
+import java.util.concurrent.Executors;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
@@ -55,12 +57,21 @@ public final class FingerprintManagerCompatApi23 {
 
     public static void authenticate(Context context, CryptoObject crypto, int flags, Object cancel,
                                     AuthenticationCallback callback, Handler handler) {
-        try {
-            getFingerprintManager(context).authenticate(wrapCryptoObject(crypto),
-                    (android.os.CancellationSignal) cancel, flags,
-                    wrapCallback(callback), handler);
-        } catch (Exception e) {
-            FileLog.e(e);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            try {
+                context.getSystemService(BiometricPrompt.class).authenticate(wrapBioMetricCryptoObject(crypto),
+                        (android.os.CancellationSignal) cancel, Executors.newSingleThreadExecutor(), wrapBiometricCallback(callback));
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+        } else {
+            try {
+                getFingerprintManager(context).authenticate(wrapCryptoObject(crypto),
+                        (android.os.CancellationSignal) cancel, flags,
+                        wrapCallback(callback), handler);
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
         }
     }
 
@@ -78,6 +89,34 @@ public final class FingerprintManagerCompatApi23 {
         }
     }
 
+    private static BiometricPrompt.CryptoObject wrapBioMetricCryptoObject(CryptoObject cryptoObject) {
+        if (cryptoObject == null) {
+            return null;
+        } else if (cryptoObject.getCipher() != null) {
+            return new BiometricPrompt.CryptoObject(cryptoObject.getCipher());
+        } else if (cryptoObject.getSignature() != null) {
+            return new BiometricPrompt.CryptoObject(cryptoObject.getSignature());
+        } else if (cryptoObject.getMac() != null) {
+            return new BiometricPrompt.CryptoObject(cryptoObject.getMac());
+        } else {
+            return null;
+        }
+    }
+
+    private static CryptoObject unwrapCryptoObject(BiometricPrompt.CryptoObject cryptoObject) {
+        if (cryptoObject == null) {
+            return null;
+        } else if (cryptoObject.getCipher() != null) {
+            return new CryptoObject(cryptoObject.getCipher());
+        } else if (cryptoObject.getSignature() != null) {
+            return new CryptoObject(cryptoObject.getSignature());
+        } else if (cryptoObject.getMac() != null) {
+            return new CryptoObject(cryptoObject.getMac());
+        } else {
+            return null;
+        }
+    }
+
     private static CryptoObject unwrapCryptoObject(FingerprintManager.CryptoObject cryptoObject) {
         if (cryptoObject == null) {
             return null;
@@ -90,6 +129,32 @@ public final class FingerprintManagerCompatApi23 {
         } else {
             return null;
         }
+    }
+
+    private static BiometricPrompt.AuthenticationCallback wrapBiometricCallback(
+            final AuthenticationCallback callback) {
+        return new BiometricPrompt.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationError(int errMsgId, CharSequence errString) {
+                callback.onAuthenticationError(errMsgId, errString);
+            }
+
+            @Override
+            public void onAuthenticationHelp(int helpMsgId, CharSequence helpString) {
+                callback.onAuthenticationHelp(helpMsgId, helpString);
+            }
+
+            @Override
+            public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
+                callback.onAuthenticationSucceeded(new AuthenticationResultInternal(
+                        unwrapCryptoObject(result.getCryptoObject())));
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                callback.onAuthenticationFailed();
+            }
+        };
     }
 
     private static FingerprintManager.AuthenticationCallback wrapCallback(
@@ -116,6 +181,7 @@ public final class FingerprintManagerCompatApi23 {
                 callback.onAuthenticationFailed();
             }
         };
+
     }
 
     public static class CryptoObject {

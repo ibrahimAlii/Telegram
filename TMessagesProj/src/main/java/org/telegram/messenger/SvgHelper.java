@@ -820,8 +820,8 @@ public class SvgHelper {
                 if (classAttr != null) {
                     styles = new ArrayList<>();
                     String[] args = classAttr.split(" ");
-                    for (int a = 0; a < args.length; a++) {
-                        StyleSet set = globalStyles.get(args[a].trim());
+                    for (String arg : args) {
+                        StyleSet set = globalStyles.get(arg.trim());
                         if (set != null) {
                             styles.add(set);
                         }
@@ -1672,8 +1672,8 @@ public class SvgHelper {
         try {
             StringBuilder path = new StringBuilder(encoded.length * 2);
             path.append('M');
-            for (int i = 0; i < encoded.length; i++) {
-                int num = encoded[i] & 0xff;
+            for (byte b : encoded) {
+                int num = b & 0xff;
                 if (num >= 128 + 64) {
                     int start = num - 128 - 64;
                     path.append("AACAAAAHAAALMAAAQASTAVAAAZaacaaaahaaalmaaaqastava.az0123456789-,".substring(start, start + 1));

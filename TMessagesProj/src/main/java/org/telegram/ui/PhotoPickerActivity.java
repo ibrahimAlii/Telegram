@@ -999,7 +999,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                 combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
                 writeButtonDrawable = combinedDrawable;
             }
-            writeButton.setBackgroundDrawable(writeButtonDrawable);
+            writeButton.setBackground(writeButtonDrawable);
             writeButton.setImageResource(R.drawable.attach_send);
             writeButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
             writeButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_dialogFloatingIcon), PorterDuff.Mode.MULTIPLY));
@@ -1188,12 +1188,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
     }
 
     private void onListItemClick(View view, Object item) {
-        boolean add;
-        if (addToSelectedPhotos(item, -1) == -1) {
-            add = true;
-        } else {
-            add = false;
-        }
+        boolean add = addToSelectedPhotos(item, -1) == -1;
         if (view instanceof SharedDocumentCell) {
             Integer index = (Integer) view.getTag();
             MediaController.PhotoEntry photoEntry = selectedAlbum.photos.get(index);

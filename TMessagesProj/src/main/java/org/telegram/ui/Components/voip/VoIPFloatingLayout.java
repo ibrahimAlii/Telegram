@@ -221,8 +221,8 @@ public class VoIPFloatingLayout extends FrameLayout {
                     float maxTop = topPadding;
                     float maxBottom = bottomPadding;
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH && lastInsets != null) {
-                        maxTop += lastInsets.getSystemWindowInsetTop();
-                        maxBottom += lastInsets.getSystemWindowInsetBottom();
+                        maxTop += lastInsets.getInsets(WindowInsets.Type.systemBars()).top;
+                        maxBottom += lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom;
                     }
 
                     if (getX() < leftPadding) {
@@ -329,8 +329,8 @@ public class VoIPFloatingLayout extends FrameLayout {
             return;
         }
 
-        float maxTop = (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH || lastInsets == null ? 0 : lastInsets.getSystemWindowInsetTop() + topPadding);
-        float maxBottom = (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH || lastInsets == null ? 0 : lastInsets.getSystemWindowInsetBottom() + bottomPadding);
+        float maxTop = (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH || lastInsets == null ? 0 : lastInsets.getInsets(WindowInsets.Type.systemBars()).top + topPadding);
+        float maxBottom = (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH || lastInsets == null ? 0 : lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom + bottomPadding);
 
         float xPoint = leftPadding + (((View) parent).getMeasuredWidth() - leftPadding - rightPadding - width) * xRelative;
         float yPoint = maxTop + (((View) parent).getMeasuredHeight() - maxBottom - maxTop - height) * yRelative;
@@ -500,8 +500,8 @@ public class VoIPFloatingLayout extends FrameLayout {
             return;
         }
 
-        float maxTop = (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH || lastInsets == null ? 0 : lastInsets.getSystemWindowInsetTop() + topPadding);
-        float maxBottom = (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH || lastInsets == null ? 0 : lastInsets.getSystemWindowInsetBottom() + bottomPadding);
+        float maxTop = (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH || lastInsets == null ? 0 : lastInsets.getInsets(WindowInsets.Type.systemBars()).top + topPadding);
+        float maxBottom = (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH || lastInsets == null ? 0 : lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom + bottomPadding);
 
         float xRelative = (fromLayout.getTranslationX() - leftPadding) / (((View) parent).getMeasuredWidth() - leftPadding - rightPadding - fromLayout.getMeasuredWidth());
         float yRelative = (fromLayout.getTranslationY() - maxTop) / (((View) parent).getMeasuredHeight() - maxBottom - maxTop - fromLayout.getMeasuredHeight());
@@ -522,8 +522,8 @@ public class VoIPFloatingLayout extends FrameLayout {
             if (parent == null) {
                 return;
             }
-            float maxTop = (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH || lastInsets == null ? 0 : lastInsets.getSystemWindowInsetTop() + topPadding);
-            float maxBottom = (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH || lastInsets == null ? 0 : lastInsets.getSystemWindowInsetBottom() + bottomPadding);
+            float maxTop = (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH || lastInsets == null ? 0 : lastInsets.getInsets(WindowInsets.Type.systemBars()).top + topPadding);
+            float maxBottom = (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH || lastInsets == null ? 0 : lastInsets.getInsets(WindowInsets.Type.systemBars()).bottom + bottomPadding);
 
             savedRelativePositionX = (getTranslationX() - leftPadding) / (((View) parent).getMeasuredWidth() - leftPadding - rightPadding - getMeasuredWidth());
             savedRelativePositionY = (getTranslationY() - maxTop) / (((View) parent).getMeasuredHeight() - maxBottom - maxTop - getMeasuredHeight());

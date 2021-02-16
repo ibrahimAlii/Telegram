@@ -377,14 +377,14 @@ public class ActionBarMenuItem extends FrameLayout {
                 delegate.onItemClick((Integer) view1.getTag());
             }
         });
-        view.setBackgroundDrawable(Theme.getSelectorDrawable(false));
+        view.setBackground(Theme.getSelectorDrawable(false));
     }
 
     public TextView addSubItem(int id, CharSequence text) {
         createPopupLayout();
         TextView textView = new TextView(getContext());
         textView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
-        textView.setBackgroundDrawable(Theme.getSelectorDrawable(false));
+        textView.setBackground(Theme.getSelectorDrawable(false));
         if (!LocaleController.isRTL) {
             textView.setGravity(Gravity.CENTER_VERTICAL);
         } else {

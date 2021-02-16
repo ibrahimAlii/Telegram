@@ -11,6 +11,7 @@ package org.telegram.ui.Components;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.RectF;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -21,7 +22,7 @@ public class RecordStatusDrawable extends StatusDrawable {
     private boolean isChat = false;
     private long lastUpdateTime = 0;
     private boolean started = false;
-    private RectF rect = new RectF();
+    private final RectF rect = new RectF();
     private float progress;
 
     Paint currentPaint;
@@ -105,7 +106,7 @@ public class RecordStatusDrawable extends StatusDrawable {
 
     @Override
     public int getOpacity() {
-        return 0;
+        return PixelFormat.UNKNOWN;
     }
 
     @Override

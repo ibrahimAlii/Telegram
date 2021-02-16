@@ -526,7 +526,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
             if (Build.VERSION.SDK_INT >= 21) {
                 View selector = new View(context);
-                selector.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 1, AndroidUtilities.dp(23)));
+                selector.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 1, AndroidUtilities.dp(23)));
                 addView(selector, LayoutHelper.createFrame(46, 46, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 9, 0, 0));
             }
 
@@ -1057,7 +1057,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         selectedMenuItem.setDelegate(id -> actionBar.getActionBarMenuOnItemClick().onItemClick(id));
         selectedMenuItem.setAdditionalYOffset(AndroidUtilities.dp(72));
         selectedMenuItem.setTranslationX(AndroidUtilities.dp(6));
-        selectedMenuItem.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 6));
+        selectedMenuItem.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 6));
         selectedMenuItem.setOnClickListener(v -> selectedMenuItem.toggleSubMenu());
 
         doneItem = new ActionBarMenuItem(context, null, 0, Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader), true);
@@ -1066,7 +1066,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         doneItem.setVisibility(View.INVISIBLE);
         doneItem.setAlpha(0.0f);
         doneItem.setTranslationX(-AndroidUtilities.dp(12));
-        doneItem.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 3));
+        doneItem.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 3));
         doneItem.setOnClickListener(v -> currentAttachLayout.onMenuItemClick(40));
 
         searchItem = new ActionBarMenuItem(context, null, 0, Theme.getColor(Theme.key_dialogTextBlack));
@@ -1076,7 +1076,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         searchItem.setVisibility(View.INVISIBLE);
         searchItem.setAlpha(0.0f);
         searchItem.setTranslationX(-AndroidUtilities.dp(42));
-        searchItem.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 6));
+        searchItem.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_dialogButtonSelector), 6));
         searchItem.setOnClickListener(v -> {
             if (avatarPicker != 0) {
                 delegate.openAvatarsSearch();
@@ -1511,7 +1511,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
             writeButtonDrawable = combinedDrawable;
         }
-        writeButton.setBackgroundDrawable(writeButtonDrawable);
+        writeButton.setBackground(writeButtonDrawable);
         writeButton.setImageResource(R.drawable.attach_send);
         writeButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_dialogFloatingIcon), PorterDuff.Mode.MULTIPLY));
         writeButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
@@ -2110,9 +2110,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     @Override
     public ArrayList<ThemeDescription> getThemeDescriptions() {
         ArrayList<ThemeDescription> descriptions = new ArrayList<>();
-        for (int a = 0; a < layouts.length; a++) {
-            if (layouts[a] != null) {
-                ArrayList<ThemeDescription> arrayList = layouts[a].getThemeDescriptions();
+        for (AttachAlertLayout layout : layouts) {
+            if (layout != null) {
+                ArrayList<ThemeDescription> arrayList = layout.getThemeDescriptions();
                 if (arrayList != null) {
                     descriptions.addAll(arrayList);
                 }
@@ -2146,10 +2146,10 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         commentTextView.updateColors();
 
         if (sendPopupLayout != null) {
-            for (int a = 0; a < itemCells.length; a++) {
-                if (itemCells[a] != null) {
-                    itemCells[a].setColors(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem), Theme.getColor(Theme.key_actionBarDefaultSubmenuItemIcon));
-                    itemCells[a].setSelectorColor(Theme.getColor(Theme.key_dialogButtonSelector));
+            for (ActionBarMenuSubItem itemCell : itemCells) {
+                if (itemCell != null) {
+                    itemCell.setColors(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem), Theme.getColor(Theme.key_actionBarDefaultSubmenuItemIcon));
+                    itemCell.setSelectorColor(Theme.getColor(Theme.key_dialogButtonSelector));
                 }
             }
             sendPopupLayout.setBackgroundColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground));
@@ -2180,33 +2180,27 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
         containerView.invalidate();
 
-        for (int a = 0; a < layouts.length; a++) {
-            if (layouts[a] != null) {
-                layouts[a].checkColors();
+        for (AttachAlertLayout layout : layouts) {
+            if (layout != null) {
+                layout.checkColors();
             }
         }
     }
 
     @Override
     protected boolean onCustomMeasure(View view, int width, int height) {
-        if (photoLayout.onCustomMeasure(view, width, height)) {
-            return true;
-        }
-        return false;
+        return photoLayout.onCustomMeasure(view, width, height);
     }
 
     @Override
     protected boolean onCustomLayout(View view, int left, int top, int right, int bottom) {
-        if (photoLayout.onCustomLayout(view, left, top, right, bottom)) {
-            return true;
-        }
-        return false;
+        return photoLayout.onCustomLayout(view, left, top, right, bottom);
     }
 
     public void onPause() {
-        for (int a = 0; a < layouts.length; a++) {
-            if (layouts[a] != null) {
-                layouts[a].onPause();
+        for (AttachAlertLayout layout : layouts) {
+            if (layout != null) {
+                layout.onPause();
             }
         }
         paused = true;
@@ -2214,9 +2208,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
     public void onResume() {
         paused = false;
-        for (int a = 0; a < layouts.length; a++) {
-            if (layouts[a] != null) {
-                layouts[a].onResume();
+        for (AttachAlertLayout layout : layouts) {
+            if (layout != null) {
+                layout.onResume();
             }
         }
         if (isShowing()) {
@@ -2555,9 +2549,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     }
 
     public void onDestroy() {
-        for (int a = 0; a < layouts.length; a++) {
-            if (layouts[a] != null) {
-                layouts[a].onDestroy();
+        for (AttachAlertLayout layout : layouts) {
+            if (layout != null) {
+                layout.onDestroy();
             }
         }
         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.reloadInlineHints);
@@ -2834,9 +2828,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         if (currentAttachLayout.onDismiss()) {
             return;
         }
-        for (int a = 0; a < layouts.length; a++) {
-            if (layouts[a] != null && currentAttachLayout != layouts[a]) {
-                layouts[a].onDismiss();
+        for (AttachAlertLayout layout : layouts) {
+            if (layout != null && currentAttachLayout != layout) {
+                layout.onDismiss();
             }
         }
         if (commentTextView != null) {

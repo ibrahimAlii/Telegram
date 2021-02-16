@@ -105,7 +105,7 @@ public class CropGestureDetector {
         mDetector.onTouchEvent(ev);
 
         int i = 0;
-        switch (ev.getAction() & MotionEventCompat.ACTION_MASK) {
+        switch (ev.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 this.mActivePointerId = ev.getPointerId(0);
                 touchTime = SystemClock.elapsedRealtime();
@@ -118,7 +118,7 @@ public class CropGestureDetector {
                 this.mActivePointerId = INVALID_POINTER_ID;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
-                int pointerIndex = (MotionEventCompat.ACTION_POINTER_INDEX_MASK & ev.getAction()) >> 8;
+                int pointerIndex = (MotionEvent.ACTION_POINTER_INDEX_MASK & ev.getAction()) >> 8;
                 if (ev.getPointerId(pointerIndex) == this.mActivePointerId) {
                     int newPointerIndex;
                     if (pointerIndex == 0) {
